@@ -1,0 +1,141 @@
+{
+  "Python": {
+    "category": "language",
+    "aliases": [
+      "python3",
+      "py"
+    ]
+  },
+
+  "Java": {
+    "category": "language",
+    "aliases": []
+  },
+
+  "JavaScript": {
+    "category": "language",
+    "aliases": [
+      "javascript",
+      "js"
+    ]
+  },
+
+  "TypeScript": {
+    "category": "language",
+    "aliases": [
+      "typescript",
+      "ts"
+    ]
+  },
+
+  "Django": {
+    "category": "web_framework",
+    "aliases": [
+      "django rest framework",
+      "drf"
+    ]
+  },
+
+  "Flask": {
+    "category": "web_framework",
+    "aliases": []
+  },
+
+  "FastAPI": {
+    "category": "web_framework",
+    "aliases": [
+      "fast api"
+    ]
+  },
+
+  "React": {
+    "category": "frontend_library",
+    "aliases": [
+      "react.js",
+      "reactjs"
+    ]
+  },
+
+  "Angular": {
+    "category": "frontend_framework",
+    "aliases": [
+      "angularjs"
+    ]
+  },
+
+  "PostgreSQL": {
+    "category": "database",
+    "aliases": [
+      "postgres",
+      "psql",
+      "postgres db"
+    ]
+  },
+
+  "MySQL": {
+    "category": "database",
+    "aliases": [
+      "mysql database"
+    ]
+  },
+
+  "MongoDB": {
+    "category": "database",
+    "aliases": [
+      "mongo"
+    ]
+  },
+
+  "SQLite": {
+    "category": "database",
+    "aliases": []
+  },
+
+  "REST API": {
+    "category": "backend_concept",
+    "aliases": [
+      "rest api",
+      "rest apis",
+      "restful api",
+      "web api"
+    ]
+  },
+
+  "Git": {
+    "category": "tool",
+    "aliases": [
+      "version control"
+    ]
+  },
+
+  "GitHub": {
+    "category": "tool",
+    "aliases": []
+  },
+
+  "Docker": {
+    "category": "tool",
+    "aliases": []
+  },
+
+  "Machine Learning": {
+    "category": "domain",
+    "aliases": [
+      "ml"
+    ]
+  },
+
+  "Deep Learning": {
+    "category": "domain",
+    "aliases": [
+      "dl"
+    ]
+  },
+
+  "Data Analysis": {
+    "category": "domain",
+    "aliases": [
+      "data analytics"
+    ]
+  }
+}
