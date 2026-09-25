@@ -2,7 +2,7 @@ import json
 
 from agent.nlp_extractor import NLPExtractor
 from agent.reconciler import Reconciler
-
+from agent.portfolio_evidence_agent import PortfolioEvidenceAgent
 
 def test_skill_extraction():
     extractor = NLPExtractor(
@@ -148,3 +148,78 @@ def test_reconciler_both_methods():
     assert items[0]["extraction_method"] == "both"
     assert items[0]["confidence"] == 0.98
     assert unmapped == []
+
+def test_end_to_end_without_llm():
+
+    agent = PortfolioEvidenceAgent(
+        use_llm=False
+    )
+
+    profile = {
+        "freelancer_id": "fl_001",
+
+        "portfolio_projects": [
+            {
+                "project_id": "proj_001",
+                "title": "Restaurant Booking Platform",
+                "description":
+                    "Built a backend application using Django, "
+                    "PostgreSQL and REST API technologies."
+            }
+        ],
+
+        "certificates": [
+            {
+                "certificate_id": "cert_001",
+                "title": "Python Development Certificate",
+                "description":
+                    "Completed training in Python and Flask."
+            }
+        ],
+
+        "code_samples": [
+            {
+                "sample_id": "code_001",
+                "filename": "app.py",
+                "language": "Python",
+                "snippet":
+                    "Created a Flask API using PostgreSQL."
+            }
+        ],
+
+        "work_descriptions": [
+            {
+                "work_id": "work_001",
+                "description":
+                    "Developed React applications and used Git "
+                    "for version control."
+            }
+        ]
+    }
+
+    output = agent.process(profile)
+
+    assert output["freelancer_id"] == "fl_001"
+
+    assert output["agent"] == "portfolio_evidence_agent"
+
+    assert output["agent_version"] == "1.0.0"
+
+    assert "evidence_items" in output
+
+    skills = {
+        item["skill"]
+        for item in output["evidence_items"]
+    }
+
+    assert "Django" in skills
+    assert "PostgreSQL" in skills
+    assert "REST API" in skills
+    assert "Python" in skills
+    assert "Flask" in skills
+    assert "React" in skills
+    assert "Git" in skills
+
+    for item in output["evidence_items"]:
+        assert item["evidence_id"].startswith("ev_")
+        assert item["extraction_method"] == "ner"

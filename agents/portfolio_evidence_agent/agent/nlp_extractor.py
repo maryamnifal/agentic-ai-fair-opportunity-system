@@ -20,7 +20,7 @@ class NLPExtractor:
             attr="LOWER"
         )
 
-        # Add skills and aliases
+        # Add skills and aliases to matcher
         for canonical_skill, details in self.taxonomy.items():
 
             terms = [
@@ -56,11 +56,9 @@ class NLPExtractor:
 
         seen = set()
 
-
         for match_id, start, end in matches:
 
             skill = self.nlp.vocab.strings[match_id]
-
 
             # Avoid duplicate skills
             if skill in seen:
@@ -68,9 +66,7 @@ class NLPExtractor:
 
             seen.add(skill)
 
-
             span = doc[start:end]
-
 
             results.append({
 
@@ -103,9 +99,7 @@ class NLPExtractor:
 
             })
 
-
         return results
-
 
 
     def _create_excerpt(
@@ -130,5 +124,36 @@ class NLPExtractor:
             end + window
         )
 
-
         return doc[start_index:end_index].text.strip()
+
+
+    def candidate_terms(self, text):
+
+        """
+        Find short noun phrases that are not already
+        recognised by the skill taxonomy.
+        """
+
+        doc = self.nlp(text)
+
+        # Collect all known canonical skills and aliases
+        known = {
+            alias.lower()
+            for details in self.taxonomy.values()
+            for alias in details.get("aliases", [])
+        }
+
+        known.update(
+            skill.lower()
+            for skill in self.taxonomy
+        )
+
+        # Return short noun phrases that are not known skills
+        return [
+            chunk.text
+            for chunk in doc.noun_chunks
+            if (
+                chunk.text.lower() not in known
+                and len(chunk.text.split()) <= 3
+            )
+        ]
