@@ -406,3 +406,226 @@ def test_extract_evidence_endpoint():
     assert "Django" in skills
     assert "REST API" in skills
     assert "PostgreSQL" in skills
+
+def test_sparse_profile():
+    agent = PortfolioEvidenceAgent(
+        use_llm=False
+    )
+
+    profile = {
+        "freelancer_id": "sparse_001",
+
+        "portfolio_projects": [
+            {
+                "project_id": "proj_sparse",
+                "title": "Website",
+                "description": "Made a website."
+            }
+        ],
+
+        "certificates": [],
+        "code_samples": [],
+        "work_descriptions": []
+    }
+
+    output = agent.process(profile)
+
+    assert output["freelancer_id"] == "sparse_001"
+
+    assert "processing_notes" in output
+
+    assert any(
+        "very short" in note.lower()
+        for note in output["processing_notes"]
+    )
+       
+def test_empty_profile():
+    agent = PortfolioEvidenceAgent(
+        use_llm=False
+    )
+
+    profile = {
+        "freelancer_id": "empty_001",
+        "portfolio_projects": [],
+        "certificates": [],
+        "code_samples": [],
+        "work_descriptions": []
+    }
+
+    output = agent.process(profile)
+
+    assert output["freelancer_id"] == "empty_001"
+
+    assert output["evidence_items"] == []
+
+    assert "processing_notes" in output
+
+    assert any(
+        "no extractable skill evidence" in note.lower()
+        for note in output["processing_notes"]
+    )
+
+def test_unmapped_skill():
+    agent = PortfolioEvidenceAgent(
+        use_llm=False
+    )
+
+    profile = {
+        "freelancer_id": "unmapped_001",
+
+        "portfolio_projects": [
+            {
+                "project_id": "proj_unmapped",
+                "title": "Frontend Project",
+                "description":
+                    "Used Svelte for frontend development."
+            }
+        ],
+
+        "certificates": [],
+        "code_samples": [],
+        "work_descriptions": []
+    }
+
+    output = agent.process(profile)
+
+    assert output["freelancer_id"] == "unmapped_001"
+
+    # Svelte is not currently in our taxonomy,
+    # so it should not become evidence.
+    skills = {
+        item["skill"]
+        for item in output["evidence_items"]
+    }
+
+    assert "Svelte" not in skills
+
+    # It should instead be reported as an unmapped term.
+    assert any(
+        "svelte" in term.lower()
+        for term in output["unmapped_terms"]
+    )
+
+def test_graceful_llm_unavailable():
+
+    class UnavailableLLM:
+        def interpret(
+            self,
+            text,
+            source_type,
+            source_ref,
+            known_skills
+        ):
+            # Simulate unavailable / failed LLM
+            return []
+
+    agent = PortfolioEvidenceAgent(
+        use_llm=False
+    )
+
+    # Enable the LLM path but replace it with
+    # an unavailable mock implementation.
+    agent.llm = UnavailableLLM()
+    agent.use_llm = True
+
+    profile = {
+        "freelancer_id": "fallback_001",
+
+        "portfolio_projects": [
+            {
+                "project_id": "proj_fallback",
+                "title": "Backend Project",
+                "description":
+                    "Built a REST API using Django and PostgreSQL."
+            }
+        ],
+
+        "certificates": [],
+        "code_samples": [],
+        "work_descriptions": []
+    }
+
+    output = agent.process(profile)
+
+    assert output["freelancer_id"] == "fallback_001"
+
+    skills = {
+        item["skill"]
+        for item in output["evidence_items"]
+    }
+
+    # NLP should still work even though LLM returned nothing
+    assert "Django" in skills
+    assert "REST API" in skills
+    assert "PostgreSQL" in skills
+
+    # Since only NLP produced evidence,
+    # extraction method should remain "ner".
+    for item in output["evidence_items"]:
+        assert item["extraction_method"] == "ner"
+
+def test_llm_hallucinated_excerpt_rejected():
+
+    class FakeHallucinatingLLM:
+
+        def interpret(
+            self,
+            text,
+            source_type,
+            source_ref,
+            known_skills
+        ):
+
+            return [
+                {
+                    "skill": "JavaScript",
+                    "skill_category": "language",
+                    "source_type": source_type,
+                    "source_ref": source_ref,
+                    "source_excerpt":
+                        "Created a React dashboard",
+                    "extraction_method": "llm",
+                    "confidence": 0.90,
+                    "reasoning":
+                        "React requires JavaScript."
+                }
+            ]
+
+
+    agent = PortfolioEvidenceAgent(
+        use_llm=False
+    )
+
+    agent.llm = FakeHallucinatingLLM()
+    agent.use_llm = True
+
+
+    profile = {
+        "freelancer_id": "hallucination_001",
+
+        "portfolio_projects": [
+            {
+                "project_id": "proj_hallucination",
+                "title": "Backend API",
+                "description":
+                    "Built server-side APIs with Django."
+            }
+        ],
+
+        "certificates": [],
+        "code_samples": [],
+        "work_descriptions": []
+    }
+
+
+    output = agent.process(profile)
+
+
+    skills = {
+        item["skill"]
+        for item in output["evidence_items"]
+    }
+
+
+    # Hallucinated LLM evidence should be rejected
+    assert "JavaScript" not in skills
