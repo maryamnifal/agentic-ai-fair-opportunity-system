@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Skill Verification — Evidence Workbench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2430;
+    --ink-soft:#4B5563;
+    --paper:#F6F4EF;
+    --panel:#FCFBF8;
+    --line:#D9D3C6;
+    --accent:#3D4F91;
+    --accent-soft:#EAEDF6;
+    --supported:#2F6B4F;
+    --supported-bg:#E8F0EA;
+    --weak:#8A6A0F;
+    --weak-bg:#F5EFDE;
+    --unsupported:#6B7280;
+    --unsupported-bg:#EEEEEC;
+    --contradicted:#B3432B;
+    --contradicted-bg:#F6E7E2;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.5;
+  }
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:48px 28px 80px;
+  }
+  header{
+    max-width:640px;
+    margin-bottom:40px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:2.1rem;
+    letter-spacing:-0.01em;
+    margin:0 0 10px;
+  }
+  header p{
+    color:var(--ink-soft);
+    font-size:1rem;
+    margin:0;
+    max-width:56ch;
+  }
+  .layout{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:40px;
+    align-items:start;
+  }
+  @media (max-width: 880px){
+    .layout{grid-template-columns:1fr;}
+  }
+  .panel-heading{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:16px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:10px;
+  }
+  .panel-heading h2{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:1.05rem;
+    margin:0;
+  }
+  .presets{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .preset-btn{
+    font-size:0.78rem;
+    background:none;
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    padding:4px 10px;
+    border-radius:3px;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .preset-btn:hover{ border-color:var(--accent); color:var(--accent); }
+
+  label{
+    display:block;
+    font-size:0.82rem;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+    font-weight:500;
+  }
+  input[type=text], textarea{
+    width:100%;
+    font-family:inherit;
+    font-size:0.92rem;
+    color:var(--ink);
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:9px 11px;
+  }
+  textarea{ resize:vertical; min-height:60px; }
+  input:focus, textarea:focus, button:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:1px;
+    border-color:var(--accent);
+  }
+  .field{ margin-bottom:16px; }
+
+  .chip-input{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    padding:8px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--panel);
+  }
+  .chip-input input{
+    border:none;
+    background:none;
+    flex:1;
+    min-width:120px;
+    padding:4px;
+  }
+  .chip-input input:focus{ outline:none; }
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--accent-soft);
+    color:var(--accent);
+    font-size:0.82rem;
+    padding:4px 8px 4px 10px;
+    border-radius:3px;
+    white-space:nowrap;
+  }
+  .chip button{
+    background:none;
+    border:none;
+    color:var(--accent);
+    cursor:pointer;
+    font-size:0.95rem;
+    line-height:1;
+    padding:0;
+    opacity:0.6;
+  }
+  .chip button:hover{ opacity:1; }
+
+  .evidence-block{
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:16px;
+    margin-bottom:14px;
+    background:var(--panel);
+    position:relative;
+  }
+  .evidence-block .remove-evidence{
+    position:absolute;
+    top:12px;
+    right:12px;
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-size:0.8rem;
+  }
+  .evidence-block .remove-evidence:hover{ color:var(--contradicted); }
+
+  .add-evidence-btn{
+    width:100%;
+    background:none;
+    border:1px dashed var(--line);
+    border-radius:4px;
+    padding:10px;
+    color:var(--ink-soft);
+    font-family:inherit;
+    font-size:0.86rem;
+    cursor:pointer;
+    margin-bottom:22px;
+  }
+  .add-evidence-btn:hover{ border-color:var(--accent); color:var(--accent); }
+
+  .submit-btn{
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:3px;
+    padding:12px 22px;
+    font-family:inherit;
+    font-size:0.92rem;
+    font-weight:500;
+    cursor:pointer;
+  }
+  .submit-btn:hover{ background:#324180; }
+  .submit-btn:disabled{ background:var(--unsupported); cursor:default; }
+
+  .results-empty{
+    color:var(--ink-soft);
+    font-size:0.9rem;
+    border:1px dashed var(--line);
+    border-radius:4px;
+    padding:28px;
+    text-align:center;
+  }
+
+  .error-box{
+    background:var(--contradicted-bg);
+    color:var(--contradicted);
+    border:1px solid var(--contradicted);
+    border-radius:4px;
+    padding:12px 14px;
+    font-size:0.85rem;
+    margin-bottom:16px;
+  }
+
+  .meta-line{
+    font-size:0.8rem;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+  }
+
+  .verdict{
+    border:1px solid var(--line);
+    border-left-width:4px;
+    border-radius:3px;
+    background:var(--panel);
+    padding:14px 16px;
+    margin-bottom:12px;
+  }
+  .verdict.supported{ border-left-color:var(--supported); }
+  .verdict.weakly_supported{ border-left-color:var(--weak); }
+  .verdict.unsupported{ border-left-color:var(--unsupported); }
+  .verdict.contradicted{ border-left-color:var(--contradicted); }
+
+  .verdict-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:8px;
+  }
+  .verdict-skill{
+    font-weight:600;
+    font-size:0.98rem;
+  }
+  .status-pill{
+    font-size:0.76rem;
+    font-weight:500;
+    padding:3px 9px;
+    border-radius:12px;
+    white-space:nowrap;
+  }
+  .status-pill.supported{ background:var(--supported-bg); color:var(--supported); }
+  .status-pill.weakly_supported{ background:var(--weak-bg); color:var(--weak); }
+  .status-pill.unsupported{ background:var(--unsupported-bg); color:var(--unsupported); }
+  .status-pill.contradicted{ background:var(--contradicted-bg); color:var(--contradicted); }
+
+  .conf-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:8px;
+  }
+  .conf-track{
+    flex:1;
+    height:6px;
+    background:var(--line);
+    border-radius:3px;
+    overflow:hidden;
+  }
+  .conf-fill{ height:100%; border-radius:3px; }
+  .conf-fill.supported{ background:var(--supported); }
+  .conf-fill.weakly_supported{ background:var(--weak); }
+  .conf-fill.unsupported{ background:var(--unsupported); }
+  .conf-fill.contradicted{ background:var(--contradicted); }
+  .conf-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    min-width:38px;
+    text-align:right;
+  }
+
+  .verdict-reason{
+    font-size:0.88rem;
+    color:var(--ink-soft);
+    margin-bottom:8px;
+  }
+  .evidence-ids{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .evidence-id-chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    background:var(--accent-soft);
+    color:var(--accent);
+    padding:2px 7px;
+    border-radius:3px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Skill verification — evidence workbench</h1>
+    <p>Enter a freelancer's claimed skills and portfolio evidence. The agent checks each claim against the evidence supplied — it does not verify identity or credentials, only whether a claim is supported by what's here.</p>
+  </header>
+
+  <div class="layout">
+    <section>
+      <div class="panel-heading">
+        <h2>Claim &amp; evidence</h2>
+        <div class="presets">
+          <button class="preset-btn" data-preset="strong">Strong match</button>
+          <button class="preset-btn" data-preset="contradiction">Contradiction</button>
+          <button class="preset-btn" data-preset="overclaim">Overclaimed</button>
+        </div>
+      </div>
+
+      <form id="verify-form">
+        <div class="field">
+          <label for="candidate-id">Candidate ID</label>
+          <input type="text" id="candidate-id" value="F001" />
+        </div>
+
+        <div class="field">
+          <label for="skills-input">Claimed skills</label>
+          <div class="chip-input" id="skills-chip-input">
+            <input type="text" id="skills-input" placeholder="Type a skill, press Enter" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Portfolio evidence</label>
+          <div id="evidence-list"></div>
+          <button type="button" class="add-evidence-btn" id="add-evidence">+ Add evidence item</button>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit-btn">Verify skills</button>
+      </form>
+    </section>
+
+    <section>
+      <div class="panel-heading">
+        <h2>Verdicts</h2>
+      </div>
+      <div id="results"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+const API_URL = '/api/verify-skills';
+
+const PRESETS = {
+  strong: {
+    candidate_id: 'F001',
+    claimed_skills: ['Python', 'Django', 'Machine Learning', 'React'],
+    evidence: [{
+      evidence_id: 'E001',
+      project: 'Online Booking System',
+      description: 'Built a web-based booking platform using Django and REST APIs.',
+      extracted_skills: ['Python', 'Django', 'REST API', 'Web Development']
+    }]
+  },
+  contradiction: {
+    candidate_id: 'F005',
+    claimed_skills: ['Python'],
+    evidence: [{
+      evidence_id: 'E005',
+      project: 'Retail POS System',
+      description: 'Built entirely in Java using Spring Boot with no use of Python.',
+      extracted_skills: ['Java', 'Spring Boot']
+    }]
+  },
+  overclaim: {
+    candidate_id: 'F008',
+    claimed_skills: ['Python', 'Java', 'React', 'Machine Learning', 'DevOps', 'Kubernetes'],
+    evidence: [{
+      evidence_id: 'E009',
+      project: 'Static Landing Page',
+      description: 'Created a single-page marketing site using HTML and CSS.',
+      extracted_skills: ['HTML', 'CSS']
+    }]
+  }
+};
+
+let skills = [];
+let evidenceItems = [];
+let evCounter = 0;
+
+const skillsInput = document.getElementById('skills-input');
+const chipInputWrap = document.getElementById('skills-chip-input');
+const evidenceList = document.getElementById('evidence-list');
+const resultsEl = document.getElementById('results');
+const form = document.getElementById('verify-form');
+const submitBtn = document.getElementById('submit-btn');
+const candidateIdEl = document.getElementById('candidate-id');
+
+function renderSkillChips(){
+  chipInputWrap.querySelectorAll('.chip').forEach(c => c.remove());
+  skills.forEach((s, i) => {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.innerHTML = `${escapeHtml(s)} <button type="button" aria-label="Remove ${escapeHtml(s)}">&times;</button>`;
+    chip.querySelector('button').onclick = () => { skills.splice(i,1); renderSkillChips(); };
+    chipInputWrap.insertBefore(chip, skillsInput);
+  });
+}
+
+skillsInput.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' || e.key === ','){
+    e.preventDefault();
+    const val = skillsInput.value.trim();
+    if(val && !skills.includes(val)){
+      skills.push(val);
+      renderSkillChips();
+    }
+    skillsInput.value = '';
+  } else if(e.key === 'Backspace' && !skillsInput.value && skills.length){
+    skills.pop();
+    renderSkillChips();
+  }
+});
+
+function addEvidenceBlock(data){
+  data = data || { evidence_id: 'E00' + (evCounter+1), project: '', description: '', extracted_skills: [] };
+  const id = 'ev-' + (evCounter++);
+  const block = document.createElement('div');
+  block.className = 'evidence-block';
+  block.dataset.id = id;
+  block.innerHTML = `
+    <button type="button" class="remove-evidence">Remove</button>
+    <div class="field">
+      <label>Evidence ID</label>
+      <input type="text" class="ev-id" value="${escapeHtml(data.evidence_id)}" />
+    </div>
+    <div class="field">
+      <label>Project name</label>
+      <input type="text" class="ev-project" value="${escapeHtml(data.project)}" placeholder="e.g. Online Booking System" />
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <textarea class="ev-desc" placeholder="What was built and with what tech...">${escapeHtml(data.description)}</textarea>
+    </div>
+    <div class="field">
+      <label>Extracted skills (comma-separated)</label>
+      <input type="text" class="ev-skills" value="${escapeHtml((data.extracted_skills||[]).join(', '))}" placeholder="Python, Django, REST API" />
+    </div>
+  `;
+  block.querySelector('.remove-evidence').onclick = () => block.remove();
+  evidenceList.appendChild(block);
+}
+
+document.getElementById('add-evidence').onclick = () => addEvidenceBlock();
+
+document.querySelectorAll('.preset-btn').forEach(btn => {
+  btn.onclick = () => loadPreset(PRESETS[btn.dataset.preset]);
+});
+
+function loadPreset(preset){
+  candidateIdEl.value = preset.candidate_id;
+  skills = [...preset.claimed_skills];
+  renderSkillChips();
+  evidenceList.innerHTML = '';
+  preset.evidence.forEach(ev => addEvidenceBlock(ev));
+}
+
+function escapeHtml(str){
+  return (str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function collectPayload(){
+  const evidence = Array.from(evidenceList.querySelectorAll('.evidence-block')).map(block => ({
+    evidence_id: block.querySelector('.ev-id').value.trim(),
+    project: block.querySelector('.ev-project').value.trim(),
+    description: block.querySelector('.ev-desc').value.trim(),
+    extracted_skills: block.querySelector('.ev-skills').value.split(',').map(s => s.trim()).filter(Boolean)
+  }));
+  return {
+    candidate_id: candidateIdEl.value.trim(),
+    claimed_skills: skills,
+    evidence
+  };
+}
+
+const STATUS_LABELS = {
+  supported: 'Supported',
+  weakly_supported: 'Weakly supported',
+  unsupported: 'Unsupported',
+  contradicted: 'Contradicted'
+};
+
+function renderResults(data){
+  resultsEl.innerHTML = '';
+  const meta = document.createElement('div');
+  meta.className = 'meta-line';
+  meta.textContent = `Candidate ${data.candidate_id} — ${data.verified_skills.length} skill${data.verified_skills.length===1?'':'s'} evaluated`;
+  resultsEl.appendChild(meta);
+
+  data.verified_skills.forEach(v => {
+    const pct = Math.round(v.confidence * 100);
+    const card = document.createElement('div');
+    card.className = 'verdict ' + v.status;
+    card.innerHTML = `
+      <div class="verdict-top">
+        <span class="verdict-skill">${escapeHtml(v.skill)}</span>
+        <span class="status-pill ${v.status}">${STATUS_LABELS[v.status] || v.status}</span>
+      </div>
+      <div class="conf-row">
+        <div class="conf-track"><div class="conf-fill ${v.status}" style="width:${pct}%"></div></div>
+        <span class="conf-num">${pct}%</span>
+      </div>
+      <div class="verdict-reason">${escapeHtml(v.reason)}</div>
+      ${v.evidence_ids.length ? `<div class="evidence-ids">${v.evidence_ids.map(id => `<span class="evidence-id-chip">${escapeHtml(id)}</span>`).join('')}</div>` : ''}
+    `;
+    resultsEl.appendChild(card);
+  });
+}
+
+function renderEmpty(){
+  resultsEl.innerHTML = '<div class="results-empty">Add claimed skills and evidence, then verify to see results here.</div>';
+}
+
+function renderError(message){
+  resultsEl.innerHTML = `<div class="error-box">${escapeHtml(message)}</div>`;
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const payload = collectPayload();
+
+  if(!payload.candidate_id){ renderError('Candidate ID is required.'); return; }
+  if(!payload.claimed_skills.length){ renderError('Add at least one claimed skill.'); return; }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Checking evidence...';
+  resultsEl.innerHTML = '<div class="results-empty">Checking evidence...</div>';
+
+  try{
+    const resp = await fetch(API_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const body = await resp.json();
+    if(!resp.ok){
+      renderError(body.detail || body.error || `Request failed with status ${resp.status}.`);
+    } else {
+      renderResults(body);
+    }
+  } catch(err){
+    renderError('Could not reach the server. Is it still running?');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Verify skills';
+  }
+});
+
+// Initial state: preload the strong-match example so the page isn't empty on first load.
+loadPreset(PRESETS.strong);
+renderEmpty();
+</script>
+</body>
+</html>

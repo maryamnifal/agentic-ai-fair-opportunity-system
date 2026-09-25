@@ -1,0 +1,208 @@
+{
+  "description": "Synthetic freelancer-side dataset for Member B testing. Not real data.",
+  "freelancers": [
+    {
+      "candidate_id": "F001",
+      "case": "strong evidence, exact + implied matches",
+      "claimed_skills": ["Python", "Django", "REST API"],
+      "evidence": [
+        {
+          "evidence_id": "E001",
+          "project": "Online Booking System",
+          "description": "Built an online booking platform using Django REST Framework.",
+          "extracted_skills": ["Python", "Django", "Django REST Framework", "REST API"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F002",
+      "case": "fully unsupported claims (unrelated evidence)",
+      "claimed_skills": ["Python", "Machine Learning", "React"],
+      "evidence": [
+        {
+          "evidence_id": "E002",
+          "project": "Personal Portfolio Site",
+          "description": "Created a static portfolio website using HTML and CSS.",
+          "extracted_skills": ["HTML", "CSS", "Web Development"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F003",
+      "case": "moderate/implied match: framework implies language",
+      "claimed_skills": ["Python", "Java"],
+      "evidence": [
+        {
+          "evidence_id": "E003",
+          "project": "Inventory Dashboard",
+          "description": "Developed a Django application for tracking warehouse inventory.",
+          "extracted_skills": ["Django", "Web Development"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F004",
+      "case": "weak evidence via loosely related skill",
+      "claimed_skills": ["Machine Learning"],
+      "evidence": [
+        {
+          "evidence_id": "E004",
+          "project": "Sales Data Report",
+          "description": "Performed data analysis on sales figures using Pandas.",
+          "extracted_skills": ["Pandas", "Data Analysis"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F005",
+      "case": "contradictory evidence (exclusive different language)",
+      "claimed_skills": ["Python"],
+      "evidence": [
+        {
+          "evidence_id": "E005",
+          "project": "Retail POS System",
+          "description": "Built entirely in Java using Spring Boot with no use of Python.",
+          "extracted_skills": ["Java", "Spring Boot"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F006",
+      "case": "multiple projects, multiple claimed skills",
+      "claimed_skills": ["Python", "React", "Machine Learning", "SQL"],
+      "evidence": [
+        {
+          "evidence_id": "E006",
+          "project": "Customer Churn Predictor",
+          "description": "Trained a churn prediction model using scikit-learn and pandas.",
+          "extracted_skills": ["Python", "scikit-learn", "Pandas", "Machine Learning"]
+        },
+        {
+          "evidence_id": "E007",
+          "project": "Admin Dashboard",
+          "description": "Built the frontend dashboard using React connected to a REST API.",
+          "extracted_skills": ["React", "JavaScript", "REST API"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F007",
+      "case": "sparse portfolio (single tiny evidence item)",
+      "claimed_skills": ["Python", "Django", "AWS", "Docker"],
+      "evidence": [
+        {
+          "evidence_id": "E008",
+          "project": "To-Do List App",
+          "description": "Simple to-do list built with Flask.",
+          "extracted_skills": ["Flask", "Python"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F008",
+      "case": "overclaimed skills relative to evidence",
+      "claimed_skills": [
+        "Python", "Java", "React", "Machine Learning",
+        "DevOps", "Kubernetes", "Blockchain", "iOS Development"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "E009",
+          "project": "Static Landing Page",
+          "description": "Created a single-page marketing site using HTML and CSS.",
+          "extracted_skills": ["HTML", "CSS"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F009",
+      "case": "different technology domain: mobile",
+      "claimed_skills": ["Swift", "iOS Development", "React"],
+      "evidence": [
+        {
+          "evidence_id": "E010",
+          "project": "Fitness Tracker App",
+          "description": "Built a fitness tracking iOS app using SwiftUI.",
+          "extracted_skills": ["Swift", "SwiftUI", "iOS Development"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F010",
+      "case": "different technology domain: Java/Spring backend",
+      "claimed_skills": ["Java", "Spring Boot", "REST API", "React"],
+      "evidence": [
+        {
+          "evidence_id": "E011",
+          "project": "Employee Management System",
+          "description": "Developed a Spring Boot backend exposing REST APIs for HR data.",
+          "extracted_skills": ["Java", "Spring Boot", "REST API"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F011",
+      "case": "no evidence at all provided",
+      "claimed_skills": ["Python", "Machine Learning"],
+      "evidence": []
+    },
+    {
+      "candidate_id": "F012",
+      "case": "duplicate claimed skills",
+      "claimed_skills": ["Python", "python", "Django", "PYTHON"],
+      "evidence": [
+        {
+          "evidence_id": "E012",
+          "project": "Blog Platform",
+          "description": "Developed a blogging platform with Django.",
+          "extracted_skills": ["Python", "Django"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F013",
+      "case": "multiple supporting evidence items for the same skill",
+      "claimed_skills": ["Python"],
+      "evidence": [
+        {
+          "evidence_id": "E013",
+          "project": "Data Pipeline",
+          "description": "Wrote ETL scripts in Python for a data pipeline.",
+          "extracted_skills": ["Python", "Data Analysis"]
+        },
+        {
+          "evidence_id": "E014",
+          "project": "Chatbot Backend",
+          "description": "Built a Flask backend to serve a chatbot.",
+          "extracted_skills": ["Flask", "Python"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F014",
+      "case": "front-end vs back-end domain mismatch",
+      "claimed_skills": ["React", "Vue", "Angular"],
+      "evidence": [
+        {
+          "evidence_id": "E015",
+          "project": "Internal API Gateway",
+          "description": "Built an internal API gateway service in Node.js and Express.",
+          "extracted_skills": ["Node.js", "Express", "JavaScript"]
+        }
+      ]
+    },
+    {
+      "candidate_id": "F015",
+      "case": "PHP/Laravel domain, weak related claim",
+      "claimed_skills": ["Laravel", "PHP", "Machine Learning"],
+      "evidence": [
+        {
+          "evidence_id": "E016",
+          "project": "E-commerce Storefront",
+          "description": "Built an e-commerce storefront using Laravel and MySQL.",
+          "extracted_skills": ["Laravel", "PHP", "SQL"]
+        }
+      ]
+    }
+  ]
+}
