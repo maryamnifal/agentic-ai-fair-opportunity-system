@@ -223,3 +223,109 @@ def test_end_to_end_without_llm():
     for item in output["evidence_items"]:
         assert item["evidence_id"].startswith("ev_")
         assert item["extraction_method"] == "ner"
+
+def test_end_to_end_with_mock_llm():
+
+    class FakeLLM:
+
+        def interpret(
+            self,
+            text,
+            source_type,
+            source_ref,
+            known_skills
+        ):
+            return [
+                {
+                    "skill": "Django",
+                    "skill_category": "uncategorised",
+                    "source_type": source_type,
+                    "source_ref": source_ref,
+                    "source_excerpt": "Django",
+                    "extraction_method": "llm",
+                    "confidence": 0.85,
+                    "reasoning": "Django identified by contextual interpretation."
+                },
+                {
+                    "skill": "Python",
+                    "skill_category": "uncategorised",
+                    "source_type": source_type,
+                    "source_ref": source_ref,
+                    "source_excerpt": "Django",
+                    "extraction_method": "llm",
+                    "confidence": 0.75,
+                    "reasoning": "Django implies Python usage."
+                },
+                {
+                    "skill": "REST API",
+                    "skill_category": "uncategorised",
+                    "source_type": source_type,
+                    "source_ref": source_ref,
+                    "source_excerpt": "server-side APIs",
+                    "extraction_method": "llm",
+                    "confidence": 0.75,
+                    "reasoning": "Server-side APIs indicate REST API development."
+                }
+            ]
+
+
+    agent = PortfolioEvidenceAgent(
+        use_llm=False
+    )
+
+    # Replace real LLM with our fake LLM
+    agent.llm = FakeLLM()
+    agent.use_llm = True
+
+
+    profile = {
+        "freelancer_id": "fl_llm_test",
+
+        "portfolio_projects": [
+            {
+                "project_id": "proj_llm_001",
+                "title": "Booking Platform",
+                "description":
+                    "Built server-side APIs with Django."
+            }
+        ],
+
+        "certificates": [],
+        "code_samples": [],
+        "work_descriptions": []
+    }
+
+
+    output = agent.process(profile)
+
+
+    evidence = {
+        item["skill"]: item
+        for item in output["evidence_items"]
+    }
+
+
+    assert "Django" in evidence
+    assert "Python" in evidence
+    assert "REST API" in evidence
+
+
+    # Django was detected by NLP + LLM
+    assert (
+        evidence["Django"]["extraction_method"]
+        == "both"
+    )
+
+
+    # Python came only from the LLM
+    assert (
+        evidence["Python"]["extraction_method"]
+        == "llm"
+    )
+
+
+    # REST API came only from the LLM
+    assert (
+        evidence["REST API"]["extraction_method"]
+        == "llm"
+    )
