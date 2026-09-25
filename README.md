@@ -1,6 +1,18 @@
 # agentic-ai-fair-opportunity-system
 Agentic AI-Based Fair Opportunity and Capability Verification System for New Freelancers
 
+## Portfolio Evidence Agent
+(Member A Maryam)
+
+## Skill Verification Agent
+(Member B Pirushalini)
+
+## Job Compatibility Agent
+(Member C Thushanya)
+
+## Fair Ranking Agent
+(Member D Girushana)
+
 # Portfolio Evidence Agent
 
 ## Overview
@@ -181,3 +193,53 @@ No external API key is required.
 LLM outputs are validated against original portfolio evidence.
 If the LLM is unavailable, NLP extraction continues working.
 
+```
+
+# Skill Verification Agent
+
+## Overview
+
+The Skill Verification Agent verifies freelancer skills against portfolio evidence provided by the Portfolio Evidence Agent.
+
+It determines whether a claimed skill is:
+
+- Exact match
+- Implied match
+- Weak/related match
+- Unsupported
+- Contradicted
+
+## Features
+
+### 1. Skill Verification
+
+Compares claimed freelancer skills with available portfolio evidence.
+
+### 2. Evidence Matching
+
+Supports exact and contextual/implied skill matching.
+
+Example:
+
+Portfolio evidence:
+"Built server-side APIs using Django."
+
+Claimed skills:
+- Django
+- Python
+- REST API
+
+The agent can identify Django as directly supported and Python/REST API as implied where the evidence supports those relationships.
+
+### 3. Portfolio Evidence Adapter
+
+The adapter converts the Portfolio Evidence Agent's output into the format required by the Skill Verification Agent.
+
+```text
+Portfolio Evidence Agent
+        ↓
+Portfolio Evidence Adapter
+        ↓
+Skill Verification Agent
+        ↓
+Verification Results
