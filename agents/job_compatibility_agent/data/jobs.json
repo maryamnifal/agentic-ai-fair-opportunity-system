@@ -1,0 +1,137 @@
+[
+  {
+    "job_id": "JOB001",
+    "title": "Junior Data Analyst",
+    "description": "Analyze business data, create dashboards, clean datasets, and generate reports to support business decisions.",
+    "required_skills": ["Python", "SQL", "Pandas", "Excel"],
+    "preferred_skills": ["Power BI", "Statistics"],
+    "skill_categories": ["programming", "database", "data_analysis", "business_intelligence"],
+    "minimum_experience_years": 0
+  },
+  {
+    "job_id": "JOB002",
+    "title": "Machine Learning Intern",
+    "description": "Prepare datasets, train machine learning models, evaluate model performance, and support experimentation.",
+    "required_skills": ["Python", "Scikit-learn", "Pandas", "Machine Learning"],
+    "preferred_skills": ["NumPy", "XGBoost", "Statistics"],
+    "skill_categories": ["programming", "data_analysis", "machine_learning"],
+    "minimum_experience_years": 0
+  },
+  {
+    "job_id": "JOB003",
+    "title": "Junior Python Developer",
+    "description": "Develop and maintain Python applications, create REST APIs, debug software, and work with databases.",
+    "required_skills": ["Python", "Git", "REST API"],
+    "preferred_skills": ["FastAPI", "SQL", "Docker"],
+    "skill_categories": ["programming", "web_development", "software_engineering"],
+    "minimum_experience_years": 0
+  },
+  {
+    "job_id": "JOB004",
+    "title": "Data Engineer Intern",
+    "description": "Build data pipelines, transform datasets, work with SQL databases, and support data warehouse development.",
+    "required_skills": ["Python", "SQL", "ETL"],
+    "preferred_skills": ["SSIS", "Data Warehousing", "Power BI"],
+    "skill_categories": ["programming", "database", "data_engineering"],
+    "minimum_experience_years": 0
+  },
+  {
+    "job_id": "JOB005",
+    "title": "Business Intelligence Analyst",
+    "description": "Develop business dashboards, analyze organizational data, write SQL queries, and communicate analytical insights.",
+    "required_skills": ["SQL", "Power BI", "Excel", "Data Analysis"],
+    "preferred_skills": ["DAX", "Statistics", "Python"],
+    "skill_categories": ["database", "business_intelligence", "data_analysis"],
+    "minimum_experience_years": 1
+  },
+  {
+    "job_id": "JOB006",
+    "title": "Junior Data Scientist",
+    "description": "Explore datasets, perform statistical analysis, build predictive models, and communicate machine learning results.",
+    "required_skills": ["Python", "Pandas", "Scikit-learn", "Statistics"],
+    "preferred_skills": ["XGBoost", "NumPy", "Machine Learning"],
+    "skill_categories": ["programming", "data_analysis", "machine_learning", "statistics"],
+    "minimum_experience_years": 1
+  },
+  {
+    "job_id": "JOB007",
+    "title": "NLP Research Intern",
+    "description": "Experiment with natural language processing techniques, text preprocessing, embeddings, and machine learning models.",
+    "required_skills": ["Python", "NLP", "Machine Learning"],
+    "preferred_skills": ["Transformers", "PyTorch", "Hugging Face"],
+    "skill_categories": ["programming", "machine_learning", "natural_language_processing"],
+    "minimum_experience_years": 0
+  },
+  {
+    "job_id": "JOB008",
+    "title": "AI Engineer Intern",
+    "description": "Assist with developing AI applications using machine learning models, Python, embeddings, and model evaluation techniques.",
+    "required_skills": ["Python", "Machine Learning"],
+    "preferred_skills": ["PyTorch", "Transformers", "Embeddings", "Scikit-learn"],
+    "skill_categories": ["programming", "machine_learning", "artificial_intelligence"],
+    "minimum_experience_years": 0
+  },
+  {
+    "job_id": "JOB009",
+    "title": "SQL Developer Intern",
+    "description": "Write SQL queries, design database objects, optimize queries, and support data-driven applications.",
+    "required_skills": ["SQL", "Database"],
+    "preferred_skills": ["SQL Server", "ETL", "Data Warehousing"],
+    "skill_categories": ["database", "data_engineering"],
+    "minimum_experience_years": 0
+  },
+  {
+    "job_id": "JOB010",
+    "title": "Power BI Developer",
+    "description": "Create interactive Power BI dashboards, develop DAX measures, transform data, and communicate business insights.",
+    "required_skills": ["Power BI", "DAX", "Data Analysis"],
+    "preferred_skills": ["SQL", "Excel", "Data Warehousing"],
+    "skill_categories": ["business_intelligence", "data_analysis"],
+    "minimum_experience_years": 1
+  },
+  {
+    "job_id": "JOB011",
+    "title": "Backend Developer Intern",
+    "description": "Build backend services and APIs using Python, work with databases, and maintain source code using Git.",
+    "required_skills": ["Python", "REST API", "Git"],
+    "preferred_skills": ["FastAPI", "SQL", "Docker"],
+    "skill_categories": ["programming", "web_development", "software_engineering"],
+    "minimum_experience_years": 0
+  },
+  {
+    "job_id": "JOB012",
+    "title": "Data Visualization Intern",
+    "description": "Transform datasets into clear visualizations, identify trends, prepare analytical reports, and support dashboard development.",
+    "required_skills": ["Python", "Data Visualization", "Pandas"],
+    "preferred_skills": ["Matplotlib", "Power BI", "Excel"],
+    "skill_categories": ["data_analysis", "business_intelligence", "visualization"],
+    "minimum_experience_years": 0
+  },
+  {
+    "job_id": "JOB013",
+    "title": "Machine Learning Engineer",
+    "description": "Develop machine learning pipelines, train predictive models, evaluate models, and integrate models into applications.",
+    "required_skills": ["Python", "Machine Learning", "Scikit-learn"],
+    "preferred_skills": ["PyTorch", "Docker", "Git", "XGBoost"],
+    "skill_categories": ["programming", "machine_learning", "software_engineering"],
+    "minimum_experience_years": 2
+  },
+  {
+    "job_id": "JOB014",
+    "title": "ETL Developer Intern",
+    "description": "Develop ETL workflows, transform structured data, load information into databases, and monitor data processing tasks.",
+    "required_skills": ["ETL", "SQL", "Database"],
+    "preferred_skills": ["SSIS", "Python", "Data Warehousing"],
+    "skill_categories": ["data_engineering", "database"],
+    "minimum_experience_years": 0
+  },
+  {
+    "job_id": "JOB015",
+    "title": "Analytics Intern",
+    "description": "Support data collection, cleaning, exploratory analysis, visualization, and preparation of business reports.",
+    "required_skills": ["Python", "Data Analysis"],
+    "preferred_skills": ["Pandas", "SQL", "Excel", "Power BI"],
+    "skill_categories": ["data_analysis", "business_intelligence"],
+    "minimum_experience_years": 0
+  }
+]
