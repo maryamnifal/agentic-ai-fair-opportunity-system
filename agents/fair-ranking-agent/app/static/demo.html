@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fair Ranking Agent — Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2430; --ink-soft:#4B5563;
+    --paper:#F6F4EF; --panel:#FCFBF8; --line:#D9D3C6;
+    --accent:#3D4F91; --accent-soft:#EAEDF6;
+    --boost:#2F6B4F; --boost-bg:#E8F0EA;
+    --penalty:#B3432B; --penalty-bg:#F6E7E2;
+    --neutral:#6B7280; --neutral-bg:#EEEEEC;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:960px;margin:0 auto;padding:44px 26px 80px;}
+  h1{font-family:'Fraunces',serif;font-weight:500;font-size:1.9rem;margin:0 0 8px;letter-spacing:-0.01em;}
+  header p{color:var(--ink-soft);margin:0 0 32px;max-width:60ch;}
+  .card{border:1px solid var(--line);border-radius:4px;background:var(--panel);padding:20px;margin-bottom:20px;}
+  .card h2{font-family:'Fraunces',serif;font-weight:500;font-size:1.05rem;margin:0 0 14px;}
+  label{display:block;font-size:0.8rem;color:var(--ink-soft);margin-bottom:5px;font-weight:500;}
+  input[type=text],input[type=password],textarea{
+    width:100%;font-family:inherit;font-size:0.9rem;color:var(--ink);
+    background:#fff;border:1px solid var(--line);border-radius:3px;padding:8px 10px;
+  }
+  textarea{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;min-height:110px;resize:vertical;}
+  .field{margin-bottom:14px;}
+  .row{display:flex;gap:14px;flex-wrap:wrap;}
+  .row .field{flex:1;min-width:160px;}
+  button{
+    background:var(--accent);color:#fff;border:none;border-radius:3px;
+    padding:10px 18px;font-family:inherit;font-size:0.88rem;font-weight:500;cursor:pointer;
+  }
+  button:hover{background:#324180;}
+  button.secondary{background:none;border:1px solid var(--line);color:var(--ink-soft);}
+  button.secondary:hover{border-color:var(--accent);color:var(--accent);}
+  button:disabled{background:var(--neutral);cursor:default;}
+  .status-line{font-size:0.82rem;margin-top:10px;}
+  .status-line.ok{color:var(--boost);}
+  .status-line.err{color:var(--penalty);}
+  .hint{font-size:0.78rem;color:var(--ink-soft);margin-top:4px;}
+
+  .job-card{border:1px solid var(--line);border-left-width:4px;border-radius:3px;background:#fff;padding:14px 16px;margin-bottom:10px;}
+  .job-card.boost{border-left-color:var(--boost);}
+  .job-card.penalty{border-left-color:var(--penalty);}
+  .job-card.neutral{border-left-color:var(--neutral);}
+  .job-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+  .job-title{font-weight:600;}
+  .rank-badge{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--ink-soft);}
+  .rank-badge b{color:var(--ink);}
+  .score-row{display:flex;gap:18px;font-size:0.82rem;color:var(--ink-soft);margin-bottom:6px;}
+  .score-row .fair{color:var(--ink);font-weight:600;}
+  .note{font-size:0.82rem;color:var(--ink-soft);}
+  .note.boost{color:var(--boost);}
+  .note.penalty{color:var(--penalty);}
+
+  .fairness-box{
+    display:flex;flex-wrap:wrap;gap:16px;font-size:0.82rem;color:var(--ink-soft);
+    border:1px solid var(--line);border-radius:4px;padding:12px 16px;margin-bottom:18px;background:var(--accent-soft);
+  }
+  .fairness-box b{color:var(--ink);}
+  .empty{color:var(--ink-soft);font-size:0.9rem;border:1px dashed var(--line);border-radius:4px;padding:24px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Fair ranking agent — demo</h1>
+    <p>This demo signs you in with a JWT, then submits claimed skills + Member A's portfolio evidence through the full pipeline (Member B → Member C → fairness re-ranking).</p>
+  </header>
+
+  <div class="card" id="auth-card">
+    <h2>1. Sign in</h2>
+    <div class="row">
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" value="demo_user" />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" value="demo_password123" />
+      </div>
+    </div>
+    <button id="register-btn" class="secondary" type="button">Register</button>
+    <button id="login-btn" type="button">Log in</button>
+    <div class="status-line" id="auth-status"></div>
+  </div>
+
+  <div class="card" id="orchestrate-card">
+    <h2>2. Submit candidate data</h2>
+    <div class="field">
+      <label for="claimed-skills">Claimed skills (comma-separated)</label>
+      <input type="text" id="claimed-skills" value="Python, Django, REST API, MySQL" />
+    </div>
+    <div class="field">
+      <label for="evidence-json">Member A's portfolio_evidence (raw JSON)</label>
+      <textarea id="evidence-json">{
+  "freelancer_id": "fl_001",
+  "evidence_items": [
+    {"skill":"Django","skill_category":"web_framework","source_type":"portfolio_project","source_ref":"proj_001","source_excerpt":"developed a backend using Django and REST API","extraction_method":"both","confidence":0.98,"reasoning":"x","evidence_id":"ev_001"},
+    {"skill":"REST API","skill_category":"backend_concept","source_type":"portfolio_project","source_ref":"proj_001","source_excerpt":"using Django and REST API","extraction_method":"ner","confidence":0.95,"reasoning":"x","evidence_id":"ev_002"}
+  ]
+}</textarea>
+    </div>
+    <div class="field">
+      <label for="experience-years">Experience years</label>
+      <input type="text" id="experience-years" value="1.5" style="max-width:120px" />
+    </div>
+    <button id="orchestrate-btn" type="button" disabled>Run fair ranking</button>
+    <div class="hint" id="orchestrate-hint">Sign in first — this calls a protected endpoint.</div>
+    <div class="status-line" id="orchestrate-status"></div>
+  </div>
+
+  <div class="card">
+    <h2>3. Fair-ranked results</h2>
+    <div id="results"><div class="empty">Sign in and run fair ranking to see results here.</div></div>
+  </div>
+</div>
+
+<script>
+let token = null;
+
+const usernameEl = document.getElementById('username');
+const passwordEl = document.getElementById('password');
+const authStatus = document.getElementById('auth-status');
+const orchestrateBtn = document.getElementById('orchestrate-btn');
+const orchestrateHint = document.getElementById('orchestrate-hint');
+const orchestrateStatus = document.getElementById('orchestrate-status');
+const resultsEl = document.getElementById('results');
+
+function setAuthStatus(msg, ok){
+  authStatus.textContent = msg;
+  authStatus.className = 'status-line ' + (ok ? 'ok' : 'err');
+}
+function setOrchestrateStatus(msg, ok){
+  orchestrateStatus.textContent = msg;
+  orchestrateStatus.className = 'status-line ' + (ok ? 'ok' : 'err');
+}
+
+document.getElementById('register-btn').onclick = async () => {
+  setAuthStatus('Registering...', true);
+  try{
+    const resp = await fetch('/auth/register', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username: usernameEl.value, password: passwordEl.value})
+    });
+    const body = await resp.json();
+    if(resp.ok){ setAuthStatus('Registered. Now click "Log in".', true); }
+    else { setAuthStatus(body.detail || 'Registration failed (maybe already exists — try logging in).', false); }
+  }catch(e){ setAuthStatus('Could not reach the server.', false); }
+};
+
+document.getElementById('login-btn').onclick = async () => {
+  setAuthStatus('Logging in...', true);
+  try{
+    const resp = await fetch('/auth/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username: usernameEl.value, password: passwordEl.value})
+    });
+    const body = await resp.json();
+    if(resp.ok){
+      token = body.access_token;
+      setAuthStatus('Signed in. Token expires in ' + body.expires_in_minutes + ' minutes.', true);
+      orchestrateBtn.disabled = false;
+      orchestrateHint.textContent = '';
+    } else {
+      setAuthStatus(body.detail || 'Login failed.', false);
+    }
+  }catch(e){ setAuthStatus('Could not reach the server.', false); }
+};
+
+function escapeHtml(str){
+  return (str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function noteClass(fairScore, compatScore){
+  if(fairScore > compatScore + 0.01) return 'boost';
+  if(fairScore < compatScore - 0.01) return 'penalty';
+  return 'neutral';
+}
+
+function renderResults(data){
+  resultsEl.innerHTML = '';
+
+  const f = data.fairness;
+  const box = document.createElement('div');
+  box.className = 'fairness-box';
+  box.innerHTML = `
+    <span><b>${f.claimed_skill_count}</b> claimed</span>
+    <span><b>${f.supported_count}</b> supported</span>
+    <span><b>${f.weakly_supported_count}</b> weak</span>
+    <span><b>${f.unsupported_count}</b> unsupported</span>
+    <span><b>${f.contradicted_count}</b> contradicted</span>
+    <span>multiplier <b>${f.fairness_multiplier}</b></span>
+  `;
+  resultsEl.appendChild(box);
+
+  const summary = document.createElement('div');
+  summary.className = 'note';
+  summary.style.marginBottom = '14px';
+  summary.textContent = f.summary;
+  resultsEl.appendChild(summary);
+
+  if(!data.ranked_jobs.length){
+    resultsEl.innerHTML += '<div class="empty">No matched jobs to rank.</div>';
+    return;
+  }
+
+  data.ranked_jobs.forEach(job => {
+    const cls = noteClass(job.fair_score, job.compatibility_score);
+    const card = document.createElement('div');
+    card.className = 'job-card ' + cls;
+    card.innerHTML = `
+      <div class="job-top">
+        <span class="job-title">${escapeHtml(job.title)}</span>
+        <span class="rank-badge">rank <b>#${job.fair_rank}</b> (was #${job.original_rank})</span>
+      </div>
+      <div class="score-row">
+        <span>compatibility: ${job.compatibility_score.toFixed(2)}</span>
+        <span class="fair">fair score: ${job.fair_score.toFixed(2)}</span>
+      </div>
+      <div class="note ${cls}">${escapeHtml(job.fairness_note)}</div>
+    `;
+    resultsEl.appendChild(card);
+  });
+}
+
+orchestrateBtn.onclick = async () => {
+  if(!token){ setOrchestrateStatus('Sign in first.', false); return; }
+
+  let evidence;
+  try{
+    evidence = JSON.parse(document.getElementById('evidence-json').value);
+  }catch(e){
+    setOrchestrateStatus('portfolio_evidence is not valid JSON.', false);
+    return;
+  }
+
+  const claimedSkills = document.getElementById('claimed-skills').value
+    .split(',').map(s => s.trim()).filter(Boolean);
+  const experienceYears = parseFloat(document.getElementById('experience-years').value) || 0;
+
+  orchestrateBtn.disabled = true;
+  orchestrateBtn.textContent = 'Running...';
+  setOrchestrateStatus('Calling Member B and Member C, then applying fairness...', true);
+  resultsEl.innerHTML = '<div class="empty">Running fair ranking...</div>';
+
+  try{
+    const resp = await fetch('/api/orchestrate', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'Authorization': 'Bearer ' + token},
+      body: JSON.stringify({
+        claimed_skills: claimedSkills,
+        portfolio_evidence: evidence,
+        experience_years: experienceYears
+      })
+    });
+    const body = await resp.json();
+    if(resp.ok){
+      setOrchestrateStatus('Done.', true);
+      renderResults(body);
+    } else {
+      setOrchestrateStatus(body.detail || 'Request failed with status ' + resp.status + '.', false);
+      resultsEl.innerHTML = '<div class="empty">' + escapeHtml(body.detail || 'Request failed.') + '</div>';
+    }
+  }catch(e){
+    setOrchestrateStatus('Could not reach the server.', false);
+  }finally{
+    orchestrateBtn.disabled = false;
+    orchestrateBtn.textContent = 'Run fair ranking';
+  }
+};
+</script>
+</body>
+</html>
