@@ -51,4 +51,5 @@ class FairRankingAgent:
             candidate_id=request.candidate_id,
             fairness=fairness,
             ranked_jobs=fair_jobs,
+            verified_skills=request.verified_skills,
         )

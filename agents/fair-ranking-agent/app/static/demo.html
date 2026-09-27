@@ -3,298 +3,588 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>FairRank AI — Fair Opportunity Evaluation</title>
+<title>FairWork AI — Candidate Evaluation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#1B2430; --ink-soft:#4B5563;
-    --paper:#F6F4EF; --panel:#FCFBF8; --line:#D9D3C6;
-    --accent:#3D4F91; --accent-soft:#EAEDF6;
-    --boost:#2F6B4F; --boost-bg:#E8F0EA;
-    --penalty:#B3432B; --penalty-bg:#F6E7E2;
-    --neutral:#6B7280; --neutral-bg:#EEEEEC;
+    --navy:#101B3D;
+    --navy-light:#1B2A5C;
+    --blue:#2F6FED;
+    --blue-dark:#1E56C9;
+    --blue-soft:#E8F0FE;
+    --green:#16A34A;
+    --green-soft:#DCFCE7;
+    --amber:#B7791F;
+    --amber-soft:#FEF3D8;
+    --red:#DC2626;
+    --red-soft:#FEE2E2;
+    --purple:#7C5CFF;
+    --purple-soft:#EFEBFF;
+    --ink:#111827;
+    --ink-soft:#6B7280;
+    --ink-faint:#9CA3AF;
+    --page-bg:#F5F6F8;
+    --white:#FFFFFF;
+    --line:#E5E7EB;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(16,24,40,0.04), 0 1px 3px rgba(16,24,40,0.06);
   }
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;line-height:1.5;}
-  .wrap{max-width:980px;margin:0 auto;padding:44px 26px 80px;}
-  h1{font-family:'Fraunces',serif;font-weight:500;font-size:1.9rem;margin:0 0 8px;letter-spacing:-0.01em;}
-  header p{color:var(--ink-soft);margin:0 0 32px;max-width:64ch;}
-  .card{border:1px solid var(--line);border-radius:4px;background:var(--panel);padding:20px;margin-bottom:20px;}
-  .card h2{font-family:'Fraunces',serif;font-weight:500;font-size:1.05rem;margin:0 0 14px;display:flex;align-items:center;gap:8px;}
-  .card h2 .step-num{
-    display:inline-flex;align-items:center;justify-content:center;
-    width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;
-    font-family:'IBM Plex Sans',sans-serif;font-size:0.75rem;font-weight:600;flex-shrink:0;
+  body{
+    margin:0; background:var(--page-bg); color:var(--ink);
+    font-family:'Inter',sans-serif; line-height:1.5; font-size:14px;
   }
-  label{display:block;font-size:0.8rem;color:var(--ink-soft);margin-bottom:5px;font-weight:500;}
-  input[type=text],input[type=password],textarea{
-    width:100%;font-family:inherit;font-size:0.9rem;color:var(--ink);
-    background:#fff;border:1px solid var(--line);border-radius:3px;padding:8px 10px;
-  }
-  textarea{min-height:70px;resize:vertical;}
-  .field{margin-bottom:14px;}
-  .row{display:flex;gap:14px;flex-wrap:wrap;}
-  .row .field{flex:1;min-width:160px;}
-  button{
-    background:var(--accent);color:#fff;border:none;border-radius:3px;
-    padding:10px 18px;font-family:inherit;font-size:0.88rem;font-weight:500;cursor:pointer;
-  }
-  button:hover{background:#324180;}
-  button.secondary{background:none;border:1px solid var(--line);color:var(--ink-soft);}
-  button.secondary:hover{border-color:var(--accent);color:var(--accent);}
-  button:disabled{background:var(--neutral);cursor:default;}
-  .status-line{font-size:0.82rem;margin-top:10px;}
-  .status-line.ok{color:var(--boost);}
-  .status-line.err{color:var(--penalty);}
+  button, input{font-family:inherit;}
+  :focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms !important; transition-duration:.001ms !important;} }
 
-  .chip-input{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px solid var(--line);border-radius:3px;background:#fff;}
-  .chip-input input{border:none;background:none;flex:1;min-width:120px;padding:4px;}
+  /* ============ LOGIN SCREEN ============ */
+  .login-screen{min-height:100vh; display:flex;}
+  .login-left{
+    flex:1; background:var(--white); display:flex; flex-direction:column; justify-content:center;
+    padding:60px; border-right:1px solid var(--line);
+  }
+  .login-left-inner{max-width:420px; margin:0 auto; width:100%;}
+  .brand{display:flex; align-items:center; gap:10px; margin-bottom:40px;}
+  .brand-mark{
+    width:34px; height:34px; border-radius:9px; background:var(--blue);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .brand-name{font-size:1.15rem; font-weight:800; color:var(--navy);}
+  .login-left h1{font-size:1.9rem; font-weight:800; margin:0 0 14px; color:var(--navy); line-height:1.25;}
+  .login-left p.desc{color:var(--ink-soft); font-size:0.95rem; margin:0 0 40px; max-width:38ch;}
+  .illustration{margin-top:8px;}
+
+  .login-right{
+    flex:1; display:flex; align-items:center; justify-content:center; padding:60px; background:var(--page-bg);
+  }
+  .login-form-box{width:100%; max-width:360px;}
+  .login-form-box h2{font-size:1.4rem; font-weight:700; margin:0 0 6px; color:var(--navy);}
+  .login-form-box .sub{color:var(--ink-soft); font-size:0.88rem; margin:0 0 28px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:0.8rem; color:var(--ink-soft); font-weight:600; margin-bottom:6px;}
+  .field input{
+    width:100%; padding:10px 13px; border:1px solid var(--line); border-radius:8px;
+    background:var(--white); color:var(--ink); font-size:0.9rem;
+  }
+  .field input:focus{border-color:var(--blue);}
+  .btn-primary{
+    width:100%; background:var(--blue); color:#fff; border:none; border-radius:8px;
+    padding:11px 18px; font-size:0.92rem; font-weight:700; cursor:pointer; margin-top:4px;
+  }
+  .btn-primary:hover{background:var(--blue-dark);}
+  .btn-primary:disabled{background:var(--ink-faint); cursor:default;}
+  .form-alt{text-align:center; margin-top:16px; font-size:0.85rem; color:var(--ink-soft);}
+  .form-alt button{background:none; border:none; color:var(--blue); font-weight:700; cursor:pointer; padding:0; font-size:inherit;}
+  .status-line{font-size:0.82rem; margin-top:12px; min-height:1.2em;}
+  .status-line.ok{color:var(--green);}
+  .status-line.err{color:var(--red);}
+
+  /* ============ APP SHELL ============ */
+  .app-shell{display:none; min-height:100vh;}
+  .app-shell.visible{display:flex;}
+
+  .sidebar{
+    width:240px; flex-shrink:0; background:var(--navy); color:#fff;
+    display:flex; flex-direction:column; padding:22px 14px;
+  }
+  .sidebar .brand{margin-bottom:30px; padding:0 8px;}
+  .sidebar .brand-name{color:#fff;}
+  .sidebar-section-label{
+    font-size:0.72rem; color:#8592B8; font-weight:600; padding:0 12px; margin-bottom:8px;
+  }
+  .nav-list{list-style:none; margin:0 0 24px; padding:0;}
+  .nav-item{margin-bottom:3px;}
+  .nav-item button{
+    width:100%; display:flex; align-items:center; gap:11px; text-align:left;
+    background:none; border:none; color:#B8C1DE; padding:10px 12px; border-radius:8px;
+    font-size:0.87rem; font-weight:500; cursor:pointer; transition:background 0.15s ease, color 0.15s ease;
+  }
+  .nav-item button:hover:not(:disabled){background:var(--navy-light); color:#fff;}
+  .nav-item button:disabled{cursor:default; opacity:0.55;}
+  .nav-item.active button{background:var(--blue); color:#fff;}
+  .nav-item.done button{color:#fff;}
+  .nav-icon{width:17px; height:17px; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+  .nav-check{
+    margin-left:auto; width:16px; height:16px; border-radius:50%; background:var(--green);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .sidebar-spacer{flex:1;}
+  .sidebar-bottom{border-top:1px solid var(--navy-light); padding-top:14px;}
+  .signout-btn{
+    width:100%; display:flex; align-items:center; gap:10px; background:none; border:none;
+    color:#B8C1DE; padding:10px 12px; border-radius:8px; font-size:0.87rem; font-weight:500; cursor:pointer;
+  }
+  .signout-btn:hover{background:var(--navy-light); color:#fff;}
+
+  .main-col{flex:1; min-width:0; display:flex; flex-direction:column;}
+  .topbar{
+    background:var(--white); border-bottom:1px solid var(--line); padding:16px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .topbar-title{font-size:1.05rem; font-weight:700; color:var(--navy);}
+  .topbar-user{display:flex; align-items:center; gap:10px;}
+  .avatar{
+    width:32px; height:32px; border-radius:50%; background:var(--blue-soft); color:var(--blue-dark);
+    display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700;
+  }
+  .topbar-username{font-size:0.85rem; font-weight:600; color:var(--ink);}
+
+  .content{padding:28px 32px 80px; max-width:960px;}
+  .panel{display:none;}
+  .panel.active{display:block; animation:rise 0.3s ease;}
+  @keyframes rise{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+
+  .card{
+    background:var(--white); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:22px 24px; margin-bottom:20px;
+  }
+  .card h3{font-size:0.98rem; font-weight:700; margin:0 0 4px; color:var(--navy);}
+  .card .card-sub{font-size:0.82rem; color:var(--ink-soft); margin:0 0 18px;}
+
+  .row{display:flex; gap:16px; flex-wrap:wrap;}
+  .row .field{flex:1; min-width:180px;}
+  textarea{
+    width:100%; padding:10px 13px; border:1px solid var(--line); border-radius:8px;
+    background:var(--white); color:var(--ink); font-size:0.88rem; min-height:72px; resize:vertical;
+  }
+  textarea:focus{border-color:var(--blue);}
+
+  .chip-input{
+    display:flex; flex-wrap:wrap; gap:7px; padding:9px; border:1px solid var(--line);
+    border-radius:8px; background:var(--white);
+  }
+  .chip-input input{border:none; background:none; flex:1; min-width:120px; padding:4px; font-size:0.88rem;}
   .chip-input input:focus{outline:none;}
-  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent);font-size:0.82rem;padding:4px 8px 4px 10px;border-radius:3px;white-space:nowrap;}
-  .chip button{background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.95rem;line-height:1;padding:0;opacity:0.6;}
+  .chip{
+    display:inline-flex; align-items:center; gap:7px; background:var(--blue-soft); color:var(--blue-dark);
+    font-size:0.82rem; font-weight:600; padding:5px 8px 5px 12px; border-radius:14px; white-space:nowrap;
+  }
+  .chip button{background:none; border:none; color:var(--blue-dark); cursor:pointer; font-size:1rem; line-height:1; padding:0; opacity:0.55;}
   .chip button:hover{opacity:1;}
 
-  .project-block{border:1px solid var(--line);border-radius:4px;padding:14px;margin-bottom:10px;background:#fff;position:relative;}
-  .project-block .remove-btn{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--ink-soft);cursor:pointer;font-size:0.78rem;}
-  .add-btn{width:100%;background:none;border:1px dashed var(--line);border-radius:4px;padding:9px;color:var(--ink-soft);font-family:inherit;font-size:0.84rem;cursor:pointer;margin-bottom:6px;}
-  .add-btn:hover{border-color:var(--accent);color:var(--accent);}
-
-  .disabled-overlay{opacity:0.5;pointer-events:none;}
-
-  .pipeline-steps{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
-  .pipeline-step{
-    flex:1;min-width:150px;border:1px solid var(--line);border-radius:4px;padding:12px 14px;
-    background:#fff;font-size:0.82rem;color:var(--ink-soft);
+  .project-card{border:1px solid var(--line); border-radius:8px; padding:16px; margin-bottom:12px; position:relative;}
+  .project-card .remove-btn{position:absolute; top:14px; right:14px; background:none; border:none; color:var(--ink-faint); cursor:pointer; font-size:0.78rem;}
+  .project-card .remove-btn:hover{color:var(--red);}
+  .add-link{
+    display:inline-flex; align-items:center; gap:6px; background:none; border:none; color:var(--blue);
+    font-weight:700; font-size:0.86rem; cursor:pointer; padding:4px 0;
   }
-  .pipeline-step .step-label{font-weight:600;color:var(--ink);display:block;margin-bottom:4px;}
-  .pipeline-step.active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);}
-  .pipeline-step.active .step-label{color:var(--accent);}
-  .pipeline-step.done{border-color:var(--boost);}
-  .pipeline-step.done .step-label{color:var(--boost);}
-  .pipeline-step.failed{border-color:var(--penalty);background:var(--penalty-bg);color:var(--penalty);}
-  .pipeline-step.failed .step-label{color:var(--penalty);}
+  .add-link:hover{color:var(--blue-dark);}
 
-  .job-card{border:1px solid var(--line);border-left-width:4px;border-radius:3px;background:#fff;padding:14px 16px;margin-bottom:10px;}
-  .job-card.boost{border-left-color:var(--boost);}
-  .job-card.penalty{border-left-color:var(--penalty);}
-  .job-card.neutral{border-left-color:var(--neutral);}
-  .job-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
-  .job-title{font-weight:600;}
-  .rank-badge{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--ink-soft);}
-  .rank-badge b{color:var(--ink);}
-  .score-row{display:flex;gap:18px;font-size:0.82rem;color:var(--ink-soft);margin-bottom:6px;}
-  .score-row .fair{color:var(--ink);font-weight:600;}
-  .note{font-size:0.82rem;color:var(--ink-soft);}
-  .note.boost{color:var(--boost);}
-  .note.penalty{color:var(--penalty);}
-
-  .fairness-box{display:flex;flex-wrap:wrap;gap:16px;font-size:0.82rem;color:var(--ink-soft);border:1px solid var(--line);border-radius:4px;padding:12px 16px;margin-bottom:14px;background:var(--accent-soft);}
-  .fairness-box b{color:var(--ink);}
-  .empty{color:var(--ink-soft);font-size:0.9rem;border:1px dashed var(--line);border-radius:4px;padding:24px;text-align:center;}
-
-  /* FairRank AI dashboard shell */
-  :root{
-    --ink:#17212f; --ink-soft:#667085; --paper:#f4f7fb; --panel:#fff; --line:#e5eaf1;
-    --accent:#315efb; --accent-dark:#2348c7; --accent-soft:#edf3ff; --navy:#17233d;
-    --boost:#087443; --boost-bg:#e9f8f0; --penalty:#c2412d; --penalty-bg:#fff1ed;
-    --neutral:#667085; --shadow:0 10px 30px rgba(31,49,82,.06); --shadow-hover:0 16px 36px rgba(31,49,82,.1);
+  .btn-evaluate{
+    background:var(--blue); color:#fff; border:none; border-radius:8px;
+    padding:12px 26px; font-size:0.92rem; font-weight:700; cursor:pointer; margin-top:6px;
   }
-  body{background:var(--paper);color:var(--ink);}
-  .wrap{width:min(1440px,calc(100% - 48px));max-width:none;display:grid;grid-template-columns:232px minmax(0,1fr);grid-template-rows:auto auto 1fr auto;column-gap:34px;margin:0 auto;padding:24px 0 46px;}
-  .app-sidebar{grid-column:1;grid-row:1 / span 4;min-height:calc(100vh - 70px);padding:18px 14px;border:1px solid #dfe6f0;border-radius:18px;background:var(--navy);color:#d7e0f3;box-shadow:0 12px 34px rgba(23,35,61,.12);}
-  .sidebar-label{padding:0 12px;color:#8795b5;font-family:'IBM Plex Mono',monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;}
-  .sidebar-nav{display:grid;gap:5px;margin-top:14px;}
-  .sidebar-link{display:flex;align-items:center;gap:11px;min-height:44px;padding:0 12px;border:1px solid transparent;border-radius:10px;color:#aebbd3;font-size:.78rem;font-weight:600;text-decoration:none;}
-  .sidebar-link svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;}
-  .sidebar-link:hover,.sidebar-link.active{border-color:rgba(151,177,255,.22);background:rgba(79,117,231,.2);color:#fff;}
-  .sidebar-link.active{box-shadow:inset 3px 0 0 #79a0ff;}
-  .sidebar-foot{margin-top:30px;padding:18px 12px 4px;color:#8795b5;font-size:.68rem;line-height:1.55;}
-  .sidebar-foot strong{display:block;margin-bottom:5px;color:#d7e0f3;font-size:.72rem;}
-  .wrap>header,.wrap>.topbar,.wrap>.card,.wrap>footer{grid-column:2;}
-  .topbar{display:flex;align-items:center;justify-content:space-between;min-height:58px;margin-bottom:30px;padding:0 4px;}
-  .brand{display:flex;align-items:center;gap:12px;}
-  .brand-mark{display:grid;width:40px;height:40px;place-items:center;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;box-shadow:0 8px 18px rgba(49,94,251,.22);}
-  .brand-text{line-height:1.1;}
-  .brand-name{color:var(--navy);font-size:1rem;font-weight:700;}
-  .brand-sub{margin-top:4px;color:#8090a8;font-size:.68rem;}
-  .system-badge{display:inline-flex;align-items:center;gap:7px;border:1px solid #dbe5f5;border-radius:999px;background:#fff;color:#51627c;padding:7px 11px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;box-shadow:0 4px 12px rgba(31,49,82,.04);}
-  .system-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;}
-  .account-pill{display:inline-flex;align-items:center;gap:9px;margin-left:8px;padding:6px 11px 6px 6px;border:1px solid #dfe6f0;border-radius:999px;background:#fff;color:#475467;font-size:.72rem;font-weight:600;}
-  .account-avatar{display:grid;width:27px;height:27px;place-items:center;border-radius:50%;background:#dce7ff;color:var(--accent-dark);font-size:.68rem;}
-  .wrap>header{margin-bottom:24px;padding:10px 4px 0;}
-  .hero-kicker{display:inline-flex;align-items:center;gap:7px;margin-bottom:10px;color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;}
-  h1{color:var(--navy);font-family:'IBM Plex Sans',sans-serif;font-size:clamp(2rem,3vw,2.8rem);font-weight:700;letter-spacing:-.05em;}
-  .wrap>header p{max-width:650px;margin-top:10px;color:#718096;font-size:.88rem;}
-  .header-status{float:right;margin-top:-48px;padding:11px 13px;border:1px solid #dbe5f5;border-radius:11px;background:#fff;color:#64748b;font-size:.7rem;font-weight:600;}
-  .header-status:before{display:inline-block;width:8px;height:8px;margin-right:9px;border-radius:50%;background:#f59e0b;content:'';}
-  .card{margin-bottom:16px;padding:22px;border:1px solid #e1e7f0;border-radius:14px;background:rgba(255,255,255,.98);box-shadow:var(--shadow);}
-  .card:hover{box-shadow:var(--shadow-hover);}
-  .card h2{color:var(--navy);font-family:'IBM Plex Sans',sans-serif;font-size:.95rem;letter-spacing:-.01em;}
-  .step-num{border-radius:9px!important;background:var(--accent-soft)!important;color:var(--accent)!important;}
-  label{color:#53627a;font-size:.69rem;letter-spacing:.01em;text-transform:uppercase;}
-  input[type=text],input[type=password],textarea{border-color:#dbe3ee;border-radius:8px;background:#fbfcfe;font-size:.82rem;}
-  input[type=text]:focus,input[type=password]:focus,textarea:focus,.chip-input:focus-within{border-color:#7c9cff;box-shadow:0 0 0 3px rgba(49,94,251,.1);}
-  button{border-radius:8px;background:var(--accent);font-size:.76rem;}
-  button.secondary{border-color:#dbe3ee;color:#53627a;}
-  .auth-card{border-top:3px solid var(--accent);}
-  .chip-input{min-height:46px;border-color:#dbe3ee;border-radius:8px;background:#fbfcfe;}
-  .chip{border-color:#d5e1ff;border-radius:7px;background:var(--accent-soft);color:#3153b8;font-size:.7rem;}
-  .project-block{border-color:#e1e7f0;border-radius:11px;background:#fbfcfe;padding:16px;}
-  .project-block .remove-btn{border-color:#e1e7f0;border-radius:7px;color:#8995a8;}
-  .add-btn{border-color:#b9c9e8;border-radius:8px;background:#f7faff;color:var(--accent);font-weight:600;}
-  #run-btn{min-width:205px;padding:12px 20px;background:var(--navy);box-shadow:0 8px 18px rgba(23,35,61,.16);}
-  #run-btn:hover{background:#25385f;}
-  .pipeline-steps{gap:9px;}
-  .pipeline-step{min-height:112px;border-color:#e1e7f0;border-radius:10px;background:#fbfcfe;}
-  .pipeline-step.active{border-color:#8eacff;background:#f2f6ff;box-shadow:inset 0 3px 0 var(--accent);}
-  .pipeline-step.done{border-color:#9ad7b7;background:#f2fbf6;}
-  .pipeline-step.failed{border-color:#efb0a3;background:var(--penalty-bg);}
-  .fairness-box{gap:7px;border-color:#d8e5fb;border-radius:11px;background:#f3f7ff;}
-  .fairness-box span{border:1px solid rgba(217,227,245,.8);border-radius:8px;background:#fff;padding:9px 10px;}
-  .fairness-box span:last-child{border-color:#b9c9e8;background:#e8f0ff;}
-  .job-card{border-color:#e1e7f0;border-left-width:3px;border-radius:10px;box-shadow:none;}
-  .job-card:hover{border-color:#c5d3eb;box-shadow:0 8px 20px rgba(31,49,82,.07);}
-  .job-title{color:var(--navy);}
-  .rank-badge{border:1px solid #e1e7f0;border-radius:999px;background:#f7f9fc;padding:5px 9px;}
-  .score-row span{border:1px solid #e4eaf2;border-radius:6px;background:#f8fafc;padding:5px 8px;}
-  .footer{text-align:center;grid-column:2;color:#9aa7b8;font-size:.65rem;padding-top:22px;}
-  @media(max-width:900px){.wrap{display:block;width:min(100% - 32px,720px);padding-top:16px;}.app-sidebar{min-height:auto;margin-bottom:18px;padding:10px;}.sidebar-label,.sidebar-foot{display:none;}.sidebar-nav{display:flex;gap:5px;margin-top:0;overflow-x:auto;}.sidebar-link{flex:1 0 auto;justify-content:center;min-height:40px;padding:0 10px;font-size:.7rem;}.wrap>header,.wrap>.topbar,.wrap>.card,.wrap>footer{width:100%;}.header-status{float:none;display:inline-block;margin-top:13px;}.pipeline-steps{display:grid;grid-template-columns:repeat(2,1fr);}}
-  @media(max-width:560px){.topbar{align-items:flex-start;margin-bottom:18px;}.system-badge{display:none;}.account-pill{margin-left:0;}.card{padding:17px;}.row{display:grid;grid-template-columns:1fr;}.pipeline-steps{grid-template-columns:1fr 1fr;}.fairness-box{display:grid;grid-template-columns:1fr 1fr;}}
-  @media(max-width:400px){.sidebar-link{font-size:0;}.sidebar-link svg{width:18px;height:18px;}.pipeline-steps,.fairness-box{grid-template-columns:1fr;}}
+  .btn-evaluate:hover{background:var(--blue-dark);}
+  .btn-evaluate:disabled{background:var(--ink-faint); cursor:default;}
+
+  /* ---- Agent timeline (purple/blue AI accent) ---- */
+  .agent-track{display:flex; flex-direction:column;}
+  .agent-row{display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid var(--line);}
+  .agent-row:last-child{border-bottom:none;}
+  .agent-icon{
+    width:30px; height:30px; border-radius:50%; background:var(--purple-soft); color:var(--purple);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s ease;
+  }
+  .agent-row.done .agent-icon{background:var(--green-soft); color:var(--green);}
+  .agent-row.failed .agent-icon{background:var(--red-soft); color:var(--red);}
+  .agent-row.active .agent-icon{animation:pulse 1s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:0.4;}}
+  .agent-text-title{font-size:0.9rem; font-weight:600; color:var(--ink);}
+  .agent-text-caption{font-size:0.78rem; color:var(--ink-soft); margin-top:1px;}
+  .badge-completed{
+    margin-left:auto; font-size:0.72rem; font-weight:700; color:var(--green); background:var(--green-soft);
+    padding:3px 9px; border-radius:12px; flex-shrink:0; align-self:center;
+  }
+
+  .error-box{border:1px solid var(--red); background:var(--red-soft); color:var(--red); border-radius:8px; padding:16px 18px; font-size:0.87rem; margin-top:8px;}
+  .error-box .retry-btn{margin-top:10px; background:none; border:1px solid var(--red); color:var(--red); padding:7px 14px; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:700;}
+
+  /* ---- Results: stat cards ---- */
+  .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px;}
+  .stat-card{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px 18px;}
+  .stat-card .num{font-size:1.6rem; font-weight:800; color:var(--navy); line-height:1;}
+  .stat-card .lbl{font-size:0.76rem; color:var(--ink-soft); margin-top:6px; font-weight:500;}
+  .stat-card.gold .num{color:var(--amber);}
+
+  /* ---- Evidence quality circular gauge ---- */
+  .gauge-wrap{display:flex; align-items:center; gap:24px; flex-wrap:wrap;}
+  .gauge{position:relative; width:120px; height:120px; flex-shrink:0;}
+  .gauge svg{transform:rotate(-90deg);}
+  .gauge-track{fill:none; stroke:var(--line); stroke-width:10;}
+  .gauge-fill{fill:none; stroke:var(--green); stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset 0.6s ease;}
+  .gauge-label{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .gauge-label .pct{font-size:1.4rem; font-weight:800; color:var(--navy);}
+  .gauge-label .sub{font-size:0.68rem; color:var(--ink-soft);}
+  .gauge-desc{flex:1; min-width:220px;}
+  .gauge-desc p{font-size:0.88rem; color:var(--ink-soft); margin:0;}
+
+  /* ---- Skills bars ---- */
+  .skill-row{display:flex; align-items:center; gap:14px; margin-bottom:14px;}
+  .skill-row:last-child{margin-bottom:0;}
+  .skill-name{width:150px; flex-shrink:0; font-size:0.85rem; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .skill-bar-track{flex:1; height:8px; background:var(--page-bg); border-radius:4px; overflow:hidden;}
+  .skill-bar-fill{height:100%; border-radius:4px; transition:width 0.5s ease;}
+  .skill-bar-fill.supported{background:var(--green);}
+  .skill-bar-fill.weakly_supported{background:var(--amber);}
+  .skill-bar-fill.unsupported{background:var(--ink-faint);}
+  .skill-bar-fill.contradicted{background:var(--red);}
+  .skill-pct{width:42px; flex-shrink:0; text-align:right; font-size:0.82rem; font-weight:700; color:var(--ink-soft);}
+
+  /* ---- Opportunity cards ---- */
+  .opp-card{border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; margin-bottom:14px; background:var(--white);}
+  .opp-top{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:8px;}
+  .opp-title{font-size:1rem; font-weight:700; color:var(--navy);}
+  .opp-rank{font-size:0.76rem; color:var(--ink-faint); font-weight:600; margin-top:2px;}
+  .opp-score{text-align:right; flex-shrink:0;}
+  .opp-score .val{font-size:1.3rem; font-weight:800; color:var(--green);}
+  .opp-score .lbl{font-size:0.7rem; color:var(--ink-soft);}
+  .opp-chips{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;}
+  .opp-chip{font-size:0.76rem; font-weight:600; padding:4px 10px; border-radius:12px;}
+  .opp-chip.match{background:var(--green-soft); color:var(--green);}
+  .opp-chip.missing{background:var(--page-bg); color:var(--ink-soft);}
+  .opp-note{font-size:0.85rem; color:var(--ink-soft); margin-top:6px;}
+
+  .empty-note{border:1px dashed var(--line); border-radius:var(--radius); padding:30px; text-align:center; color:var(--ink-faint); font-size:0.88rem;}
+
+  .restart-link{display:inline-flex; align-items:center; gap:6px; background:none; border:none; color:var(--blue); font-weight:700; font-size:0.87rem; cursor:pointer; padding:0; margin-top:8px;}
+  .restart-link:hover{color:var(--blue-dark);}
+
+  @media (max-width:860px){
+    .stat-grid{grid-template-columns:repeat(2,1fr);}
+    .login-screen{flex-direction:column;}
+    .login-left{padding:40px 24px;}
+    .login-right{padding:40px 24px;}
+  }
+  @media (max-width:680px){
+    .app-shell.visible{flex-direction:column;}
+    .sidebar{width:100%; flex-direction:row; align-items:center; padding:12px 16px; overflow-x:auto;}
+    .sidebar .brand{margin-bottom:0; padding:0; margin-right:16px;}
+    .sidebar-section-label{display:none;}
+    .nav-list{display:flex; gap:4px; margin:0;}
+    .nav-item{margin-bottom:0;}
+    .sidebar-spacer{display:none;}
+    .sidebar-bottom{border-top:none; padding-top:0; margin-left:auto;}
+    .signout-btn span{display:none;}
+    .content{padding:20px 16px 60px;}
+    .stat-grid{grid-template-columns:1fr 1fr;}
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <aside class="app-sidebar" aria-label="Primary navigation">
-    <div class="sidebar-label">Workspace</div>
-    <nav class="sidebar-nav">
-      <a class="sidebar-link" href="#dashboard"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></a>
-      <a class="sidebar-link active" href="#input-card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg><span>Candidate Evaluation</span></a>
-      <a class="sidebar-link" href="#progress-card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18V9M12 18V5M19 18v-7"/><path d="M3 18h18"/></svg><span>AI Pipeline</span></a>
-      <a class="sidebar-link" href="#results"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16"/><path d="m7 15 3-4 3 2 5-6"/></svg><span>Ranking Results</span></a>
-      <a class="sidebar-link" href="#about-system"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg><span>About System</span></a>
-    </nav>
-    <div class="sidebar-foot" id="about-system"><strong>FairRank AI</strong>Evidence-led candidate evaluation for more consistent opportunity decisions.</div>
-  </aside>
 
-  <div class="topbar">
-    <div class="brand">
-      <div class="brand-mark">FR</div>
-      <div class="brand-text"><div class="brand-name">FairRank AI</div><div class="brand-sub">Fair Opportunity Evaluation</div></div>
+<!-- ============ LOGIN SCREEN ============ -->
+<div class="login-screen" id="login-screen">
+  <div class="login-left">
+    <div class="login-left-inner">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L20 6V12C20 16.5 16.5 20.3 12 22C7.5 20.3 4 16.5 4 12V6L12 2Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12L11 14L15 10" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="brand-name">FairWork AI</span>
+      </div>
+      <h1>Fair opportunities,<br/>backed by evidence.</h1>
+      <p class="desc">Evaluate a candidate's claimed skills against what their portfolio actually shows — then see which roles genuinely fit.</p>
+      <div class="illustration">
+        <svg width="280" height="200" viewBox="0 0 280 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="30" width="160" height="130" rx="12" fill="#E8F0FE"/>
+          <rect x="44" y="54" width="90" height="10" rx="5" fill="#2F6FED"/>
+          <rect x="44" y="74" width="112" height="8" rx="4" fill="#C7D9FB"/>
+          <rect x="44" y="90" width="112" height="8" rx="4" fill="#C7D9FB"/>
+          <rect x="44" y="106" width="70" height="8" rx="4" fill="#C7D9FB"/>
+          <circle cx="200" cy="70" r="46" fill="#DCFCE7"/>
+          <path d="M182 70L194 82L218 56" stroke="#16A34A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="60" y="150" width="160" height="34" rx="10" fill="#101B3D"/>
+          <circle cx="82" cy="167" r="8" fill="#7C5CFF"/>
+          <rect x="98" y="161" width="100" height="6" rx="3" fill="#5B6A9E"/>
+          <rect x="98" y="171" width="70" height="6" rx="3" fill="#5B6A9E"/>
+        </svg>
+      </div>
     </div>
-    <div><span class="system-badge"><span class="system-dot"></span>System online</span><span class="account-pill"><span class="account-avatar">DU</span>Demo workspace</span></div>
   </div>
 
-  <header>
-    <div class="hero-kicker">✦ &nbsp;AI-powered decision workspace</div>
-    <h1>Fair Opportunity Evaluation</h1>
-    <p>Turn portfolio evidence into transparent skill verification, role matching, and fair ranking in one focused workspace.</p>
-    <div class="header-status">Authentication required</div>
-  </header>
+  <div class="login-right">
+    <div class="login-form-box">
+      <h2 id="auth-heading">Welcome back</h2>
+      <p class="sub" id="auth-sub">Log in to evaluate a candidate.</p>
 
-  <div class="card" id="auth-card">
-    <h2><span class="step-num">✓</span>Sign in</h2>
-    <div class="row">
       <div class="field">
         <label for="username">Username</label>
-        <input type="text" id="username" value="demo_user" />
+        <input type="text" id="username" value="demo_user" autocomplete="username" />
       </div>
       <div class="field">
         <label for="password">Password</label>
-        <input type="password" id="password" value="demo_password123" />
+        <input type="password" id="password" value="demo_password123" autocomplete="current-password" />
       </div>
-    </div>
-    <button id="register-btn" class="secondary" type="button">Register</button>
-    <button id="login-btn" type="button">Log in</button>
-    <div class="status-line" id="auth-status"></div>
-  </div>
 
-  <div class="card disabled-overlay" id="input-card">
-    <h2><span class="step-num">1</span>Candidate details</h2>
-    <div class="row">
-      <div class="field">
-        <label for="candidate-id">Candidate ID</label>
-        <input type="text" id="candidate-id" value="F001" />
+      <button class="btn-primary" id="primary-auth-btn" type="button">Log in</button>
+      <div class="form-alt" id="form-alt">
+        Don't have an account? <button type="button" id="switch-mode-btn">Register</button>
       </div>
-      <div class="field">
-        <label for="experience-years">Experience (years)</label>
-        <input type="text" id="experience-years" value="1.5" />
-      </div>
-    </div>
-    <div class="field">
-      <label for="skills-input">Claimed skills</label>
-      <div class="chip-input" id="skills-chip-input">
-        <input type="text" id="skills-input" placeholder="Type a skill, press Enter" />
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Portfolio projects</label>
-      <div id="project-list"></div>
-      <button type="button" class="add-btn" id="add-project">+ Add project</button>
-    </div>
-
-    <button type="button" id="run-btn" disabled>Evaluate candidate</button>
-    <div class="status-line" id="run-status"></div>
-  </div>
-
-  <div class="card" id="progress-card" style="display:none;">
-    <h2><span class="step-num">2</span>Agent pipeline</h2>
-    <div class="pipeline-steps">
-      <div class="pipeline-step" data-step="a"><span class="step-label">Agent A</span>Portfolio evidence extraction</div>
-      <div class="pipeline-step" data-step="b"><span class="step-label">Agent B</span>Skill verification</div>
-      <div class="pipeline-step" data-step="c"><span class="step-label">Agent C</span>Job compatibility</div>
-      <div class="pipeline-step" data-step="d"><span class="step-label">Agent D</span>Fair ranking</div>
+      <div class="status-line" id="auth-status"></div>
     </div>
   </div>
+</div>
 
-  <div class="card">
-    <h2><span class="step-num">3</span>Results</h2>
-    <div id="results"><div class="empty">Sign in, fill in candidate details, and evaluate to see results here.</div></div>
+<!-- ============ APP SHELL ============ -->
+<div class="app-shell" id="app-shell">
+  <div class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L20 6V12C20 16.5 16.5 20.3 12 22C7.5 20.3 4 16.5 4 12V6L12 2Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12L11 14L15 10" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="brand-name">FairWork AI</span>
+    </div>
+
+    <div class="sidebar-section-label">Evaluation</div>
+    <ul class="nav-list">
+      <li class="nav-item active" data-nav="details">
+        <button type="button" data-goto="details">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+          Details
+        </button>
+      </li>
+      <li class="nav-item" data-nav="verifying">
+        <button type="button" data-goto="verifying" disabled>
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L19 5.5V11C19 15.5 16 19 12 21C8 19 5 15.5 5 11V5.5L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span>
+          Verifying
+        </button>
+      </li>
+      <li class="nav-item" data-nav="results">
+        <button type="button" data-goto="results" disabled>
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M12 20V4M20 20V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+          Results
+        </button>
+      </li>
+    </ul>
+
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-bottom">
+      <button class="signout-btn" id="signout-btn" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Log out</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="main-col">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Candidate details</div>
+      <div class="topbar-user">
+        <div class="avatar" id="avatar-initials">U</div>
+        <span class="topbar-username" id="topbar-username"></span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Step: Details -->
+      <div class="panel active" data-panel="details">
+        <div class="card">
+          <h3>Candidate details</h3>
+          <p class="card-sub">Enter what the candidate claims, and what their portfolio shows.</p>
+
+          <div class="row">
+            <div class="field">
+              <label for="candidate-id">Candidate ID</label>
+              <input type="text" id="candidate-id" value="F001" />
+            </div>
+            <div class="field">
+              <label for="experience-years">Years of experience</label>
+              <input type="text" id="experience-years" value="1.5" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="skills-input">Skills claimed</label>
+            <div class="chip-input" id="skills-chip-input">
+              <input type="text" id="skills-input" placeholder="Type a skill, press Enter" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Portfolio projects</label>
+            <div id="project-list"></div>
+            <button type="button" class="add-link" id="add-project">+ Add another project</button>
+          </div>
+
+          <button type="button" class="btn-evaluate" id="run-btn">Evaluate candidate</button>
+        </div>
+      </div>
+
+      <!-- Step: Verifying -->
+      <div class="panel" data-panel="verifying">
+        <div class="card">
+          <h3>AI Agent Activity</h3>
+          <p class="card-sub">Each agent runs in sequence to evaluate this candidate.</p>
+          <div class="agent-track" id="agent-track">
+            <div class="agent-row" data-step="a">
+              <div class="agent-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 19V5a2 2 0 012-2h9l5 5v11a2 2 0 01-2 2H6a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
+              <div><div class="agent-text-title">Reading the portfolio</div><div class="agent-text-caption">Portfolio Evidence Agent</div></div>
+            </div>
+            <div class="agent-row" data-step="b">
+              <div class="agent-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
+              <div><div class="agent-text-title">Checking claims against evidence</div><div class="agent-text-caption">Skill Verification Agent</div></div>
+            </div>
+            <div class="agent-row" data-step="c">
+              <div class="agent-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div><div class="agent-text-title">Matching against open roles</div><div class="agent-text-caption">Job Compatibility Agent</div></div>
+            </div>
+            <div class="agent-row" data-step="d">
+              <div class="agent-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M12 20V4M20 20V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div><div class="agent-text-title">Adjusting for fairness</div><div class="agent-text-caption">Fair Ranking Agent</div></div>
+            </div>
+          </div>
+          <div id="verify-error-container"></div>
+        </div>
+      </div>
+
+      <!-- Step: Results -->
+      <div class="panel" data-panel="results">
+
+        <div class="stat-grid" id="stat-grid"></div>
+
+        <div class="card">
+          <h3>Fairness-related results</h3>
+          <p class="card-sub">How claim-evidence consistency shaped this evaluation.</p>
+          <div class="gauge-wrap">
+            <div class="gauge">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle class="gauge-track" cx="60" cy="60" r="50"/>
+                <circle class="gauge-fill" id="gauge-fill" cx="60" cy="60" r="50"/>
+              </svg>
+              <div class="gauge-label"><div class="pct" id="gauge-pct">0%</div><div class="sub">Evidence quality</div></div>
+            </div>
+            <div class="gauge-desc"><p id="fairness-summary"></p></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Verified skills</h3>
+          <p class="card-sub">Each claimed skill, checked against portfolio evidence.</p>
+          <div id="skills-body"></div>
+        </div>
+
+        <div class="card">
+          <h3>Ranked opportunities</h3>
+          <p class="card-sub">Job matches, adjusted for evidence quality.</p>
+          <div id="opportunities-body"></div>
+        </div>
+
+        <div class="card">
+          <h3>Agent activity</h3>
+          <p class="card-sub">What each agent did during this evaluation.</p>
+          <div class="agent-track" id="agent-track-results"></div>
+        </div>
+
+        <button type="button" class="restart-link" id="restart-btn">Evaluate another candidate</button>
+      </div>
+
+    </div>
   </div>
 </div>
 
 <script>
 let token = null;
+let mode = 'login';
 
-const usernameEl = document.getElementById('username');
-const passwordEl = document.getElementById('password');
-const authStatus = document.getElementById('auth-status');
-const inputCard = document.getElementById('input-card');
-const runBtn = document.getElementById('run-btn');
-const runStatus = document.getElementById('run-status');
-const resultsEl = document.getElementById('results');
-const progressCard = document.getElementById('progress-card');
-
-function setAuthStatus(msg, ok){ authStatus.textContent = msg; authStatus.className = 'status-line ' + (ok?'ok':'err'); }
-function setRunStatus(msg, ok){ runStatus.textContent = msg; runStatus.className = 'status-line ' + (ok?'ok':'err'); }
 function escapeHtml(str){ return (str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-document.getElementById('register-btn').onclick = async () => {
-  setAuthStatus('Registering...', true);
+// ---------- Auth ----------
+const authHeading = document.getElementById('auth-heading');
+const authSub = document.getElementById('auth-sub');
+const primaryAuthBtn = document.getElementById('primary-auth-btn');
+const formAlt = document.getElementById('form-alt');
+const authStatus = document.getElementById('auth-status');
+const usernameEl = document.getElementById('username');
+const passwordEl = document.getElementById('password');
+
+function setAuthStatus(msg, ok){ authStatus.textContent = msg; authStatus.className = 'status-line ' + (ok?'ok':'err'); }
+
+function renderAuthMode(){
+  if(mode === 'login'){
+    authHeading.textContent = 'Welcome back';
+    authSub.textContent = 'Log in to evaluate a candidate.';
+    primaryAuthBtn.textContent = 'Log in';
+    formAlt.innerHTML = 'Don\'t have an account? <button type="button" id="switch-mode-btn">Register</button>';
+  } else {
+    authHeading.textContent = 'Create an account';
+    authSub.textContent = 'Set a username and password to start evaluating candidates.';
+    primaryAuthBtn.textContent = 'Create account';
+    formAlt.innerHTML = 'Already have an account? <button type="button" id="switch-mode-btn">Log in</button>';
+  }
+  document.getElementById('switch-mode-btn').onclick = () => {
+    mode = mode === 'login' ? 'register' : 'login';
+    renderAuthMode();
+    setAuthStatus('', true);
+  };
+}
+renderAuthMode();
+
+primaryAuthBtn.onclick = async () => {
+  const username = usernameEl.value.trim();
+  const password = passwordEl.value;
+  if(!username || !password){ setAuthStatus('Enter a username and password.', false); return; }
+
+  primaryAuthBtn.disabled = true;
+  setAuthStatus(mode === 'login' ? 'Signing in…' : 'Creating account…', true);
+
   try{
-    const resp = await fetch('/auth/register', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: new URLSearchParams({username: usernameEl.value, password: passwordEl.value})});
+    if(mode === 'register'){
+      const resp = await fetch('/auth/register', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username, password})});
+      const body = await resp.json();
+      primaryAuthBtn.disabled = false;
+      if(!resp.ok){ setAuthStatus(body.detail || 'Could not create that account.', false); return; }
+      mode = 'login';
+      renderAuthMode();
+      setAuthStatus('Account created. Log in to continue.', true);
+      return;
+    }
+
+    const resp = await fetch('/auth/login', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: new URLSearchParams({username, password})});
     const body = await resp.json();
-    setAuthStatus(resp.ok ? 'Registered. Now click "Log in".' : (body.detail || 'Registration failed (maybe exists already — try logging in).'), resp.ok);
-  }catch(e){ setAuthStatus('Could not reach the server.', false); }
+    primaryAuthBtn.disabled = false;
+    if(!resp.ok){ setAuthStatus(body.detail || 'Incorrect username or password.', false); return; }
+
+    token = body.access_token;
+    enterApp(username);
+  }catch(e){
+    primaryAuthBtn.disabled = false;
+    setAuthStatus('Could not reach the server.', false);
+  }
 };
 
-document.getElementById('login-btn').onclick = async () => {
-  setAuthStatus('Logging in...', true);
-  try{
-    const resp = await fetch('/auth/login', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: new URLSearchParams({username: usernameEl.value, password: passwordEl.value})});
-    const body = await resp.json();
-    if(resp.ok){
-      token = body.access_token;
-      setAuthStatus('Signed in. Token expires in ' + body.expires_in_minutes + ' minutes.', true);
-      inputCard.classList.remove('disabled-overlay');
-      runBtn.disabled = false;
-    } else { setAuthStatus(body.detail || 'Login failed.', false); }
-  }catch(e){ setAuthStatus('Could not reach the server.', false); }
-};
+function enterApp(username){
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-shell').classList.add('visible');
+  document.getElementById('topbar-username').textContent = username;
+  document.getElementById('avatar-initials').textContent = username.slice(0,2).toUpperCase();
+}
+document.getElementById('signout-btn').onclick = () => location.reload();
 
-// ---- Claimed skills chip input ----
+// ---------- Sidebar step nav ----------
+const stepOrder = ['details','verifying','results'];
+let reachedStep = 0; // index of furthest step reached
+
+function goToStep(stepName){
+  const idx = stepOrder.indexOf(stepName);
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === stepName));
+  document.querySelectorAll('.nav-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+    el.classList.toggle('done', i < reachedStep && i !== idx);
+    const btn = el.querySelector('button');
+    btn.disabled = i > reachedStep;
+  });
+  const titles = {details:'Candidate details', verifying:'Verifying', results:'Evaluation results'};
+  document.getElementById('topbar-title').textContent = titles[stepName];
+}
+document.querySelectorAll('.nav-item button').forEach(btn => {
+  btn.addEventListener('click', () => { if(!btn.disabled) goToStep(btn.dataset.goto); });
+});
+
+// ---------- Claimed skills chip input ----------
 let skills = ['Python', 'Django', 'REST API'];
 const skillsInput = document.getElementById('skills-input');
 const chipWrap = document.getElementById('skills-chip-input');
@@ -303,7 +593,7 @@ function renderChips(){
   skills.forEach((s,i) => {
     const chip = document.createElement('span');
     chip.className = 'chip';
-    chip.innerHTML = `${escapeHtml(s)} <button type="button">&times;</button>`;
+    chip.innerHTML = `${escapeHtml(s)} <button type="button" aria-label="Remove ${escapeHtml(s)}">&times;</button>`;
     chip.querySelector('button').onclick = () => { skills.splice(i,1); renderChips(); };
     chipWrap.insertBefore(chip, skillsInput);
   });
@@ -318,18 +608,18 @@ skillsInput.addEventListener('keydown', e => {
 });
 renderChips();
 
-// ---- Portfolio projects ----
+// ---------- Portfolio projects ----------
 const projectList = document.getElementById('project-list');
 let projCounter = 0;
 function addProject(data){
   data = data || {project_id:'proj_'+String(++projCounter).padStart(3,'0'), title:'', description:''};
   const block = document.createElement('div');
-  block.className = 'project-block';
+  block.className = 'project-card';
   block.innerHTML = `
     <button type="button" class="remove-btn">Remove</button>
-    <div class="field"><label>Project ID</label><input type="text" class="p-id" value="${escapeHtml(data.project_id)}" /></div>
-    <div class="field"><label>Title</label><input type="text" class="p-title" value="${escapeHtml(data.title)}" placeholder="e.g. Online Booking System" /></div>
-    <div class="field"><label>Description</label><textarea class="p-desc" placeholder="What was built and with what tech...">${escapeHtml(data.description)}</textarea></div>
+    <div class="field"><label>Project title</label><input type="text" class="p-title" value="${escapeHtml(data.title)}" placeholder="e.g. Online Booking System" /></div>
+    <div class="field"><label>What was built</label><textarea class="p-desc" placeholder="Describe the work and the technologies used…">${escapeHtml(data.description)}</textarea></div>
+    <input type="hidden" class="p-id" value="${escapeHtml(data.project_id)}" />
   `;
   block.querySelector('.remove-btn').onclick = () => block.remove();
   projectList.appendChild(block);
@@ -337,137 +627,161 @@ function addProject(data){
 document.getElementById('add-project').onclick = () => addProject();
 addProject({project_id:'proj_001', title:'Online Booking System', description:'Built a web-based booking platform using Django and REST APIs.'});
 
-// ---- Pipeline progress display ----
-function setStepState(step, state){
-  const el = document.querySelector(`.pipeline-step[data-step="${step}"]`);
-  el.classList.remove('active','done','failed');
-  if(state) el.classList.add(state);
+// ---------- Evaluate flow ----------
+const runBtn = document.getElementById('run-btn');
+const agentRows = { a: document.querySelector('#agent-track .agent-row[data-step="a"]'), b: document.querySelector('#agent-track .agent-row[data-step="b"]'), c: document.querySelector('#agent-track .agent-row[data-step="c"]'), d: document.querySelector('#agent-track .agent-row[data-step="d"]') };
+const verifyErrorContainer = document.getElementById('verify-error-container');
+
+const AGENT_META = {
+  a: {title:'Reading the portfolio', caption:'Portfolio Evidence Agent',
+      icon:'<path d="M4 19V5a2 2 0 012-2h9l5 5v11a2 2 0 01-2 2H6a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>'},
+  b: {title:'Checking claims against evidence', caption:'Skill Verification Agent',
+      icon:'<path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>'},
+  c: {title:'Matching against open roles', caption:'Job Compatibility Agent',
+      icon:'<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
+  d: {title:'Adjusting for fairness', caption:'Fair Ranking Agent',
+      icon:'<path d="M4 20V10M12 20V4M20 20V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
+};
+
+function resetAgentTrack(){
+  Object.values(agentRows).forEach(row => row.classList.remove('active','done','failed'));
+  verifyErrorContainer.innerHTML = '';
 }
-function resetSteps(){ ['a','b','c','d'].forEach(s => setStepState(s, null)); }
-
-async function animateProgress(promise){
-  // Simulated staged progress while the single backend call is in flight
-  // (the real work happens server-side across all 4 agents in one request).
-  progressCard.style.display = 'block';
-  resetSteps();
-  const stages = ['a','b','c','d'];
-  let i = 0;
-  setStepState(stages[0], 'active');
-  const interval = setInterval(() => {
-    setStepState(stages[i], 'done');
-    i++;
-    if(i < stages.length) setStepState(stages[i], 'active');
-  }, 900);
-
-  try{
-    const result = await promise;
-    clearInterval(interval);
-    stages.forEach(s => setStepState(s, 'done'));
-    return result;
-  }catch(e){
-    clearInterval(interval);
-    setStepState(stages[Math.min(i, stages.length-1)], 'failed');
-    throw e;
-  }
-}
-
-function noteClass(fairScore, compatScore){
-  if(fairScore > compatScore + 0.01) return 'boost';
-  if(fairScore < compatScore - 0.01) return 'penalty';
-  return 'neutral';
-}
-
-function renderResults(data){
-  resultsEl.innerHTML = '';
-  const f = data.fairness;
-  const box = document.createElement('div');
-  box.className = 'fairness-box';
-  box.innerHTML = `
-    <span><b>${f.claimed_skill_count}</b> claimed</span>
-    <span><b>${f.supported_count}</b> supported</span>
-    <span><b>${f.weakly_supported_count}</b> weak</span>
-    <span><b>${f.unsupported_count}</b> unsupported</span>
-    <span><b>${f.contradicted_count}</b> contradicted</span>
-    <span>multiplier <b>${f.fairness_multiplier}</b></span>
-  `;
-  resultsEl.appendChild(box);
-
-  const summary = document.createElement('div');
-  summary.className = 'note';
-  summary.style.marginBottom = '14px';
-  summary.textContent = f.summary;
-  resultsEl.appendChild(summary);
-
-  if(!data.ranked_jobs.length){
-    resultsEl.innerHTML += '<div class="empty">No matched jobs to rank.</div>';
-    return;
-  }
-  data.ranked_jobs.forEach(job => {
-    const cls = noteClass(job.fair_score, job.compatibility_score);
-    const card = document.createElement('div');
-    card.className = 'job-card ' + cls;
-    card.innerHTML = `
-      <div class="job-top">
-        <span class="job-title">${escapeHtml(job.title)}</span>
-        <span class="rank-badge">rank <b>#${job.fair_rank}</b> (was #${job.original_rank})</span>
-      </div>
-      <div class="score-row">
-        <span>compatibility: ${job.compatibility_score.toFixed(2)}</span>
-        <span class="fair">fair score: ${job.fair_score.toFixed(2)}</span>
-      </div>
-      <div class="note ${cls}">${escapeHtml(job.fairness_note)}</div>
-    `;
-    resultsEl.appendChild(card);
-  });
+function showRetry(message){
+  verifyErrorContainer.innerHTML = `<div class="error-box">${escapeHtml(message)}<div><button type="button" class="retry-btn" id="retry-btn">Try again</button></div></div>`;
+  document.getElementById('retry-btn').onclick = () => { reachedStep = 0; goToStep('details'); };
 }
 
 runBtn.onclick = async () => {
-  if(!token){ setRunStatus('Sign in first.', false); return; }
-  if(!skills.length){ setRunStatus('Add at least one claimed skill.', false); return; }
+  if(!skills.length){ alert('Add at least one claimed skill.'); return; }
 
-  const portfolioProjects = Array.from(projectList.querySelectorAll('.project-block')).map(b => ({
-    project_id: b.querySelector('.p-id').value.trim(),
+  const portfolioProjects = Array.from(projectList.querySelectorAll('.project-card')).map(b => ({
+    project_id: b.querySelector('.p-id').value,
     title: b.querySelector('.p-title').value.trim(),
     description: b.querySelector('.p-desc').value.trim(),
-  })).filter(p => p.project_id);
+  })).filter(p => p.description);
 
   const payload = {
-    candidate_id: document.getElementById('candidate-id').value.trim(),
+    candidate_id: document.getElementById('candidate-id').value.trim() || 'candidate_001',
     claimed_skills: skills,
     experience_years: parseFloat(document.getElementById('experience-years').value) || 0,
     portfolio_projects: portfolioProjects,
-    certificates: [],
-    code_samples: [],
-    work_descriptions: [],
+    certificates: [], code_samples: [], work_descriptions: [],
   };
 
-  runBtn.disabled = true;
-  runBtn.textContent = 'Evaluating...';
-  setRunStatus('', true);
-  resultsEl.innerHTML = '<div class="empty">Running the pipeline...</div>';
-
-  const callPromise = fetch('/api/full-pipeline', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json', 'Authorization': 'Bearer ' + token},
-    body: JSON.stringify(payload)
-  }).then(async resp => {
-    const body = await resp.json();
-    if(!resp.ok) throw new Error(body.detail || `Request failed with status ${resp.status}.`);
-    return body;
-  });
+  reachedStep = 1;
+  goToStep('verifying');
+  resetAgentTrack();
+  const stages = ['a','b','c','d'];
+  let i = 0;
+  agentRows[stages[0]].classList.add('active');
+  const interval = setInterval(() => {
+    agentRows[stages[i]].classList.remove('active');
+    agentRows[stages[i]].classList.add('done');
+    i++;
+    if(i < stages.length) agentRows[stages[i]].classList.add('active');
+  }, 850);
 
   try{
-    const result = await animateProgress(callPromise);
-    setRunStatus('Done.', true);
-    renderResults(result);
+    const resp = await fetch('/api/full-pipeline', {
+      method:'POST', headers:{'Content-Type':'application/json', 'Authorization':'Bearer ' + token},
+      body: JSON.stringify(payload)
+    });
+    const body = await resp.json();
+    clearInterval(interval);
+
+    if(!resp.ok){
+      stages.forEach(s => agentRows[s].classList.remove('active','done'));
+      agentRows[stages[Math.min(i, 3)]].classList.add('failed');
+      showRetry(body.detail || `Evaluation failed with status ${resp.status}.`);
+      return;
+    }
+
+    stages.forEach(s => { agentRows[s].classList.remove('active'); agentRows[s].classList.add('done'); });
+    renderResults(body);
+    reachedStep = 2;
+    goToStep('results');
   }catch(e){
-    setRunStatus(e.message || 'Something went wrong.', false);
-    resultsEl.innerHTML = '<div class="empty">' + escapeHtml(e.message || 'Request failed.') + '</div>';
-  }finally{
-    runBtn.disabled = false;
-    runBtn.textContent = 'Evaluate candidate';
+    clearInterval(interval);
+    agentRows[stages[Math.min(i,3)]].classList.add('failed');
+    showRetry('Could not reach the evaluation service. Check that all agents are running.');
   }
 };
+
+// ---------- Results rendering ----------
+function statusColor(status){
+  return {supported:'green', weakly_supported:'amber', unsupported:'ink-faint', contradicted:'red'}[status] || 'ink-faint';
+}
+
+function renderResults(data){
+  const f = data.fairness;
+
+  // 1. Evaluation summary stat cards
+  document.getElementById('stat-grid').innerHTML = `
+    <div class="stat-card"><div class="num">${f.supported_count}</div><div class="lbl">Supported skills</div></div>
+    <div class="stat-card"><div class="num">${f.weakly_supported_count}</div><div class="lbl">Weakly supported</div></div>
+    <div class="stat-card"><div class="num">${f.unsupported_count + f.contradicted_count}</div><div class="lbl">Unsupported / contradicted</div></div>
+    <div class="stat-card ${f.fairness_multiplier > 1.02 ? 'gold' : ''}"><div class="num">${f.fairness_multiplier.toFixed(2)}×</div><div class="lbl">Fairness adjustment</div></div>
+  `;
+
+  // 4. Fairness gauge (evidence_quality is a real 0-1 field)
+  const pct = Math.round(f.evidence_quality * 100);
+  const r = 50, circumference = 2 * Math.PI * r;
+  const fillEl = document.getElementById('gauge-fill');
+  fillEl.setAttribute('stroke-dasharray', circumference);
+  fillEl.setAttribute('stroke-dashoffset', circumference - (pct/100)*circumference);
+  document.getElementById('gauge-pct').textContent = pct + '%';
+  document.getElementById('fairness-summary').textContent = f.summary;
+
+  // 2. Verified skills bars (real per-skill data)
+  const skillsBody = document.getElementById('skills-body');
+  if(!data.verified_skills || !data.verified_skills.length){
+    skillsBody.innerHTML = '<div class="empty-note">No skill verification data was returned for this evaluation.</div>';
+  } else {
+    skillsBody.innerHTML = data.verified_skills.map(v => `
+      <div class="skill-row">
+        <div class="skill-name" title="${escapeHtml(v.skill)}">${escapeHtml(v.skill)}</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill ${v.status}" style="width:${Math.round(v.confidence*100)}%"></div></div>
+        <div class="skill-pct">${Math.round(v.confidence*100)}%</div>
+      </div>
+    `).join('');
+  }
+
+  // 3. Ranked opportunities (real ranked_jobs fields only)
+  const oppBody = document.getElementById('opportunities-body');
+  if(!data.ranked_jobs.length){
+    oppBody.innerHTML = '<div class="empty-note">No job matches were returned for this candidate.</div>';
+  } else {
+    oppBody.innerHTML = data.ranked_jobs.map(job => `
+      <div class="opp-card">
+        <div class="opp-top">
+          <div>
+            <div class="opp-title">${escapeHtml(job.title)}</div>
+            <div class="opp-rank">Rank #${job.fair_rank}${job.original_rank !== job.fair_rank ? ` (was #${job.original_rank})` : ''}</div>
+          </div>
+          <div class="opp-score"><div class="val">${Math.round(job.fair_score*100)}%</div><div class="lbl">Match score</div></div>
+        </div>
+        <div class="opp-chips">
+          ${job.matched_skills.map(s => `<span class="opp-chip match">${escapeHtml(s)}</span>`).join('')}
+          ${job.missing_skills.map(s => `<span class="opp-chip missing">${escapeHtml(s)}</span>`).join('')}
+        </div>
+        <div class="opp-note">${escapeHtml(job.fairness_note)}</div>
+      </div>
+    `).join('');
+  }
+
+  // 5. Agent activity (completed state, real steps)
+  const stepsHtml = ['a','b','c','d'].map(k => `
+    <div class="agent-row done">
+      <div class="agent-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none">${AGENT_META[k].icon}</svg></div>
+      <div><div class="agent-text-title">${AGENT_META[k].title}</div><div class="agent-text-caption">${AGENT_META[k].caption}</div></div>
+      <div class="badge-completed">Completed</div>
+    </div>
+  `).join('');
+  document.getElementById('agent-track-results').innerHTML = stepsHtml;
+}
+
+document.getElementById('restart-btn').onclick = () => { reachedStep = 0; goToStep('details'); };
 </script>
 </body>
 </html>

@@ -85,6 +85,13 @@ class FairRankingResponse(BaseModel):
     candidate_id: str
     fairness: FairnessBreakdown
     ranked_jobs: List[FairMatchedJob]
+    verified_skills: List[VerifiedSkill] = Field(
+        default_factory=list,
+        description=(
+            "Passthrough of Member B's per-skill verification results, so the UI "
+            "can render a real skills breakdown without any new backend logic."
+        ),
+    )
 
 
 # ---- Auth ----
