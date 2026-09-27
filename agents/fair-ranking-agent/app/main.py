@@ -16,6 +16,7 @@ Endpoints:
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Request, status
+from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, FileResponse
 from pydantic import ValidationError
@@ -38,7 +39,8 @@ from app.integration import (
     call_job_compatibility,
     UpstreamServiceError,
 )
-from app.schemas import FairRankingRequest as _FRR  # for orchestrate reuse
+from app.schemas import FairRankingRequest as _FRR
+
 
 app = FastAPI(
     title="Fair Ranking Agent (Member D)",
@@ -48,6 +50,7 @@ app = FastAPI(
     ),
     version="1.0.0",
 )
+
 
 ranking_agent = FairRankingAgent()
 _STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -75,17 +78,27 @@ def register(payload: RegisterRequest):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content=ErrorResponse(
-                error="user_exists", detail=f"User '{payload.username}' already exists."
+                error="user_exists",
+                detail=f"User '{payload.username}' already exists.",
             ).model_dump(),
         )
+
     try:
         create_user(payload.username, payload.password)
+
     except ValueError as exc:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
-            content=ErrorResponse(error="invalid_request", detail=str(exc)).model_dump(),
+            content=ErrorResponse(
+                error="invalid_request",
+                detail=str(exc),
+            ).model_dump(),
         )
-    return {"status": "created", "username": payload.username}
+
+    return {
+        "status": "created",
+        "username": payload.username,
+    }
 
 
 @app.post(
@@ -93,18 +106,28 @@ def register(payload: RegisterRequest):
     response_model=TokenResponse,
     responses={401: {"model": ErrorResponse}},
 )
-def login(payload: LoginRequest):
-    if not verify_user(payload.username, payload.password):
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+
+    if not verify_user(
+        form_data.username,
+        form_data.password,
+    ):
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content=ErrorResponse(
-                error="invalid_credentials", detail="Incorrect username or password."
+                error="invalid_credentials",
+                detail="Incorrect username or password.",
             ).model_dump(),
         )
+
     from app.auth import ACCESS_TOKEN_EXPIRE_MINUTES
 
-    token = create_access_token(payload.username)
-    return TokenResponse(access_token=token, expires_in_minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    token = create_access_token(form_data.username)
+
+    return TokenResponse(
+        access_token=token,
+        expires_in_minutes=ACCESS_TOKEN_EXPIRE_MINUTES,
+    )
 
 
 # ---------------- Fair ranking ----------------
@@ -112,7 +135,10 @@ def login(payload: LoginRequest):
 @app.post(
     "/api/rank",
     response_model=FairRankingResponse,
-    responses={401: {"model": ErrorResponse}, 429: {"model": ErrorResponse}},
+    responses={
+        401: {"model": ErrorResponse},
+        429: {"model": ErrorResponse},
+    },
 )
 def rank_jobs(
     payload: FairRankingRequest,
@@ -122,9 +148,13 @@ def rank_jobs(
 ):
     """
     Re-ranks Member C's matched_jobs using the fairness multiplier derived
-    from claimed_skills vs. Member B's verified_skills. Requires a valid JWT.
+    from claimed_skills vs. Member B's verified_skills.
+
+    Requires a valid JWT.
     """
+
     request.state.username = username
+
     return ranking_agent.rank(payload)
 
 
@@ -145,41 +175,61 @@ def orchestrate(
     _rl: None = Depends(rate_limit),
 ):
     """
-    Full pipeline: calls Member B's live service to verify claimed skills
-    against Member A's portfolio evidence, then Member C's live service to
-    get job matches, then applies fair ranking -- all behind one
-    authenticated, rate-limited call.
+    Full pipeline:
+
+    1. Calls Member B's live service to verify claimed skills
+       against Member A's portfolio evidence.
+    2. Calls Member C's live service to get job matches.
+    3. Applies fair ranking.
+
+    All behind one authenticated, rate-limited call.
     """
+
     request.state.username = username
 
     try:
         candidate_id, verified_skills = call_skill_verification(
-            payload.claimed_skills, payload.portfolio_evidence
+            payload.claimed_skills,
+            payload.portfolio_evidence,
         )
+
     except UpstreamServiceError as exc:
         return JSONResponse(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            content=ErrorResponse(error="upstream_error", detail=str(exc)).model_dump(),
+            content=ErrorResponse(
+                error="upstream_error",
+                detail=str(exc),
+            ).model_dump(),
         )
 
     final_candidate_id = payload.candidate_id or candidate_id
+
     if not final_candidate_id:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content=ErrorResponse(
                 error="invalid_request",
-                detail="candidate_id was not provided and Member B did not return one.",
+                detail=(
+                    "candidate_id was not provided and "
+                    "Member B did not return one."
+                ),
             ).model_dump(),
         )
 
     try:
         matched_jobs = call_job_compatibility(
-            final_candidate_id, verified_skills, payload.experience_years
+            final_candidate_id,
+            verified_skills,
+            payload.experience_years,
         )
+
     except UpstreamServiceError as exc:
         return JSONResponse(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            content=ErrorResponse(error="upstream_error", detail=str(exc)).model_dump(),
+            content=ErrorResponse(
+                error="upstream_error",
+                detail=str(exc),
+            ).model_dump(),
         )
 
     fair_request = _FRR(
@@ -188,22 +238,35 @@ def orchestrate(
         verified_skills=verified_skills,
         matched_jobs=matched_jobs,
     )
+
     return ranking_agent.rank(fair_request)
 
 
 # ---------------- Error handlers ----------------
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
+async def validation_exception_handler(
+    request: Request,
+    exc: RequestValidationError,
+):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=ErrorResponse(error="validation_error", detail=str(exc.errors())).model_dump(),
+        content=ErrorResponse(
+            error="validation_error",
+            detail=str(exc.errors()),
+        ).model_dump(),
     )
 
 
 @app.exception_handler(ValidationError)
-async def pydantic_validation_handler(request: Request, exc: ValidationError):
+async def pydantic_validation_handler(
+    request: Request,
+    exc: ValidationError,
+):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=ErrorResponse(error="validation_error", detail=str(exc)).model_dump(),
+        content=ErrorResponse(
+            error="validation_error",
+            detail=str(exc),
+        ).model_dump(),
     )
