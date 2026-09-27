@@ -1,104 +1,176 @@
-# agentic-ai-fair-opportunity-system
-Agentic AI-Based Fair Opportunity and Capability Verification System for New Freelancers
+# FairRank AI
 
-## Portfolio Evidence Agent
-(Member A Maryam)
+AI-powered fair opportunity evaluation for new freelancers.
 
-## Skill Verification Agent
-(Member B Pirushalini)
+FairRank AI evaluates a candidate's claimed skills and portfolio material through four cooperating FastAPI agents. The system extracts evidence, verifies claims, matches suitable jobs, and applies an explainable fairness adjustment to the final ranking.
 
-## Job Compatibility Agent
-(Member C Thushanya)
+## System Architecture
 
-## Fair Ranking Agent
-(Member D Girushana)
-
----
-
-## System overview
-
-Four agents form one pipeline. A freelancer's claimed skills and raw portfolio
-material go in; a fairness-adjusted, ranked list of job matches comes out.
-
-```
-                    ┌──────────────────────────┐
-  candidate input → │  Agent A: Portfolio       │
-  (claimed skills,  │  Evidence (NLP + LLM)     │
-   projects, certs) └──────────────┬────────────┘
-                                    │ structured evidence
-                                    ▼
-                     ┌──────────────────────────┐
-                     │  Agent B: Skill           │
-                     │  Verification             │
-                     └──────────────┬────────────┘
-                                    │ evidence-supported skills
-                                    ▼
-                     ┌──────────────────────────┐
-                     │  Agent C: Job             │
-                     │  Compatibility (IR/FAISS) │
-                     └──────────────┬────────────┘
-                                    │ compatibility-scored job matches
-                                    ▼
-                     ┌──────────────────────────┐
-                     │  Agent D: Fair Ranking    │
-                     │  + Integration + Security │
-                     │  + UI                     │
-                     └──────────────┬────────────┘
-                                    │
-                                    ▼
-                     fairness-adjusted ranked jobs
+```text
+Candidate profile
+      |
+      v
+Agent A: Portfolio Evidence ---> structured skill evidence
+      |
+      v
+Agent B: Skill Verification ---> supported/weak/unsupported claims
+      |
+      v
+Agent C: Job Compatibility ----> compatibility-scored jobs
+      |
+      v
+Agent D: Fair Ranking ----------> fairness-adjusted ranked jobs
+                                  + authentication, integration, and UI
 ```
 
-Agents talk to each other over plain HTTP/JSON (the agent communication
-protocol used throughout this system). Agent D exposes the single entry
-point end users interact with — everything else runs behind it.
+Agents communicate over HTTP and JSON. Agent D is the public entry point; the other agents are internal services in the Docker Compose network.
 
-| Agent | Folder | Default port |
-|---|---|---|
-| A — Portfolio Evidence | `agents/portfolio_evidence_agent` | 8000 |
-| B — Skill Verification | `agents/skill_verification_agent` | 8001 |
-| C — Job Compatibility | `agents/job_compatibility_agent` | 8002 |
-| D — Fair Ranking (entry point) | `agents/fair-ranking-agent` | 8003 |
+| Agent | Responsibility | Service port | Source |
+| --- | --- | ---: | --- |
+| A - Portfolio Evidence | Extracts structured skills and evidence from portfolio material | 8000 | `agents/portfolio_evidence_agent` |
+| B - Skill Verification | Compares claimed skills with extracted evidence | 8001 | `agents/skill_verification_agent` |
+| C - Job Compatibility | Matches verified skills and experience to available roles | 8002 | `agents/job_compatibility_agent` |
+| D - Fair Ranking | Integrates A, B, and C; authenticates users and fair-ranks jobs | 8003 | `agents/fair-ranking-agent` |
 
-## Running the whole system
+## The Four Agents
 
-The simplest way — one command brings up all four agents, wired together:
+### Agent A: Portfolio Evidence
+
+Agent A receives portfolio projects, certificates, code samples, and work descriptions. It uses spaCy taxonomy matching to identify explicit skills, captures source excerpts, records confidence and reasoning, and returns a structured evidence document.
+
+The production Compose configuration uses deterministic NLP extraction with the local Qwen inference path disabled. This keeps the pipeline responsive while preserving valid explicit evidence extraction. The optional LLM interpreter can identify strongly implied skills, but it is not required for the API response.
+
+Endpoints:
+
+```text
+GET  /health
+POST /extract-evidence
+```
+
+### Agent B: Skill Verification
+
+Agent B evaluates the candidate's claimed skills against Agent A's evidence. It classifies claims as supported, weakly supported, unsupported, or contradicted and provides the verification data used by the fairness step.
+
+Endpoints:
+
+```text
+GET  /health
+POST /api/verify-skills-from-portfolio
+```
+
+### Agent C: Job Compatibility
+
+Agent C compares verified skills and experience against the job catalogue. It returns matched jobs, compatibility scores, matched skills, missing skills, and explanations.
+
+Endpoints:
+
+```text
+GET  /health
+POST /match-jobs
+```
+
+### Agent D: Fair Ranking
+
+Agent D is the public application boundary. It owns:
+
+- JWT authentication and authorization
+- User registration and login
+- Rate limiting
+- Pipeline integration with Agents A, B, and C
+- Fairness scoring and final ranking
+- The FairRank AI web interface
+
+The fairness step keeps the original compatibility score visible and applies an explainable multiplier based on evidence support. Strongly evidence-backed claims can be boosted; unsupported or contradicted overclaiming can be penalized.
+
+Public endpoints:
+
+```text
+GET  /demo
+GET  /health
+POST /auth/register
+POST /auth/login
+POST /api/full-pipeline
+POST /api/rank
+POST /api/orchestrate
+```
+
+## Run With Docker Compose
+
+From the repository root:
 
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
+docker compose ps
 ```
 
-First build is slow (Agent A pulls a spaCy model + a local HF model; Agent C
-pulls a sentence-transformers model on first request) — this needs internet
-access and a few GB of disk. Subsequent builds are cached and much faster.
-
-Check everything is up:
+Health checks:
 
 ```bash
-docker-compose ps
-curl http://localhost:8000/health   # Agent A
-curl http://localhost:8001/health   # Agent B
-curl http://localhost:8002/health   # Agent C
-curl http://localhost:8003/health   # Agent D
+curl http://localhost:8000/health
+curl http://localhost:8001/health
+curl http://localhost:8002/health
+curl http://localhost:8003/health
 ```
 
-Then open the UI: **http://localhost:8003/demo**
+Open the application at `http://localhost:8003/demo`.
 
-Register a user, log in, fill in a candidate's claimed skills and portfolio
-projects, and click "Evaluate candidate" — this calls Agent D's
-`POST /api/full-pipeline`, which calls A → B → C in sequence and returns the
-fairness-adjusted ranking.
+Sign in, enter a candidate profile, and select **Evaluate candidate**. Agent D then runs the complete A -> B -> C -> D flow through one authenticated request.
 
-### Running agents individually (no Docker)
+## Authentication Contract
 
-Each agent folder has its own README with its own `pip install` / `uvicorn`
-instructions, for working on one agent in isolation. See:
-`agents/portfolio_evidence_agent/README` section below, and the READMEs
-inside `agents/skill_verification_agent/` and `agents/fair-ranking-agent/`.
+Registration accepts JSON:
+
+```bash
+curl -X POST http://localhost:8003/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"alice","password":"password123"}'
+```
+
+Login uses OAuth2 password form encoding, not JSON:
+
+```bash
+curl -X POST http://localhost:8003/auth/login \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "username=alice" \
+  --data-urlencode "password=password123"
+```
+
+The response contains a bearer token valid for the configured token lifetime:
+
+```json
+{
+  "access_token": "...",
+  "token_type": "bearer",
+  "expires_in_minutes": 60
+}
+```
+
+Use the token for protected endpoints:
+
+```bash
+curl -X POST http://localhost:8003/api/full-pipeline \
+  -H "Authorization: Bearer <access-token>" \
+  -H "Content-Type: application/json" \
+  -d @candidate.json
+```
+
+## Configuration
+
+Docker Compose supplies the internal service URLs to Agent D:
+
+| Variable | Compose value | Purpose |
+| --- | --- | --- |
+| `PORTFOLIO_EVIDENCE_URL` | `http://portfolio-evidence-agent:8000` | Agent A service |
+| `SKILL_VERIFICATION_URL` | `http://skill-verification-agent:8000` | Agent B service |
+| `JOB_COMPATIBILITY_URL` | `http://job-compatibility-agent:8000` | Agent C service |
+| `UPSTREAM_TIMEOUT_SECONDS` | `120` | Agent D upstream request timeout |
+| `JWT_SECRET_KEY` | development value | JWT signing secret; replace in production |
+
+When running services outside Docker, use the host port values from the agent table instead of the Compose service names.
 
 ## Testing
 
-Each agent has its own unit/API test suite (mocked, no Docker needed):
+Run each agent's local tests:
 
 ```bash
 cd agents/portfolio_evidence_agent && pytest -v
@@ -107,261 +179,20 @@ cd agents/job_compatibility_agent && pytest -v
 cd agents/fair-ranking-agent && pytest -v
 ```
 
-The **end-to-end test** exercises all four agents together over real HTTP —
-this is the "does the whole system actually work" check:
+With Docker Compose running, run the end-to-end tests:
 
 ```bash
-docker-compose up -d --build
-# wait for all services to report healthy (docker-compose ps)
 pytest tests/e2e -v
 ```
 
-If the services aren't running, `tests/e2e` skips (rather than fails) so the
-rest of the suite still runs cleanly without Docker.
-
-## Environment variables (Agent D)
-
-| Variable | Default | Purpose |
-|---|---|---|
-| `JWT_SECRET_KEY` | dev fallback (insecure) | Signs JWTs — set a real secret for any real deployment |
-| `ENCRYPTION_KEY` | auto-generated | Fernet key for the encrypted user store |
-| `PORTFOLIO_EVIDENCE_URL` | `http://localhost:8000` | Agent A's service |
-| `SKILL_VERIFICATION_URL` | `http://localhost:8001` | Agent B's service |
-| `JOB_COMPATIBILITY_URL` | `http://localhost:8002` | Agent C's service |
-
-`docker-compose.yml` sets the three URL variables to the container network
-hostnames automatically — you only need to set these by hand when running
-agents individually outside Docker.
-
----
-
-# Portfolio Evidence Agent
-
-## Overview
-
-The Portfolio Evidence Agent extracts structured skill evidence from freelancer portfolio materials.
-
-It combines:
-
-- Rule-based NLP skill extraction using spaCy PhraseMatcher
-- Local LLM-based contextual skill interpretation using Hugging Face models
-- Evidence reconciliation for confidence scoring
-- FastAPI REST interface for system integration
-
----
-
-## Features
-
-### 1. NLP Skill Extraction
-
-The agent identifies explicitly mentioned skills from:
-
-- Portfolio projects
-- Certificates
-- Code samples
-- Work descriptions
-
-Example:
-
-Input: Built a backend application using Django and PostgreSQL.
-Output: Django
-        PostgreSQL
-
-
----
-
-### 2. LLM Contextual Interpretation
-
-The local LLM identifies strongly implied skills.
-
-Example:
-
-Input: Built server-side APIs with Django.
-Possible inferred skills: Django
-                          REST API
-                          Python
-
-
-The system validates LLM evidence before accepting it.
-
----
-
-### 3. Evidence Reconciliation
-
-The reconciler combines NLP and LLM results.
-
-Example:
-NLP:
-Django
-
-LLM:
-Django
-
-Result:
-Django
-method: both
-confidence: 0.98
-
-
----
-
-# Installation
-
-## Create virtual environment
-
-```bash
-python -m venv venv
-
-Activate:
-
-Windows: 
-venv\Scripts\activate
-
-Install dependencies
-pip install -r requirements.txt
-
-Running Tests
-
-Run:
-
-pytest
-
-Expected:
-
-13 passed
-
-Running the API
-
-Start FastAPI:
-
-uvicorn api.main:app --reload --port 8001
-
-Server:
-
-http://127.0.0.1:8001
-
-Swagger documentation:
-
-http://127.0.0.1:8001/docs
-
-API Endpoints
-Health Check
-GET
-/health
-
-Response:
-
-{
-  "status": "ok",
-  "agent": "portfolio_evidence_agent",
-  "version": "1.0.0"
-}
-Extract Evidence
-POST
-/extract-evidence
-
-Example request:
-
-{
-  "freelancer_id": "fl_001",
-  "portfolio_projects": [
-    {
-      "project_id": "proj_001",
-      "title": "Booking Platform",
-      "description": "Built server-side APIs with Django."
-    }
-  ],
-  "certificates": [],
-  "code_samples": [],
-  "work_descriptions": []
-}
-Example Response
-{
-  "freelancer_id": "fl_001",
-  "agent": "portfolio_evidence_agent",
-  "agent_version": "1.0.0",
-  "evidence_items": [
-    {
-      "skill": "Django",
-      "skill_category": "web_framework",
-      "extraction_method": "both",
-      "confidence": 0.98
-    }
-  ]
-}
-Project Structure
-portfolio_evidence_agent/
-
-├── agent/
-│   ├── nlp_extractor.py
-│   ├── llm_interpreter.py
-│   ├── reconciler.py
-│   └── portfolio_evidence_agent.py
-│
-├── api/
-│   └── main.py
-│
-├── tests/
-│   ├── test_agent.py
-│   └── test_api.py
-│
-├── data/
-│   └── skill_taxonomy.json
-│
-└── requirements.txt
-Notes
-The LLM layer uses a local Hugging Face model.
-No external API key is required.
-LLM outputs are validated against original portfolio evidence.
-If the LLM is unavailable, NLP extraction continues working.
-
-```
-
-# Skill Verification Agent
-
-## Overview
-
-The Skill Verification Agent verifies freelancer skills against portfolio evidence provided by the Portfolio Evidence Agent.
-
-It determines whether a claimed skill is:
-
-- Exact match
-- Implied match
-- Weak/related match
-- Unsupported
-- Contradicted
-
-## Features
-
-### 1. Skill Verification
-
-Compares claimed freelancer skills with available portfolio evidence.
-
-### 2. Evidence Matching
-
-Supports exact and contextual/implied skill matching.
-
-Example:
-
-Portfolio evidence:
-"Built server-side APIs using Django."
-
-Claimed skills:
-- Django
-- Python
-- REST API
-
-The agent can identify Django as directly supported and Python/REST API as implied where the evidence supports those relationships.
-
-### 3. Portfolio Evidence Adapter
-
-The adapter converts the Portfolio Evidence Agent's output into the format required by the Skill Verification Agent.
+## Repository Layout
 
 ```text
-Portfolio Evidence Agent
-        ↓
-Portfolio Evidence Adapter
-        ↓
-Skill Verification Agent
-        ↓
-Verification Results
+agents/
+  portfolio_evidence_agent/   Agent A
+  skill_verification_agent/   Agent B
+  job_compatibility_agent/    Agent C
+  fair-ranking-agent/         Agent D and public UI
+docker-compose.yml             Service wiring
+tests/                         End-to-end tests
+```
