@@ -27,7 +27,7 @@ PORTFOLIO_EVIDENCE_URL = os.environ.get("PORTFOLIO_EVIDENCE_URL", "http://localh
 SKILL_VERIFICATION_URL = os.environ.get("SKILL_VERIFICATION_URL", "http://localhost:8001")
 JOB_COMPATIBILITY_URL = os.environ.get("JOB_COMPATIBILITY_URL", "http://localhost:8002")
 
-TIMEOUT_SECONDS = float(os.getenv("UPSTREAM_TIMEOUT_SECONDS", "120"))
+TIMEOUT_SECONDS = 30.0  # portfolio evidence extraction (NLP/LLM) can be slower than a plain lookup
 
 
 class UpstreamServiceError(Exception):

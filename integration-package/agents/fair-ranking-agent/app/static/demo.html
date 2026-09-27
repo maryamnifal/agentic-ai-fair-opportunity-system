@@ -1,0 +1,3034 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fair Opportunity System — Candidate Evaluation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    :root {
+      --ink: #172033;
+      --ink-soft: #667085;
+      --paper: #f7f9fc;
+      --panel: #ffffff;
+      --line: #e4e7ec;
+
+      --accent: #4f46e5;
+      --accent-dark: #4338ca;
+      --accent-soft: #eef2ff;
+
+      --boost: #15803d;
+      --boost-bg: #ecfdf3;
+
+      --penalty: #dc2626;
+      --penalty-bg: #fef2f2;
+
+      --neutral: #667085;
+      --neutral-bg: #f2f4f7;
+
+      --shadow: 0 8px 30px rgba(16, 24, 40, 0.06);
+      --shadow-hover: 0 12px 35px rgba(16, 24, 40, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(
+          circle at 0% 0%,
+          rgba(99, 102, 241, 0.08),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 100% 0%,
+          rgba(79, 70, 229, 0.05),
+          transparent 25%
+        ),
+        var(--paper);
+
+      color: var(--ink);
+      font-family: "IBM Plex Sans", sans-serif;
+      line-height: 1.5;
+    }
+
+    button,
+    input,
+    textarea {
+      font-family: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 30px 0 70px;
+    }
+
+    /* =========================
+       HEADER
+       ========================= */
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 34px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.22);
+    }
+
+    .brand-text {
+      line-height: 1.1;
+    }
+
+    .brand-name {
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-sub {
+      color: var(--ink-soft);
+      font-size: 0.68rem;
+      margin-top: 3px;
+    }
+
+    .system-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid #dde3ff;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.02em;
+    }
+
+    .system-dot {
+      width: 6px;
+      height: 6px;
+      background: #22c55e;
+      border-radius: 50%;
+    }
+
+    .hero {
+      margin-bottom: 28px;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 13px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 600;
+      box-shadow: 0 2px 7px rgba(16, 24, 40, 0.03);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 2.85rem);
+      line-height: 1.08;
+      letter-spacing: -0.045em;
+      font-weight: 700;
+      max-width: 780px;
+    }
+
+    .hero p {
+      max-width: 720px;
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+      margin: 12px 0 0;
+    }
+
+    /* =========================
+       LAYOUT
+       ========================= */
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .main-column {
+      min-width: 0;
+    }
+
+    .side-column {
+      min-width: 0;
+    }
+
+    /* =========================
+       CARDS
+       ========================= */
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.97);
+      padding: 23px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .card-title-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+    }
+
+    .section-number {
+      width: 29px;
+      height: 29px;
+      flex: 0 0 29px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      font-weight: 500;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 0.98rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .card-description {
+      margin: 3px 0 0;
+      color: var(--ink-soft);
+      font-size: 0.74rem;
+    }
+
+    /* =========================
+       AUTH
+       ========================= */
+
+    .auth-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-card::after {
+      content: "";
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      right: -70px;
+      top: -70px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      pointer-events: none;
+    }
+
+    .auth-actions {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .auth-status {
+      min-height: 20px;
+      margin-top: 10px;
+      font-size: 0.75rem;
+    }
+
+    /* =========================
+       FORM
+       ========================= */
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #475467;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .label-hint {
+      color: #98a2b3;
+      font-weight: 400;
+      margin-left: 4px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    textarea {
+      width: 100%;
+      border: 1px solid #d0d5dd;
+      border-radius: 9px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 12px;
+      font-size: 0.86rem;
+      outline: none;
+      transition: 0.18s ease;
+    }
+
+    input[type="text"]:hover,
+    input[type="password"]:hover,
+    textarea:hover {
+      border-color: #b8c0cc;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    /* =========================
+       SKILLS
+       ========================= */
+
+    .chip-input {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 7px;
+      min-height: 47px;
+      padding: 7px;
+      border: 1px solid #d0d5dd;
+      border-radius: 9px;
+      background: #fff;
+      transition: 0.18s ease;
+    }
+
+    .chip-input:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--accent-soft);
+      color: #4338ca;
+      border: 1px solid #dde3ff;
+      font-size: 0.74rem;
+      font-weight: 500;
+      padding: 5px 8px 5px 10px;
+      border-radius: 999px;
+    }
+
+    .chip button {
+      border: none;
+      background: none;
+      color: #6366f1;
+      padding: 0;
+      margin: 0;
+      font-size: 0.85rem;
+      line-height: 1;
+      transform: none;
+    }
+
+    .chip button:hover {
+      background: none;
+      color: var(--penalty);
+      transform: none;
+    }
+
+    .skills-input {
+      border: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+      flex: 1;
+      min-width: 130px;
+      padding: 6px !important;
+    }
+
+    /* =========================
+       PROJECTS
+       ========================= */
+
+    .project-list {
+      margin-bottom: 12px;
+    }
+
+    .project-block {
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 16px;
+      margin-bottom: 11px;
+      background: #fafbfc;
+      position: relative;
+    }
+
+    .project-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .project-block .remove-btn {
+      position: absolute;
+      top: 11px;
+      right: 11px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: #667085;
+      padding: 5px 9px;
+      font-size: 0.69rem;
+    }
+
+    .project-block .remove-btn:hover {
+      color: var(--penalty);
+      border-color: #fecaca;
+      background: #fffafa;
+      transform: none;
+    }
+
+    .project-block .p-id {
+      display: none;
+    }
+
+    .project-block .p-title {
+      margin-bottom: 12px;
+      padding-right: 70px;
+    }
+
+    .project-block .p-desc {
+      min-height: 82px;
+    }
+
+    .add-btn {
+      width: 100%;
+      border: 1px dashed #c7ced9;
+      border-radius: 9px;
+      background: #fff;
+      color: #667085;
+      padding: 10px;
+      font-size: 0.8rem;
+    }
+
+    .add-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      transform: none;
+    }
+
+    /* =========================
+       BUTTONS
+       ========================= */
+
+    button {
+      border: none;
+      border-radius: 9px;
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 17px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: 0.18s ease;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button.secondary {
+      background: #fff;
+      color: #344054;
+      border: 1px solid #d0d5dd;
+    }
+
+    button.secondary:hover {
+      background: #fff;
+      color: var(--accent);
+      border-color: #a5b4fc;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .evaluate-area {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    #run-btn {
+      min-width: 185px;
+      padding: 12px 22px;
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.2);
+    }
+
+    #run-btn:disabled {
+      background: #98a2b3;
+      box-shadow: none;
+    }
+
+    .run-status {
+      flex: 1;
+      font-size: 0.75rem;
+      color: var(--ink-soft);
+    }
+
+    /* =========================
+       SIDEBAR
+       ========================= */
+
+    .side-column .card {
+      position: sticky;
+      top: 20px;
+    }
+
+    .process-intro {
+      color: var(--ink-soft);
+      font-size: 0.78rem;
+      margin: -5px 0 20px;
+    }
+
+    .mini-process {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .mini-process-item {
+      display: flex;
+      gap: 11px;
+      position: relative;
+      padding-bottom: 19px;
+    }
+
+    .mini-process-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .mini-process-item:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 29px;
+      bottom: 0;
+      width: 1px;
+      background: #e4e7ec;
+    }
+
+    .mini-icon {
+      width: 29px;
+      height: 29px;
+      flex: 0 0 29px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #f2f4f7;
+      color: #667085;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.67rem;
+      z-index: 1;
+    }
+
+    .mini-process-item:first-child .mini-icon {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .mini-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 1px 0 2px;
+    }
+
+    .mini-desc {
+      font-size: 0.7rem;
+      color: var(--ink-soft);
+      line-height: 1.45;
+    }
+
+    .side-note {
+      margin-top: 20px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fafbfc;
+      color: var(--ink-soft);
+      font-size: 0.7rem;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       PIPELINE
+       ========================= */
+
+    .pipeline-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 11px;
+    }
+
+    .pipeline-step {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 14px;
+      background: #fafbfc;
+      color: #667085;
+      position: relative;
+      transition: 0.2s ease;
+    }
+
+    .pipeline-step::before {
+      content: "";
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #d0d5dd;
+      margin-bottom: 11px;
+    }
+
+    .pipeline-step .step-label {
+      display: block;
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .pipeline-step .step-description {
+      font-size: 0.67rem;
+      color: #98a2b3;
+    }
+
+    .pipeline-step.active {
+      border-color: #a5b4fc;
+      background: var(--accent-soft);
+    }
+
+    .pipeline-step.active::before {
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    }
+
+    .pipeline-step.active .step-label {
+      color: var(--accent);
+    }
+
+    .pipeline-step.done {
+      border-color: #86efac;
+      background: #f0fdf4;
+    }
+
+    .pipeline-step.done::before {
+      background: var(--boost);
+    }
+
+    .pipeline-step.done .step-label {
+      color: var(--boost);
+    }
+
+    .pipeline-step.failed {
+      border-color: #fca5a5;
+      background: var(--penalty-bg);
+    }
+
+    .pipeline-step.failed::before {
+      background: var(--penalty);
+    }
+
+    /* =========================
+       RESULTS
+       ========================= */
+
+    .results-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    .results-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .results-subtitle {
+      color: var(--ink-soft);
+      font-size: 0.74rem;
+      margin-top: 3px;
+    }
+
+    .fairness-box {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      border: 1px solid #dde3ff;
+      border-radius: 12px;
+      padding: 11px;
+      margin-bottom: 17px;
+      background: var(--accent-soft);
+    }
+
+    .fairness-box span {
+      display: block;
+      padding: 9px 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.78);
+      color: #667085;
+      font-size: 0.68rem;
+    }
+
+    .fairness-box b {
+      display: block;
+      color: var(--ink);
+      font-size: 0.98rem;
+      margin-bottom: 1px;
+    }
+
+    .fairness-summary {
+      padding: 12px 14px;
+      border: 1px solid #d1fadf;
+      background: var(--boost-bg);
+      color: #166534;
+      border-radius: 9px;
+      font-size: 0.76rem;
+      margin-bottom: 17px;
+    }
+
+    /* =========================
+       JOB CARDS
+       ========================= */
+
+    .job-card {
+      border: 1px solid var(--line);
+      border-left: 4px solid #98a2b3;
+      border-radius: 11px;
+      background: #fff;
+      padding: 16px 17px;
+      margin-bottom: 10px;
+      box-shadow: 0 3px 12px rgba(16, 24, 40, 0.035);
+      transition: 0.18s ease;
+    }
+
+    .job-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 7px 20px rgba(16, 24, 40, 0.07);
+    }
+
+    .job-card.boost {
+      border-left-color: var(--boost);
+    }
+
+    .job-card.penalty {
+      border-left-color: var(--penalty);
+    }
+
+    .job-card.neutral {
+      border-left-color: #98a2b3;
+    }
+
+    .job-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .job-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .rank-badge {
+      flex-shrink: 0;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      color: #667085;
+      background: #f2f4f7;
+      border-radius: 999px;
+      padding: 5px 9px;
+    }
+
+    .rank-badge b {
+      color: var(--ink);
+    }
+
+    .score-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      font-size: 0.7rem;
+      color: #667085;
+      margin-bottom: 9px;
+    }
+
+    .score-row span {
+      background: #f8fafc;
+      border: 1px solid #eaecf0;
+      padding: 5px 8px;
+      border-radius: 6px;
+    }
+
+    .score-row .fair {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .note {
+      font-size: 0.74rem;
+      color: #667085;
+    }
+
+    .note.boost {
+      color: var(--boost);
+    }
+
+    .note.penalty {
+      color: var(--penalty);
+    }
+
+    .note.neutral {
+      color: var(--neutral);
+    }
+
+    /* =========================
+       EMPTY / DISABLED
+       ========================= */
+
+    .empty {
+      color: #667085;
+      font-size: 0.8rem;
+      border: 1px dashed #d0d5dd;
+      border-radius: 10px;
+      padding: 28px 20px;
+      text-align: center;
+      background: #fafbfc;
+    }
+
+    .disabled-overlay {
+      position: relative;
+    }
+
+    .disabled-overlay::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(247, 249, 252, 0.62);
+      border-radius: inherit;
+      pointer-events: all;
+    }
+
+    /* =========================
+       STATUS
+       ========================= */
+
+    .status-line {
+      font-size: 0.75rem;
+      margin-top: 9px;
+    }
+
+    .status-line.ok {
+      color: var(--boost);
+    }
+
+    .status-line.err {
+      color: var(--penalty);
+    }
+
+    /* =========================
+       FOOTER
+       ========================= */
+
+    .footer {
+      text-align: center;
+      color: #98a2b3;
+      font-size: 0.68rem;
+      padding-top: 10px;
+    }
+
+    /* =========================
+       RESPONSIVE
+       ========================= */
+
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .side-column .card {
+        position: static;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .wrap {
+        width: min(100% - 28px, 680px);
+        padding-top: 20px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .system-badge {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      .pipeline-steps {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .fairness-box {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .evaluate-area {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      #run-btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .pipeline-steps {
+        grid-template-columns: 1fr;
+      }
+
+      .fairness-box {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .job-top {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .auth-actions {
+        flex-direction: column;
+      }
+
+      .auth-actions button {
+        width: 100%;
+      }
+    }
+  /* FairRank AI dashboard shell */
+  :root {
+    --ink: #17212f;
+    --ink-soft: #667085;
+    --paper: #f4f7fb;
+    --panel: #ffffff;
+    --line: #e5eaf1;
+    --accent: #315efb;
+    --accent-dark: #2348c7;
+    --accent-soft: #edf3ff;
+    --navy: #17233d;
+    --boost: #087443;
+    --boost-bg: #e9f8f0;
+    --penalty: #c2412d;
+    --penalty-bg: #fff1ed;
+    --neutral: #667085;
+    --neutral-bg: #f3f5f8;
+    --shadow: 0 10px 30px rgba(31, 49, 82, 0.06);
+    --shadow-hover: 0 16px 36px rgba(31, 49, 82, 0.1);
+  }
+
+  body { background: var(--paper); color: var(--ink); }
+
+  .wrap {
+    width: min(1440px, calc(100% - 48px));
+    max-width: none;
+    display: grid;
+    grid-template-columns: 232px minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr auto;
+    column-gap: 34px;
+    margin: 0 auto;
+    padding: 24px 0 46px;
+  }
+
+  .app-sidebar {
+    grid-column: 1;
+    grid-row: 1 / span 4;
+    min-height: calc(100vh - 70px);
+    padding: 18px 14px;
+    border: 1px solid #dfe6f0;
+    border-radius: 18px;
+    background: var(--navy);
+    color: #d7e0f3;
+    box-shadow: 0 12px 34px rgba(23, 35, 61, 0.12);
+  }
+
+  .sidebar-label {
+    padding: 0 12px;
+    color: #8795b5;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .sidebar-nav { display: grid; gap: 5px; margin-top: 14px; }
+
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: #aebbd3;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .sidebar-link svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .sidebar-link:hover, .sidebar-link.active { border-color: rgba(151, 177, 255, 0.22); background: rgba(79, 117, 231, 0.2); color: #fff; }
+  .sidebar-link.active { box-shadow: inset 3px 0 0 #79a0ff; }
+
+  .sidebar-foot { margin-top: 30px; padding: 18px 12px 4px; color: #8795b5; font-size: 0.68rem; line-height: 1.55; }
+  .sidebar-foot strong { display: block; margin-bottom: 5px; color: #d7e0f3; font-size: 0.72rem; }
+
+  .topbar, .hero, .main-grid, .footer { grid-column: 2; }
+  .topbar { min-height: 58px; margin-bottom: 30px; padding: 0 4px; }
+  .brand { gap: 12px; }
+  .brand-mark { width: 40px; height: 40px; border-radius: 12px; background: var(--accent); box-shadow: 0 8px 18px rgba(49, 94, 251, 0.22); }
+  .brand-name { color: var(--navy); font-size: 1rem; }
+  .brand-sub { color: #8090a8; font-size: 0.68rem; }
+  .system-badge { border-color: #dbe5f5; background: #fff; color: #51627c; box-shadow: 0 4px 12px rgba(31, 49, 82, 0.04); }
+
+  .account-pill { display: inline-flex; align-items: center; gap: 9px; margin-left: 8px; padding: 6px 11px 6px 6px; border: 1px solid #dfe6f0; border-radius: 999px; background: #fff; color: #475467; font-size: 0.72rem; font-weight: 600; }
+  .account-avatar { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 50%; background: #dce7ff; color: var(--accent-dark); font-size: 0.68rem; }
+
+  .hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; margin-bottom: 24px; padding: 10px 4px 0; }
+  .hero-copy { max-width: 720px; }
+  .hero-kicker { margin-bottom: 10px; border: 0; background: transparent; box-shadow: none; color: var(--accent); font-family: "IBM Plex Mono", monospace; font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .hero h1 { color: var(--navy); font-size: clamp(2rem, 3vw, 2.8rem); letter-spacing: -0.05em; }
+  .hero p { max-width: 650px; margin-top: 10px; color: #718096; font-size: 0.88rem; }
+  .hero-status { display: flex; align-items: center; gap: 9px; flex: 0 0 auto; padding: 11px 13px; border: 1px solid #dbe5f5; border-radius: 11px; background: #fff; color: #64748b; font-size: 0.7rem; font-weight: 600; }
+  .hero-status::before { width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; content: ""; }
+
+  .main-grid { grid-template-columns: minmax(0, 1fr) 286px; gap: 20px; align-items: start; }
+  .card { margin-bottom: 16px; padding: 22px; border: 1px solid #e1e7f0; border-radius: 14px; background: rgba(255, 255, 255, 0.98); box-shadow: var(--shadow); }
+  .card:hover { box-shadow: var(--shadow-hover); }
+  .card-header { margin-bottom: 18px; }
+  .section-number { border-radius: 9px; background: var(--accent-soft); color: var(--accent); font-size: 0.66rem; font-weight: 600; }
+  .card h2 { color: var(--navy); font-size: 0.95rem; }
+  .card-description { color: #8491a5; font-size: 0.71rem; }
+  .auth-card { border-top: 3px solid var(--accent); }
+  .auth-card::after { display: none; }
+  .form-grid { gap: 14px; }
+  label { color: #53627a; font-size: 0.69rem; letter-spacing: 0.01em; text-transform: uppercase; }
+  input[type="text"], input[type="password"], textarea { border-color: #dbe3ee; border-radius: 8px; padding: 10px 11px; background: #fbfcfe; font-size: 0.82rem; }
+  input[type="text"]:focus, input[type="password"]:focus, textarea:focus, .chip-input:focus-within { border-color: #7c9cff; box-shadow: 0 0 0 3px rgba(49, 94, 251, 0.1); }
+  .chip-input { min-height: 46px; border-color: #dbe3ee; border-radius: 8px; background: #fbfcfe; }
+  .chip { border-color: #d5e1ff; border-radius: 7px; background: var(--accent-soft); color: #3153b8; font-size: 0.7rem; }
+  .project-block { border-color: #e1e7f0; border-radius: 11px; background: #fbfcfe; padding: 16px; }
+  .project-block .remove-btn { border-color: #e1e7f0; border-radius: 7px; color: #8995a8; }
+  .add-btn { border-color: #b9c9e8; border-radius: 8px; background: #f7faff; color: var(--accent); font-weight: 600; }
+  button { border-radius: 8px; background: var(--accent); font-size: 0.76rem; }
+  button.secondary { border-color: #dbe3ee; color: #53627a; }
+  .evaluate-area { margin-top: 12px; padding-top: 17px; border-top-color: #e8edf4; }
+  #run-btn { min-width: 205px; padding: 12px 20px; background: var(--navy); box-shadow: 0 8px 18px rgba(23, 35, 61, 0.16); }
+  #run-btn:hover { background: #25385f; }
+  .run-status { color: #8190a5; }
+  .side-column .card { top: 20px; }
+  .side-note { border-color: #d8e5fb; background: #f5f8ff; color: #63728a; }
+  .mini-process-item:not(:last-child)::after { background: #dbe3ee; }
+
+  .pipeline-steps { gap: 9px; }
+  .pipeline-step { min-height: 112px; border-color: #e1e7f0; border-radius: 10px; background: #fbfcfe; }
+  .pipeline-step.active { border-color: #8eacff; background: #f2f6ff; box-shadow: inset 0 3px 0 var(--accent); }
+  .pipeline-step.done { border-color: #9ad7b7; background: #f2fbf6; }
+  .pipeline-step.failed { border-color: #efb0a3; background: var(--penalty-bg); }
+  .fairness-box { gap: 7px; border-color: #d8e5fb; border-radius: 11px; background: #f3f7ff; }
+  .fairness-box span { border: 1px solid rgba(217, 227, 245, 0.8); background: #fff; }
+  .fairness-box span:last-child { border-color: #b9c9e8; background: #e8f0ff; }
+  .fairness-summary { border-color: #bce4ce; border-radius: 9px; background: var(--boost-bg); }
+  .job-card { border-color: #e1e7f0; border-left-width: 3px; border-radius: 10px; box-shadow: none; }
+  .job-card:hover { border-color: #c5d3eb; box-shadow: 0 8px 20px rgba(31, 49, 82, 0.07); }
+  .job-title { color: var(--navy); }
+  .rank-badge { border: 1px solid #e1e7f0; background: #f7f9fc; }
+  .score-row span { border-color: #e4eaf2; background: #f8fafc; }
+  .footer { padding-top: 22px; color: #9aa7b8; font-size: 0.65rem; }
+
+  @media (max-width: 1080px) {
+    .wrap { column-gap: 22px; }
+    .main-grid { grid-template-columns: minmax(0, 1fr) 250px; }
+    .pipeline-steps { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 900px) {
+    .wrap { display: block; width: min(100% - 32px, 720px); padding-top: 16px; }
+    .app-sidebar { min-height: auto; margin-bottom: 18px; padding: 10px; }
+    .sidebar-label, .sidebar-foot { display: none; }
+    .sidebar-nav { display: flex; gap: 5px; margin-top: 0; overflow-x: auto; }
+    .sidebar-link { flex: 1 0 auto; justify-content: center; min-height: 40px; padding: 0 10px; font-size: 0.7rem; }
+    .main-grid { grid-template-columns: 1fr; }
+    .side-column .card { position: static; }
+  }
+
+  @media (max-width: 560px) {
+    .topbar { align-items: flex-start; margin-bottom: 18px; }
+    .system-badge { display: none; }
+    .account-pill { margin-left: 0; }
+    .hero { display: block; padding-top: 0; }
+    .hero-status { display: inline-flex; margin-top: 13px; }
+    .card { padding: 17px; }
+    .pipeline-steps, .fairness-box { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 400px) {
+    .sidebar-link { font-size: 0; }
+    .sidebar-link svg { width: 18px; height: 18px; }
+    .pipeline-steps, .fairness-box { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+
+<body>
+
+  <div class="wrap">
+
+    <aside class="app-sidebar" aria-label="Primary navigation">
+      <div class="sidebar-label">Workspace</div>
+      <nav class="sidebar-nav">
+        <a class="sidebar-link" href="#dashboard">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span>Dashboard</span>
+        </a>
+        <a class="sidebar-link active" href="#input-card">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+          <span>Candidate Evaluation</span>
+        </a>
+        <a class="sidebar-link" href="#progress-card">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18V9M12 18V5M19 18v-7"/><path d="M3 18h18"/></svg>
+          <span>AI Pipeline</span>
+        </a>
+        <a class="sidebar-link" href="#results">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16"/><path d="m7 15 3-4 3 2 5-6"/></svg>
+          <span>Ranking Results</span>
+        </a>
+        <a class="sidebar-link" href="#about-system">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
+          <span>About System</span>
+        </a>
+      </nav>
+      <div class="sidebar-foot">
+        <strong>FairRank AI</strong>
+        Evidence-led candidate evaluation for more consistent opportunity decisions.
+      </div>
+    </aside>
+
+    <!-- =========================
+         TOP BAR
+         ========================= -->
+
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">FR</div>
+
+        <div class="brand-text">
+          <div class="brand-name">FairRank AI</div>
+          <div class="brand-sub">Fair Opportunity Evaluation</div>
+        </div>
+      </div>
+
+      <div>
+        <span class="system-badge">
+          <span class="system-dot"></span>
+          System online
+        </span>
+        <span class="account-pill"><span class="account-avatar">DU</span>Demo workspace</span>
+      </div>
+    </div>
+
+    <!-- =========================
+         HERO
+         ========================= -->
+
+    <section class="hero" id="dashboard">
+      <div class="hero-copy">
+        <div class="hero-kicker">
+          <span>✦</span>
+          AI-powered decision workspace
+        </div>
+
+        <h1>Fair Opportunity Evaluation</h1>
+
+        <p>
+          Turn portfolio evidence into transparent skill verification,
+          role matching, and fair ranking in one focused workspace.
+        </p>
+      </div>
+      <div class="hero-status">Authentication required</div>
+    </section>
+
+
+    <!-- =========================
+         MAIN GRID
+         ========================= -->
+
+    <div class="main-grid">
+
+      <div class="main-column">
+
+        <!-- =========================
+             AUTHENTICATION
+             ========================= -->
+
+        <section class="card auth-card" id="auth-card">
+
+          <div class="card-header">
+
+            <div class="card-title-wrap">
+              <div class="section-number">01</div>
+
+              <div>
+                <h2>Authentication</h2>
+                <p class="card-description">
+                  Sign in to run the candidate evaluation pipeline.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="field">
+              <label for="username">Username</label>
+
+              <input
+                id="username"
+                type="text"
+                value="demo_user"
+                autocomplete="username"
+              >
+            </div>
+
+
+            <div class="field">
+              <label for="password">Password</label>
+
+              <input
+                id="password"
+                type="password"
+                value="demo_password123"
+                autocomplete="current-password"
+              >
+            </div>
+
+          </div>
+
+
+          <div class="auth-actions">
+
+            <button
+              id="register-btn"
+              type="button"
+              class="secondary"
+            >
+              Create account
+            </button>
+
+            <button
+              id="login-btn"
+              type="button"
+            >
+              Log in
+            </button>
+
+          </div>
+
+
+          <div
+            id="auth-status"
+            class="auth-status"
+          ></div>
+
+        </section>
+
+
+        <!-- =========================
+             CANDIDATE DETAILS
+             ========================= -->
+
+        <section
+          class="card disabled-overlay"
+          id="input-card"
+        >
+
+          <div class="card-header">
+
+            <div class="card-title-wrap">
+
+              <div class="section-number">02</div>
+
+              <div>
+                <h2>Candidate details</h2>
+
+                <p class="card-description">
+                  Add the candidate profile and claimed skills.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <div class="field">
+
+              <label for="candidate-id">
+                Candidate ID
+              </label>
+
+              <input
+                id="candidate-id"
+                type="text"
+                value="F001"
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="experience-years">
+                Experience
+                <span class="label-hint">years</span>
+              </label>
+
+              <input
+                id="experience-years"
+                type="text"
+                value="1.5"
+              >
+
+            </div>
+
+
+            <div class="field full">
+
+              <label>
+                Claimed skills
+                <span class="label-hint">
+                  Press Enter or comma to add
+                </span>
+              </label>
+
+
+              <div
+                id="skills-input"
+                class="chip-input"
+              >
+
+                <span class="chip">
+                  Python
+                  <button
+                    type="button"
+                    aria-label="Remove Python"
+                  >
+                    ×
+                  </button>
+                </span>
+
+                <span class="chip">
+                  Django
+                  <button
+                    type="button"
+                    aria-label="Remove Django"
+                  >
+                    ×
+                  </button>
+                </span>
+
+                <span class="chip">
+                  REST API
+                  <button
+                    type="button"
+                    aria-label="Remove REST API"
+                  >
+                    ×
+                  </button>
+                </span>
+
+
+                <input
+                  id="skills-chip-input"
+                  class="skills-input"
+                  type="text"
+                  placeholder="Add a skill..."
+                  autocomplete="off"
+                >
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =========================
+             PORTFOLIO
+             ========================= -->
+
+        <section
+          class="card disabled-overlay"
+          id="portfolio-card"
+        >
+
+          <div class="card-header">
+
+            <div class="card-title-wrap">
+
+              <div class="section-number">03</div>
+
+              <div>
+                <h2>Portfolio evidence</h2>
+
+                <p class="card-description">
+                  Projects are used to verify the candidate's claimed skills.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div id="project-list">
+
+            <div class="project-block">
+
+              <div class="p-id">
+                P1
+              </div>
+
+              <button
+                type="button"
+                class="remove-btn"
+              >
+                Remove
+              </button>
+
+
+              <div class="field">
+
+                <label>
+                  Project title
+                </label>
+
+                <input
+                  class="p-title"
+                  type="text"
+                  value="Online Booking System"
+                >
+
+              </div>
+
+
+              <div class="field">
+
+                <label>
+                  Project description
+                </label>
+
+                <textarea
+                  class="p-desc"
+                >Built a web-based booking platform using Django and REST APIs.</textarea>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <button
+            id="add-project"
+            type="button"
+            class="add-btn"
+          >
+            + Add another project
+          </button>
+
+        </section>
+
+
+        <!-- =========================
+             EVALUATE
+             ========================= -->
+
+        <section
+          class="card disabled-overlay"
+          id="evaluate-card"
+        >
+
+          <div class="card-header">
+
+            <div class="card-title-wrap">
+
+              <div class="section-number">04</div>
+
+              <div>
+                <h2>Run evaluation</h2>
+
+                <p class="card-description">
+                  Run the complete A → B → C → D evaluation pipeline.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="evaluate-area">
+
+            <div
+              id="run-status"
+              class="run-status"
+            >
+              Ready to evaluate.
+            </div>
+
+            <button
+              id="run-btn"
+              type="button"
+            >
+              Evaluate candidate
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- =========================
+             PIPELINE PROGRESS
+             ========================= -->
+
+        <section
+          class="card"
+          id="progress-card"
+          style="display:none;"
+        >
+
+          <div class="card-header">
+
+            <div class="card-title-wrap">
+
+              <div class="section-number">05</div>
+
+              <div>
+                <h2>Evaluation pipeline</h2>
+
+                <p class="card-description">
+                  Agents process the candidate sequentially.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="pipeline-steps">
+
+            <div
+              class="pipeline-step"
+              data-step="A"
+            >
+
+              <span class="step-label">
+                Evidence Agent
+              </span>
+
+              <span class="step-description">
+                Extract portfolio evidence
+              </span>
+
+            </div>
+
+
+            <div
+              class="pipeline-step"
+              data-step="B"
+            >
+
+              <span class="step-label">
+                Skill Verification
+              </span>
+
+              <span class="step-description">
+                Verify claimed skills
+              </span>
+
+            </div>
+
+
+            <div
+              class="pipeline-step"
+              data-step="C"
+            >
+
+              <span class="step-label">
+                Job Compatibility
+              </span>
+
+              <span class="step-description">
+                Match suitable roles
+              </span>
+
+            </div>
+
+
+            <div
+              class="pipeline-step"
+              data-step="D"
+            >
+
+              <span class="step-label">
+                Fair Ranking
+              </span>
+
+              <span class="step-description">
+                Apply fair ranking
+              </span>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =========================
+             RESULTS
+             ========================= -->
+
+        <section
+          class="card"
+          id="results"
+          style="display:none;"
+        >
+
+          <div class="results-header">
+
+            <div>
+              <h2 class="results-title">
+                Evaluation results
+              </h2>
+
+              <div class="results-subtitle">
+                Candidate evidence and fair job ranking
+              </div>
+            </div>
+
+          </div>
+
+
+          <div id="results-content"></div>
+
+        </section>
+
+      </div>
+
+
+      <!-- =========================
+           SIDEBAR
+           ========================= -->
+
+      <aside class="side-column">
+
+        <section class="card" id="about-system">
+
+          <div class="card-header">
+
+            <div class="card-title-wrap">
+
+              <div class="section-number">
+                AI
+              </div>
+
+              <div>
+                <h2>How it works</h2>
+
+                <p class="card-description">
+                  Four agents work together.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <p class="process-intro">
+            The system separates evidence extraction, verification,
+            compatibility, and ranking into individual agents.
+          </p>
+
+
+          <div class="mini-process">
+
+            <div class="mini-process-item">
+
+              <div class="mini-icon">
+                A
+              </div>
+
+              <div>
+
+                <div class="mini-title">
+                  Portfolio Evidence
+                </div>
+
+                <div class="mini-desc">
+                  Finds skills and supporting evidence from projects.
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="mini-process-item">
+
+              <div class="mini-icon">
+                B
+              </div>
+
+              <div>
+
+                <div class="mini-title">
+                  Skill Verification
+                </div>
+
+                <div class="mini-desc">
+                  Checks whether claimed skills are supported.
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="mini-process-item">
+
+              <div class="mini-icon">
+                C
+              </div>
+
+              <div>
+
+                <div class="mini-title">
+                  Job Compatibility
+                </div>
+
+                <div class="mini-desc">
+                  Compares the candidate against available roles.
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="mini-process-item">
+
+              <div class="mini-icon">
+                D
+              </div>
+
+              <div>
+
+                <div class="mini-title">
+                  Fair Ranking
+                </div>
+
+                <div class="mini-desc">
+                  Produces the final ranking using verified evidence.
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="side-note">
+            <strong>Fairness principle</strong><br>
+            Verified evidence can support a candidate's ranking, while
+            unsupported claims should not receive the same treatment.
+          </div>
+
+        </section>
+
+      </aside>
+
+    </div>
+
+
+    <div class="footer">
+      Fair Opportunity System · Multi-Agent Candidate Evaluation
+    </div>
+
+  </div>
+
+
+  <script>
+    let token = null;
+
+
+    /* =========================
+       STATUS HELPERS
+       ========================= */
+
+    function setAuthStatus(message, type = "") {
+      const el = document.getElementById("auth-status");
+
+      if (!el) return;
+
+      el.textContent = message || "";
+      el.className = "auth-status";
+
+      if (type === "ok") {
+        el.classList.add("status-line", "ok");
+      }
+
+      if (type === "err") {
+        el.classList.add("status-line", "err");
+      }
+    }
+
+
+    function setRunStatus(message, type = "") {
+      const el = document.getElementById("run-status");
+
+      if (!el) return;
+
+      el.textContent = message || "";
+      el.className = "run-status";
+
+      if (type === "ok") {
+        el.classList.add("status-line", "ok");
+      }
+
+      if (type === "err") {
+        el.classList.add("status-line", "err");
+      }
+    }
+
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+
+    /* =========================
+       AUTH
+       ========================= */
+
+    document
+      .getElementById("register-btn")
+      .addEventListener("click", async () => {
+
+        const username =
+          document.getElementById("username").value.trim();
+
+        const password =
+          document.getElementById("password").value;
+
+
+        if (!username || !password) {
+          setAuthStatus(
+            "Enter a username and password.",
+            "err"
+          );
+
+          return;
+        }
+
+
+        setAuthStatus("Creating account...");
+
+
+        try {
+
+          const response = await fetch("/auth/register", {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+              username,
+              password
+            })
+          });
+
+
+          const data = await response.json();
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              data.detail ||
+              "Registration failed."
+            );
+
+          }
+
+
+          setAuthStatus(
+            "Account created. You can now log in.",
+            "ok"
+          );
+
+        } catch (error) {
+
+          setAuthStatus(
+            error.message,
+            "err"
+          );
+
+        }
+
+      });
+
+
+    document
+      .getElementById("login-btn")
+      .addEventListener("click", async () => {
+
+        const username =
+          document.getElementById("username").value.trim();
+
+        const password =
+          document.getElementById("password").value;
+
+
+        if (!username || !password) {
+
+          setAuthStatus(
+            "Enter a username and password.",
+            "err"
+          );
+
+          return;
+        }
+
+
+        setAuthStatus("Signing in...");
+
+
+        try {
+
+          const response = await fetch("/auth/login", {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/x-www-form-urlencoded"
+            },
+
+            body: new URLSearchParams({
+              username,
+              password
+            })
+
+          });
+
+
+          const data = await response.json();
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              data.detail ||
+              "Login failed."
+            );
+
+          }
+
+
+          token = data.access_token;
+
+
+          setAuthStatus(
+            "Signed in. Token expires in 60 minutes.",
+            "ok"
+          );
+
+
+          document
+            .getElementById("input-card")
+            .classList.remove("disabled-overlay");
+
+
+          const portfolioCard =
+            document.getElementById("portfolio-card");
+
+          if (portfolioCard) {
+            portfolioCard.classList.remove(
+              "disabled-overlay"
+            );
+          }
+
+
+          const evaluateCard =
+            document.getElementById("evaluate-card");
+
+          if (evaluateCard) {
+            evaluateCard.classList.remove(
+              "disabled-overlay"
+            );
+          }
+
+
+        } catch (error) {
+
+          setAuthStatus(
+            error.message,
+            "err"
+          );
+
+        }
+
+      });
+
+
+    /* =========================
+       SKILLS
+       ========================= */
+
+    const skillsInput =
+      document.getElementById("skills-input");
+
+    const skillsChipInput =
+      document.getElementById("skills-chip-input");
+
+
+    function addSkill(skill) {
+
+      skill = skill.trim();
+
+      if (!skill) return;
+
+
+      const existing =
+        Array.from(
+          skillsInput.querySelectorAll(".chip")
+        )
+        .map(chip =>
+          chip.firstChild.textContent.trim().toLowerCase()
+        );
+
+
+      if (existing.includes(skill.toLowerCase())) {
+        return;
+      }
+
+
+      const chip =
+        document.createElement("span");
+
+      chip.className = "chip";
+
+
+      chip.appendChild(
+        document.createTextNode(skill)
+      );
+
+
+      const remove =
+        document.createElement("button");
+
+      remove.type = "button";
+      remove.textContent = "×";
+      remove.setAttribute(
+        "aria-label",
+        `Remove ${skill}`
+      );
+
+
+      remove.addEventListener(
+        "click",
+        () => chip.remove()
+      );
+
+
+      chip.appendChild(remove);
+
+
+      skillsInput.insertBefore(
+        chip,
+        skillsChipInput
+      );
+    }
+
+
+    skillsChipInput.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Enter" ||
+          event.key === ","
+        ) {
+
+          event.preventDefault();
+
+          addSkill(
+            skillsChipInput.value
+          );
+
+          skillsChipInput.value = "";
+
+        }
+
+
+        if (
+          event.key === "Backspace" &&
+          !skillsChipInput.value
+        ) {
+
+          const chips =
+            skillsInput.querySelectorAll(".chip");
+
+          if (chips.length) {
+            chips[chips.length - 1].remove();
+          }
+
+        }
+
+      }
+    );
+
+
+    /* =========================
+       PROJECTS
+       ========================= */
+
+    const projectList =
+      document.getElementById("project-list");
+
+    const addProjectBtn =
+      document.getElementById("add-project");
+
+
+    function attachProjectRemove(button) {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const blocks =
+            projectList.querySelectorAll(
+              ".project-block"
+            );
+
+
+          if (blocks.length <= 1) {
+
+            blocks[0]
+              .querySelector(".p-title")
+              .value = "";
+
+            blocks[0]
+              .querySelector(".p-desc")
+              .value = "";
+
+            return;
+          }
+
+
+          button
+            .closest(".project-block")
+            .remove();
+
+        }
+      );
+
+    }
+
+
+    document
+      .querySelectorAll(".project-block .remove-btn")
+      .forEach(attachProjectRemove);
+
+
+    addProjectBtn.addEventListener(
+      "click",
+      () => {
+
+        const count =
+          projectList.querySelectorAll(
+            ".project-block"
+          ).length + 1;
+
+
+        const block =
+          document.createElement("div");
+
+        block.className = "project-block";
+
+
+        block.innerHTML = `
+
+          <div class="p-id">
+            P${count}
+          </div>
+
+          <button
+            type="button"
+            class="remove-btn"
+          >
+            Remove
+          </button>
+
+
+          <div class="field">
+
+            <label>
+              Project title
+            </label>
+
+            <input
+              class="p-title"
+              type="text"
+              placeholder="e.g. E-commerce Platform"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Project description
+            </label>
+
+            <textarea
+              class="p-desc"
+              placeholder="Describe what you built, technologies used, and your contribution."
+            ></textarea>
+
+          </div>
+        `;
+
+
+        projectList.appendChild(block);
+
+
+        attachProjectRemove(
+          block.querySelector(".remove-btn")
+        );
+
+      }
+    );
+
+
+    /* =========================
+       PIPELINE PROGRESS
+       ========================= */
+
+    function updatePipeline(step, state) {
+
+      const element =
+        document.querySelector(
+          `.pipeline-step[data-step="${step}"]`
+        );
+
+
+      if (!element) return;
+
+
+      element.classList.remove(
+        "active",
+        "done",
+        "failed"
+      );
+
+
+      if (state) {
+        element.classList.add(state);
+      }
+
+    }
+
+
+    function resetPipeline() {
+
+      document
+        .querySelectorAll(".pipeline-step")
+        .forEach(step => {
+
+          step.classList.remove(
+            "active",
+            "done",
+            "failed"
+          );
+
+        });
+
+    }
+
+
+    async function animatePipeline() {
+
+      const progressCard =
+        document.getElementById(
+          "progress-card"
+        );
+
+
+      progressCard.style.display = "block";
+
+
+      resetPipeline();
+
+
+      const steps = ["A", "B", "C", "D"];
+
+
+      for (let i = 0; i < steps.length; i++) {
+
+        if (i > 0) {
+          updatePipeline(
+            steps[i - 1],
+            "done"
+          );
+        }
+
+
+        updatePipeline(
+          steps[i],
+          "active"
+        );
+
+
+        await new Promise(
+          resolve =>
+            setTimeout(resolve, 900)
+        );
+
+      }
+
+
+      updatePipeline("D", "done");
+
+    }
+
+
+    /* =========================
+       RESULT NOTE CLASS
+       ========================= */
+
+    function noteClass(note) {
+
+      const value =
+        String(note || "").toLowerCase();
+
+
+      if (
+        value.includes("boost") ||
+        value.includes("support") ||
+        value.includes("verified")
+      ) {
+
+        return "boost";
+
+      }
+
+
+      if (
+        value.includes("penalty") ||
+        value.includes("unsupported") ||
+        value.includes("contradict")
+      ) {
+
+        return "penalty";
+
+      }
+
+
+      return "neutral";
+
+    }
+
+
+    /* =========================
+       RESULTS RENDER
+       ========================= */
+
+    function renderResults(data) {
+
+      const results =
+        document.getElementById(
+          "results"
+        );
+
+
+      const content =
+        document.getElementById(
+          "results-content"
+        );
+
+
+      results.style.display = "block";
+
+
+      const fairness =
+        data.fairness || {};
+
+
+      const rankedJobs =
+        data.ranked_jobs || [];
+
+
+      const claimed =
+        fairness.claimed_count ??
+        fairness.claimed ??
+        0;
+
+
+      const supported =
+        fairness.supported_count ??
+        fairness.supported ??
+        0;
+
+
+      const weak =
+        fairness.weak_count ??
+        fairness.weak ??
+        0;
+
+
+      const unsupported =
+        fairness.unsupported_count ??
+        fairness.unsupported ??
+        0;
+
+
+      const contradicted =
+        fairness.contradicted_count ??
+        fairness.contradicted ??
+        0;
+
+
+      const multiplier =
+        fairness.multiplier ??
+        fairness.fairness_multiplier ??
+        1;
+
+
+      let html = "";
+
+
+      /* Fairness metrics */
+
+      html += `
+
+        <div class="fairness-box">
+
+          <span>
+            <b>${escapeHtml(claimed)}</b>
+            Claimed
+          </span>
+
+          <span>
+            <b>${escapeHtml(supported)}</b>
+            Supported
+          </span>
+
+          <span>
+            <b>${escapeHtml(weak)}</b>
+            Weak
+          </span>
+
+          <span>
+            <b>${escapeHtml(unsupported)}</b>
+            Unsupported
+          </span>
+
+          <span>
+            <b>${escapeHtml(contradicted)}</b>
+            Contradicted
+          </span>
+
+          <span>
+            <b>${escapeHtml(multiplier)}</b>
+            Multiplier
+          </span>
+
+        </div>
+      `;
+
+
+      /* Summary */
+
+      const summary =
+        fairness.summary ||
+        `Boosted: ${supported}/${claimed} claimed skills are evidence-supported, with no major overclaiming detected.`;
+
+
+      html += `
+
+        <div class="fairness-summary">
+          ${escapeHtml(summary)}
+        </div>
+
+      `;
+
+
+      /* Job ranking */
+
+      if (!rankedJobs.length) {
+
+        html += `
+          <div class="empty">
+            No ranked jobs were returned.
+          </div>
+        `;
+
+      } else {
+
+        rankedJobs.forEach(
+          (job, index) => {
+
+            const rank =
+              job.rank ??
+              index + 1;
+
+
+            const title =
+              job.job_title ||
+              job.title ||
+              job.role ||
+              "Job";
+
+
+            const compatibility =
+              job.compatibility_score ??
+              job.compatibility ??
+              0;
+
+
+            const fairScore =
+              job.fair_score ??
+              job.fairness_score ??
+              job.score ??
+              0;
+
+
+            const note =
+              job.note ||
+              job.reason ||
+              job.explanation ||
+              "";
+
+
+            const type =
+              noteClass(note);
+
+
+            html += `
+
+              <div class="job-card ${type}">
+
+                <div class="job-top">
+
+                  <div class="job-title">
+                    ${escapeHtml(title)}
+                  </div>
+
+                  <div class="rank-badge">
+                    Rank <b>#${escapeHtml(rank)}</b>
+                  </div>
+
+                </div>
+
+
+                <div class="score-row">
+
+                  <span>
+                    Compatibility:
+                    <strong>
+                      ${escapeHtml(
+                        Number(compatibility).toFixed(2)
+                      )}
+                    </strong>
+                  </span>
+
+                  <span class="fair">
+                    Fair score:
+                    <strong>
+                      ${escapeHtml(
+                        Number(fairScore).toFixed(2)
+                      )}
+                    </strong>
+                  </span>
+
+                </div>
+
+
+                ${
+                  note
+                    ? `
+                      <div class="note ${type}">
+                        ${escapeHtml(note)}
+                      </div>
+                    `
+                    : ""
+                }
+
+              </div>
+
+            `;
+
+          }
+        );
+
+      }
+
+
+      content.innerHTML = html;
+
+
+      results.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    }
+
+
+    /* =========================
+       BUILD PAYLOAD
+       ========================= */
+
+    function getClaimedSkills() {
+
+      return Array
+        .from(
+          skillsInput.querySelectorAll(".chip")
+        )
+        .map(chip =>
+          chip.firstChild.textContent.trim()
+        )
+        .filter(Boolean);
+
+    }
+
+
+    function getProjects() {
+
+      return Array
+        .from(
+          projectList.querySelectorAll(
+            ".project-block"
+          )
+        )
+        .map(block => {
+
+          return {
+
+            id:
+              block
+                .querySelector(".p-id")
+                ?.textContent
+                .trim() || "",
+
+            title:
+              block
+                .querySelector(".p-title")
+                ?.value
+                .trim() || "",
+
+            description:
+              block
+                .querySelector(".p-desc")
+                ?.value
+                .trim() || ""
+
+          };
+
+        })
+        .filter(
+          project =>
+            project.title ||
+            project.description
+        );
+
+    }
+
+
+    /* =========================
+       RUN FULL PIPELINE
+       ========================= */
+
+    document
+      .getElementById("run-btn")
+      .addEventListener(
+        "click",
+        async () => {
+
+          if (!token) {
+
+            setRunStatus(
+              "Please log in first.",
+              "err"
+            );
+
+            return;
+          }
+
+
+          const claimedSkills =
+            getClaimedSkills();
+
+
+          if (!claimedSkills.length) {
+
+            setRunStatus(
+              "Add at least one claimed skill.",
+              "err"
+            );
+
+            return;
+          }
+
+
+          const candidateId =
+            document
+              .getElementById("candidate-id")
+              .value
+              .trim();
+
+
+          const experience =
+            parseFloat(
+              document
+                .getElementById("experience-years")
+                .value
+            );
+
+
+          const projects =
+            getProjects();
+
+
+          const payload = {
+
+            candidate_id:
+              candidateId || "F001",
+
+            claimed_skills:
+              claimedSkills,
+
+            experience_years:
+              Number.isFinite(experience)
+                ? experience
+                : 0,
+
+            portfolio_projects:
+              projects,
+
+            certificates: [],
+
+            code_samples: [],
+
+            work_descriptions: []
+
+          };
+
+
+          const runButton =
+            document.getElementById(
+              "run-btn"
+            );
+
+
+          runButton.disabled = true;
+
+
+          setRunStatus(
+            "Running evaluation..."
+          );
+
+
+          document.getElementById(
+            "results"
+          ).style.display = "none";
+
+
+          try {
+
+            /*
+             * Start visual pipeline animation.
+             *
+             * This does not change the backend
+             * pipeline request.
+             */
+
+            animatePipeline();
+
+
+            const response =
+              await fetch(
+                "/api/full-pipeline",
+                {
+
+                  method: "POST",
+
+                  headers: {
+
+                    "Content-Type":
+                      "application/json",
+
+                    "Authorization":
+                      `Bearer ${token}`
+
+                  },
+
+                  body:
+                    JSON.stringify(payload)
+
+                }
+              );
+
+
+            const data =
+              await response.json();
+
+
+            if (!response.ok) {
+
+              throw new Error(
+                data.detail ||
+                data.message ||
+                "Evaluation failed."
+              );
+
+            }
+
+
+            setRunStatus(
+              "Evaluation completed successfully.",
+              "ok"
+            );
+
+
+            /*
+             * Make sure pipeline visually finishes.
+             */
+
+            ["A", "B", "C", "D"]
+              .forEach(
+                step =>
+                  updatePipeline(
+                    step,
+                    "done"
+                  )
+              );
+
+
+            renderResults(data);
+
+
+          } catch (error) {
+
+            setRunStatus(
+              error.message ||
+              "Something went wrong.",
+              "err"
+            );
+
+
+            /*
+             * Mark currently visible pipeline
+             * as failed if an error occurs.
+             */
+
+            const active =
+              document.querySelector(
+                ".pipeline-step.active"
+              );
+
+
+            if (active) {
+
+              active.classList.remove(
+                "active"
+              );
+
+              active.classList.add(
+                "failed"
+              );
+
+            }
+
+          } finally {
+
+            runButton.disabled = false;
+
+          }
+
+        }
+      );
+
+
+    /* =========================
+       INITIAL STATE
+       ========================= */
+
+    document
+      .getElementById("input-card")
+      .classList.add("disabled-overlay");
+
+
+    document
+      .getElementById("portfolio-card")
+      .classList.add("disabled-overlay");
+
+
+    document
+      .getElementById("evaluate-card")
+      .classList.add("disabled-overlay");
+
+  </script>
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Fair Ranking Agent — Demo</title>
+<title>FairRank AI — Fair Opportunity Evaluation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -17,17 +17,22 @@
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;line-height:1.5;}
-  .wrap{max-width:960px;margin:0 auto;padding:44px 26px 80px;}
+  .wrap{max-width:980px;margin:0 auto;padding:44px 26px 80px;}
   h1{font-family:'Fraunces',serif;font-weight:500;font-size:1.9rem;margin:0 0 8px;letter-spacing:-0.01em;}
-  header p{color:var(--ink-soft);margin:0 0 32px;max-width:60ch;}
+  header p{color:var(--ink-soft);margin:0 0 32px;max-width:64ch;}
   .card{border:1px solid var(--line);border-radius:4px;background:var(--panel);padding:20px;margin-bottom:20px;}
-  .card h2{font-family:'Fraunces',serif;font-weight:500;font-size:1.05rem;margin:0 0 14px;}
+  .card h2{font-family:'Fraunces',serif;font-weight:500;font-size:1.05rem;margin:0 0 14px;display:flex;align-items:center;gap:8px;}
+  .card h2 .step-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;
+    font-family:'IBM Plex Sans',sans-serif;font-size:0.75rem;font-weight:600;flex-shrink:0;
+  }
   label{display:block;font-size:0.8rem;color:var(--ink-soft);margin-bottom:5px;font-weight:500;}
   input[type=text],input[type=password],textarea{
     width:100%;font-family:inherit;font-size:0.9rem;color:var(--ink);
     background:#fff;border:1px solid var(--line);border-radius:3px;padding:8px 10px;
   }
-  textarea{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;min-height:110px;resize:vertical;}
+  textarea{min-height:70px;resize:vertical;}
   .field{margin-bottom:14px;}
   .row{display:flex;gap:14px;flex-wrap:wrap;}
   .row .field{flex:1;min-width:160px;}
@@ -42,7 +47,33 @@
   .status-line{font-size:0.82rem;margin-top:10px;}
   .status-line.ok{color:var(--boost);}
   .status-line.err{color:var(--penalty);}
-  .hint{font-size:0.78rem;color:var(--ink-soft);margin-top:4px;}
+
+  .chip-input{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px solid var(--line);border-radius:3px;background:#fff;}
+  .chip-input input{border:none;background:none;flex:1;min-width:120px;padding:4px;}
+  .chip-input input:focus{outline:none;}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent);font-size:0.82rem;padding:4px 8px 4px 10px;border-radius:3px;white-space:nowrap;}
+  .chip button{background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.95rem;line-height:1;padding:0;opacity:0.6;}
+  .chip button:hover{opacity:1;}
+
+  .project-block{border:1px solid var(--line);border-radius:4px;padding:14px;margin-bottom:10px;background:#fff;position:relative;}
+  .project-block .remove-btn{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--ink-soft);cursor:pointer;font-size:0.78rem;}
+  .add-btn{width:100%;background:none;border:1px dashed var(--line);border-radius:4px;padding:9px;color:var(--ink-soft);font-family:inherit;font-size:0.84rem;cursor:pointer;margin-bottom:6px;}
+  .add-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+  .disabled-overlay{opacity:0.5;pointer-events:none;}
+
+  .pipeline-steps{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .pipeline-step{
+    flex:1;min-width:150px;border:1px solid var(--line);border-radius:4px;padding:12px 14px;
+    background:#fff;font-size:0.82rem;color:var(--ink-soft);
+  }
+  .pipeline-step .step-label{font-weight:600;color:var(--ink);display:block;margin-bottom:4px;}
+  .pipeline-step.active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);}
+  .pipeline-step.active .step-label{color:var(--accent);}
+  .pipeline-step.done{border-color:var(--boost);}
+  .pipeline-step.done .step-label{color:var(--boost);}
+  .pipeline-step.failed{border-color:var(--penalty);background:var(--penalty-bg);color:var(--penalty);}
+  .pipeline-step.failed .step-label{color:var(--penalty);}
 
   .job-card{border:1px solid var(--line);border-left-width:4px;border-radius:3px;background:#fff;padding:14px 16px;margin-bottom:10px;}
   .job-card.boost{border-left-color:var(--boost);}
@@ -58,23 +89,112 @@
   .note.boost{color:var(--boost);}
   .note.penalty{color:var(--penalty);}
 
-  .fairness-box{
-    display:flex;flex-wrap:wrap;gap:16px;font-size:0.82rem;color:var(--ink-soft);
-    border:1px solid var(--line);border-radius:4px;padding:12px 16px;margin-bottom:18px;background:var(--accent-soft);
-  }
+  .fairness-box{display:flex;flex-wrap:wrap;gap:16px;font-size:0.82rem;color:var(--ink-soft);border:1px solid var(--line);border-radius:4px;padding:12px 16px;margin-bottom:14px;background:var(--accent-soft);}
   .fairness-box b{color:var(--ink);}
   .empty{color:var(--ink-soft);font-size:0.9rem;border:1px dashed var(--line);border-radius:4px;padding:24px;text-align:center;}
+
+  /* FairRank AI dashboard shell */
+  :root{
+    --ink:#17212f; --ink-soft:#667085; --paper:#f4f7fb; --panel:#fff; --line:#e5eaf1;
+    --accent:#315efb; --accent-dark:#2348c7; --accent-soft:#edf3ff; --navy:#17233d;
+    --boost:#087443; --boost-bg:#e9f8f0; --penalty:#c2412d; --penalty-bg:#fff1ed;
+    --neutral:#667085; --shadow:0 10px 30px rgba(31,49,82,.06); --shadow-hover:0 16px 36px rgba(31,49,82,.1);
+  }
+  body{background:var(--paper);color:var(--ink);}
+  .wrap{width:min(1440px,calc(100% - 48px));max-width:none;display:grid;grid-template-columns:232px minmax(0,1fr);grid-template-rows:auto auto 1fr auto;column-gap:34px;margin:0 auto;padding:24px 0 46px;}
+  .app-sidebar{grid-column:1;grid-row:1 / span 4;min-height:calc(100vh - 70px);padding:18px 14px;border:1px solid #dfe6f0;border-radius:18px;background:var(--navy);color:#d7e0f3;box-shadow:0 12px 34px rgba(23,35,61,.12);}
+  .sidebar-label{padding:0 12px;color:#8795b5;font-family:'IBM Plex Mono',monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;}
+  .sidebar-nav{display:grid;gap:5px;margin-top:14px;}
+  .sidebar-link{display:flex;align-items:center;gap:11px;min-height:44px;padding:0 12px;border:1px solid transparent;border-radius:10px;color:#aebbd3;font-size:.78rem;font-weight:600;text-decoration:none;}
+  .sidebar-link svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;}
+  .sidebar-link:hover,.sidebar-link.active{border-color:rgba(151,177,255,.22);background:rgba(79,117,231,.2);color:#fff;}
+  .sidebar-link.active{box-shadow:inset 3px 0 0 #79a0ff;}
+  .sidebar-foot{margin-top:30px;padding:18px 12px 4px;color:#8795b5;font-size:.68rem;line-height:1.55;}
+  .sidebar-foot strong{display:block;margin-bottom:5px;color:#d7e0f3;font-size:.72rem;}
+  .wrap>header,.wrap>.topbar,.wrap>.card,.wrap>footer{grid-column:2;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;min-height:58px;margin-bottom:30px;padding:0 4px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{display:grid;width:40px;height:40px;place-items:center;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;box-shadow:0 8px 18px rgba(49,94,251,.22);}
+  .brand-text{line-height:1.1;}
+  .brand-name{color:var(--navy);font-size:1rem;font-weight:700;}
+  .brand-sub{margin-top:4px;color:#8090a8;font-size:.68rem;}
+  .system-badge{display:inline-flex;align-items:center;gap:7px;border:1px solid #dbe5f5;border-radius:999px;background:#fff;color:#51627c;padding:7px 11px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;box-shadow:0 4px 12px rgba(31,49,82,.04);}
+  .system-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;}
+  .account-pill{display:inline-flex;align-items:center;gap:9px;margin-left:8px;padding:6px 11px 6px 6px;border:1px solid #dfe6f0;border-radius:999px;background:#fff;color:#475467;font-size:.72rem;font-weight:600;}
+  .account-avatar{display:grid;width:27px;height:27px;place-items:center;border-radius:50%;background:#dce7ff;color:var(--accent-dark);font-size:.68rem;}
+  .wrap>header{margin-bottom:24px;padding:10px 4px 0;}
+  .hero-kicker{display:inline-flex;align-items:center;gap:7px;margin-bottom:10px;color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;}
+  h1{color:var(--navy);font-family:'IBM Plex Sans',sans-serif;font-size:clamp(2rem,3vw,2.8rem);font-weight:700;letter-spacing:-.05em;}
+  .wrap>header p{max-width:650px;margin-top:10px;color:#718096;font-size:.88rem;}
+  .header-status{float:right;margin-top:-48px;padding:11px 13px;border:1px solid #dbe5f5;border-radius:11px;background:#fff;color:#64748b;font-size:.7rem;font-weight:600;}
+  .header-status:before{display:inline-block;width:8px;height:8px;margin-right:9px;border-radius:50%;background:#f59e0b;content:'';}
+  .card{margin-bottom:16px;padding:22px;border:1px solid #e1e7f0;border-radius:14px;background:rgba(255,255,255,.98);box-shadow:var(--shadow);}
+  .card:hover{box-shadow:var(--shadow-hover);}
+  .card h2{color:var(--navy);font-family:'IBM Plex Sans',sans-serif;font-size:.95rem;letter-spacing:-.01em;}
+  .step-num{border-radius:9px!important;background:var(--accent-soft)!important;color:var(--accent)!important;}
+  label{color:#53627a;font-size:.69rem;letter-spacing:.01em;text-transform:uppercase;}
+  input[type=text],input[type=password],textarea{border-color:#dbe3ee;border-radius:8px;background:#fbfcfe;font-size:.82rem;}
+  input[type=text]:focus,input[type=password]:focus,textarea:focus,.chip-input:focus-within{border-color:#7c9cff;box-shadow:0 0 0 3px rgba(49,94,251,.1);}
+  button{border-radius:8px;background:var(--accent);font-size:.76rem;}
+  button.secondary{border-color:#dbe3ee;color:#53627a;}
+  .auth-card{border-top:3px solid var(--accent);}
+  .chip-input{min-height:46px;border-color:#dbe3ee;border-radius:8px;background:#fbfcfe;}
+  .chip{border-color:#d5e1ff;border-radius:7px;background:var(--accent-soft);color:#3153b8;font-size:.7rem;}
+  .project-block{border-color:#e1e7f0;border-radius:11px;background:#fbfcfe;padding:16px;}
+  .project-block .remove-btn{border-color:#e1e7f0;border-radius:7px;color:#8995a8;}
+  .add-btn{border-color:#b9c9e8;border-radius:8px;background:#f7faff;color:var(--accent);font-weight:600;}
+  #run-btn{min-width:205px;padding:12px 20px;background:var(--navy);box-shadow:0 8px 18px rgba(23,35,61,.16);}
+  #run-btn:hover{background:#25385f;}
+  .pipeline-steps{gap:9px;}
+  .pipeline-step{min-height:112px;border-color:#e1e7f0;border-radius:10px;background:#fbfcfe;}
+  .pipeline-step.active{border-color:#8eacff;background:#f2f6ff;box-shadow:inset 0 3px 0 var(--accent);}
+  .pipeline-step.done{border-color:#9ad7b7;background:#f2fbf6;}
+  .pipeline-step.failed{border-color:#efb0a3;background:var(--penalty-bg);}
+  .fairness-box{gap:7px;border-color:#d8e5fb;border-radius:11px;background:#f3f7ff;}
+  .fairness-box span{border:1px solid rgba(217,227,245,.8);border-radius:8px;background:#fff;padding:9px 10px;}
+  .fairness-box span:last-child{border-color:#b9c9e8;background:#e8f0ff;}
+  .job-card{border-color:#e1e7f0;border-left-width:3px;border-radius:10px;box-shadow:none;}
+  .job-card:hover{border-color:#c5d3eb;box-shadow:0 8px 20px rgba(31,49,82,.07);}
+  .job-title{color:var(--navy);}
+  .rank-badge{border:1px solid #e1e7f0;border-radius:999px;background:#f7f9fc;padding:5px 9px;}
+  .score-row span{border:1px solid #e4eaf2;border-radius:6px;background:#f8fafc;padding:5px 8px;}
+  .footer{text-align:center;grid-column:2;color:#9aa7b8;font-size:.65rem;padding-top:22px;}
+  @media(max-width:900px){.wrap{display:block;width:min(100% - 32px,720px);padding-top:16px;}.app-sidebar{min-height:auto;margin-bottom:18px;padding:10px;}.sidebar-label,.sidebar-foot{display:none;}.sidebar-nav{display:flex;gap:5px;margin-top:0;overflow-x:auto;}.sidebar-link{flex:1 0 auto;justify-content:center;min-height:40px;padding:0 10px;font-size:.7rem;}.wrap>header,.wrap>.topbar,.wrap>.card,.wrap>footer{width:100%;}.header-status{float:none;display:inline-block;margin-top:13px;}.pipeline-steps{display:grid;grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.topbar{align-items:flex-start;margin-bottom:18px;}.system-badge{display:none;}.account-pill{margin-left:0;}.card{padding:17px;}.row{display:grid;grid-template-columns:1fr;}.pipeline-steps{grid-template-columns:1fr 1fr;}.fairness-box{display:grid;grid-template-columns:1fr 1fr;}}
+  @media(max-width:400px){.sidebar-link{font-size:0;}.sidebar-link svg{width:18px;height:18px;}.pipeline-steps,.fairness-box{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <aside class="app-sidebar" aria-label="Primary navigation">
+    <div class="sidebar-label">Workspace</div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-link" href="#dashboard"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></a>
+      <a class="sidebar-link active" href="#input-card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg><span>Candidate Evaluation</span></a>
+      <a class="sidebar-link" href="#progress-card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18V9M12 18V5M19 18v-7"/><path d="M3 18h18"/></svg><span>AI Pipeline</span></a>
+      <a class="sidebar-link" href="#results"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16"/><path d="m7 15 3-4 3 2 5-6"/></svg><span>Ranking Results</span></a>
+      <a class="sidebar-link" href="#about-system"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg><span>About System</span></a>
+    </nav>
+    <div class="sidebar-foot" id="about-system"><strong>FairRank AI</strong>Evidence-led candidate evaluation for more consistent opportunity decisions.</div>
+  </aside>
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">FR</div>
+      <div class="brand-text"><div class="brand-name">FairRank AI</div><div class="brand-sub">Fair Opportunity Evaluation</div></div>
+    </div>
+    <div><span class="system-badge"><span class="system-dot"></span>System online</span><span class="account-pill"><span class="account-avatar">DU</span>Demo workspace</span></div>
+  </div>
+
   <header>
-    <h1>Fair ranking agent — demo</h1>
-    <p>This demo signs you in with a JWT, then submits claimed skills + Member A's portfolio evidence through the full pipeline (Member B → Member C → fairness re-ranking).</p>
+    <div class="hero-kicker">✦ &nbsp;AI-powered decision workspace</div>
+    <h1>Fair Opportunity Evaluation</h1>
+    <p>Turn portfolio evidence into transparent skill verification, role matching, and fair ranking in one focused workspace.</p>
+    <div class="header-status">Authentication required</div>
   </header>
 
   <div class="card" id="auth-card">
-    <h2>1. Sign in</h2>
+    <h2><span class="step-num">✓</span>Sign in</h2>
     <div class="row">
       <div class="field">
         <label for="username">Username</label>
@@ -90,34 +210,48 @@
     <div class="status-line" id="auth-status"></div>
   </div>
 
-  <div class="card" id="orchestrate-card">
-    <h2>2. Submit candidate data</h2>
-    <div class="field">
-      <label for="claimed-skills">Claimed skills (comma-separated)</label>
-      <input type="text" id="claimed-skills" value="Python, Django, REST API, MySQL" />
+  <div class="card disabled-overlay" id="input-card">
+    <h2><span class="step-num">1</span>Candidate details</h2>
+    <div class="row">
+      <div class="field">
+        <label for="candidate-id">Candidate ID</label>
+        <input type="text" id="candidate-id" value="F001" />
+      </div>
+      <div class="field">
+        <label for="experience-years">Experience (years)</label>
+        <input type="text" id="experience-years" value="1.5" />
+      </div>
     </div>
     <div class="field">
-      <label for="evidence-json">Member A's portfolio_evidence (raw JSON)</label>
-      <textarea id="evidence-json">{
-  "freelancer_id": "fl_001",
-  "evidence_items": [
-    {"skill":"Django","skill_category":"web_framework","source_type":"portfolio_project","source_ref":"proj_001","source_excerpt":"developed a backend using Django and REST API","extraction_method":"both","confidence":0.98,"reasoning":"x","evidence_id":"ev_001"},
-    {"skill":"REST API","skill_category":"backend_concept","source_type":"portfolio_project","source_ref":"proj_001","source_excerpt":"using Django and REST API","extraction_method":"ner","confidence":0.95,"reasoning":"x","evidence_id":"ev_002"}
-  ]
-}</textarea>
+      <label for="skills-input">Claimed skills</label>
+      <div class="chip-input" id="skills-chip-input">
+        <input type="text" id="skills-input" placeholder="Type a skill, press Enter" />
+      </div>
     </div>
+
     <div class="field">
-      <label for="experience-years">Experience years</label>
-      <input type="text" id="experience-years" value="1.5" style="max-width:120px" />
+      <label>Portfolio projects</label>
+      <div id="project-list"></div>
+      <button type="button" class="add-btn" id="add-project">+ Add project</button>
     </div>
-    <button id="orchestrate-btn" type="button" disabled>Run fair ranking</button>
-    <div class="hint" id="orchestrate-hint">Sign in first — this calls a protected endpoint.</div>
-    <div class="status-line" id="orchestrate-status"></div>
+
+    <button type="button" id="run-btn" disabled>Evaluate candidate</button>
+    <div class="status-line" id="run-status"></div>
+  </div>
+
+  <div class="card" id="progress-card" style="display:none;">
+    <h2><span class="step-num">2</span>Agent pipeline</h2>
+    <div class="pipeline-steps">
+      <div class="pipeline-step" data-step="a"><span class="step-label">Agent A</span>Portfolio evidence extraction</div>
+      <div class="pipeline-step" data-step="b"><span class="step-label">Agent B</span>Skill verification</div>
+      <div class="pipeline-step" data-step="c"><span class="step-label">Agent C</span>Job compatibility</div>
+      <div class="pipeline-step" data-step="d"><span class="step-label">Agent D</span>Fair ranking</div>
+    </div>
   </div>
 
   <div class="card">
-    <h2>3. Fair-ranked results</h2>
-    <div id="results"><div class="empty">Sign in and run fair ranking to see results here.</div></div>
+    <h2><span class="step-num">3</span>Results</h2>
+    <div id="results"><div class="empty">Sign in, fill in candidate details, and evaluate to see results here.</div></div>
   </div>
 </div>
 
@@ -127,54 +261,114 @@ let token = null;
 const usernameEl = document.getElementById('username');
 const passwordEl = document.getElementById('password');
 const authStatus = document.getElementById('auth-status');
-const orchestrateBtn = document.getElementById('orchestrate-btn');
-const orchestrateHint = document.getElementById('orchestrate-hint');
-const orchestrateStatus = document.getElementById('orchestrate-status');
+const inputCard = document.getElementById('input-card');
+const runBtn = document.getElementById('run-btn');
+const runStatus = document.getElementById('run-status');
 const resultsEl = document.getElementById('results');
+const progressCard = document.getElementById('progress-card');
 
-function setAuthStatus(msg, ok){
-  authStatus.textContent = msg;
-  authStatus.className = 'status-line ' + (ok ? 'ok' : 'err');
-}
-function setOrchestrateStatus(msg, ok){
-  orchestrateStatus.textContent = msg;
-  orchestrateStatus.className = 'status-line ' + (ok ? 'ok' : 'err');
-}
+function setAuthStatus(msg, ok){ authStatus.textContent = msg; authStatus.className = 'status-line ' + (ok?'ok':'err'); }
+function setRunStatus(msg, ok){ runStatus.textContent = msg; runStatus.className = 'status-line ' + (ok?'ok':'err'); }
+function escapeHtml(str){ return (str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
 document.getElementById('register-btn').onclick = async () => {
   setAuthStatus('Registering...', true);
   try{
-    const resp = await fetch('/auth/register', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({username: usernameEl.value, password: passwordEl.value})
-    });
+    const resp = await fetch('/auth/register', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: new URLSearchParams({username: usernameEl.value, password: passwordEl.value})});
     const body = await resp.json();
-    if(resp.ok){ setAuthStatus('Registered. Now click "Log in".', true); }
-    else { setAuthStatus(body.detail || 'Registration failed (maybe already exists — try logging in).', false); }
+    setAuthStatus(resp.ok ? 'Registered. Now click "Log in".' : (body.detail || 'Registration failed (maybe exists already — try logging in).'), resp.ok);
   }catch(e){ setAuthStatus('Could not reach the server.', false); }
 };
 
 document.getElementById('login-btn').onclick = async () => {
   setAuthStatus('Logging in...', true);
   try{
-    const resp = await fetch('/auth/login', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({username: usernameEl.value, password: passwordEl.value})
-    });
+    const resp = await fetch('/auth/login', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: new URLSearchParams({username: usernameEl.value, password: passwordEl.value})});
     const body = await resp.json();
     if(resp.ok){
       token = body.access_token;
       setAuthStatus('Signed in. Token expires in ' + body.expires_in_minutes + ' minutes.', true);
-      orchestrateBtn.disabled = false;
-      orchestrateHint.textContent = '';
-    } else {
-      setAuthStatus(body.detail || 'Login failed.', false);
-    }
+      inputCard.classList.remove('disabled-overlay');
+      runBtn.disabled = false;
+    } else { setAuthStatus(body.detail || 'Login failed.', false); }
   }catch(e){ setAuthStatus('Could not reach the server.', false); }
 };
 
-function escapeHtml(str){
-  return (str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+// ---- Claimed skills chip input ----
+let skills = ['Python', 'Django', 'REST API'];
+const skillsInput = document.getElementById('skills-input');
+const chipWrap = document.getElementById('skills-chip-input');
+function renderChips(){
+  chipWrap.querySelectorAll('.chip').forEach(c => c.remove());
+  skills.forEach((s,i) => {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.innerHTML = `${escapeHtml(s)} <button type="button">&times;</button>`;
+    chip.querySelector('button').onclick = () => { skills.splice(i,1); renderChips(); };
+    chipWrap.insertBefore(chip, skillsInput);
+  });
+}
+skillsInput.addEventListener('keydown', e => {
+  if(e.key==='Enter'||e.key===','){
+    e.preventDefault();
+    const v = skillsInput.value.trim();
+    if(v && !skills.includes(v)){ skills.push(v); renderChips(); }
+    skillsInput.value='';
+  } else if(e.key==='Backspace' && !skillsInput.value && skills.length){ skills.pop(); renderChips(); }
+});
+renderChips();
+
+// ---- Portfolio projects ----
+const projectList = document.getElementById('project-list');
+let projCounter = 0;
+function addProject(data){
+  data = data || {project_id:'proj_'+String(++projCounter).padStart(3,'0'), title:'', description:''};
+  const block = document.createElement('div');
+  block.className = 'project-block';
+  block.innerHTML = `
+    <button type="button" class="remove-btn">Remove</button>
+    <div class="field"><label>Project ID</label><input type="text" class="p-id" value="${escapeHtml(data.project_id)}" /></div>
+    <div class="field"><label>Title</label><input type="text" class="p-title" value="${escapeHtml(data.title)}" placeholder="e.g. Online Booking System" /></div>
+    <div class="field"><label>Description</label><textarea class="p-desc" placeholder="What was built and with what tech...">${escapeHtml(data.description)}</textarea></div>
+  `;
+  block.querySelector('.remove-btn').onclick = () => block.remove();
+  projectList.appendChild(block);
+}
+document.getElementById('add-project').onclick = () => addProject();
+addProject({project_id:'proj_001', title:'Online Booking System', description:'Built a web-based booking platform using Django and REST APIs.'});
+
+// ---- Pipeline progress display ----
+function setStepState(step, state){
+  const el = document.querySelector(`.pipeline-step[data-step="${step}"]`);
+  el.classList.remove('active','done','failed');
+  if(state) el.classList.add(state);
+}
+function resetSteps(){ ['a','b','c','d'].forEach(s => setStepState(s, null)); }
+
+async function animateProgress(promise){
+  // Simulated staged progress while the single backend call is in flight
+  // (the real work happens server-side across all 4 agents in one request).
+  progressCard.style.display = 'block';
+  resetSteps();
+  const stages = ['a','b','c','d'];
+  let i = 0;
+  setStepState(stages[0], 'active');
+  const interval = setInterval(() => {
+    setStepState(stages[i], 'done');
+    i++;
+    if(i < stages.length) setStepState(stages[i], 'active');
+  }, 900);
+
+  try{
+    const result = await promise;
+    clearInterval(interval);
+    stages.forEach(s => setStepState(s, 'done'));
+    return result;
+  }catch(e){
+    clearInterval(interval);
+    setStepState(stages[Math.min(i, stages.length-1)], 'failed');
+    throw e;
+  }
 }
 
 function noteClass(fairScore, compatScore){
@@ -185,7 +379,6 @@ function noteClass(fairScore, compatScore){
 
 function renderResults(data){
   resultsEl.innerHTML = '';
-
   const f = data.fairness;
   const box = document.createElement('div');
   box.className = 'fairness-box';
@@ -209,7 +402,6 @@ function renderResults(data){
     resultsEl.innerHTML += '<div class="empty">No matched jobs to rank.</div>';
     return;
   }
-
   data.ranked_jobs.forEach(job => {
     const cls = noteClass(job.fair_score, job.compatibility_score);
     const card = document.createElement('div');
@@ -229,49 +421,51 @@ function renderResults(data){
   });
 }
 
-orchestrateBtn.onclick = async () => {
-  if(!token){ setOrchestrateStatus('Sign in first.', false); return; }
+runBtn.onclick = async () => {
+  if(!token){ setRunStatus('Sign in first.', false); return; }
+  if(!skills.length){ setRunStatus('Add at least one claimed skill.', false); return; }
 
-  let evidence;
-  try{
-    evidence = JSON.parse(document.getElementById('evidence-json').value);
-  }catch(e){
-    setOrchestrateStatus('portfolio_evidence is not valid JSON.', false);
-    return;
-  }
+  const portfolioProjects = Array.from(projectList.querySelectorAll('.project-block')).map(b => ({
+    project_id: b.querySelector('.p-id').value.trim(),
+    title: b.querySelector('.p-title').value.trim(),
+    description: b.querySelector('.p-desc').value.trim(),
+  })).filter(p => p.project_id);
 
-  const claimedSkills = document.getElementById('claimed-skills').value
-    .split(',').map(s => s.trim()).filter(Boolean);
-  const experienceYears = parseFloat(document.getElementById('experience-years').value) || 0;
+  const payload = {
+    candidate_id: document.getElementById('candidate-id').value.trim(),
+    claimed_skills: skills,
+    experience_years: parseFloat(document.getElementById('experience-years').value) || 0,
+    portfolio_projects: portfolioProjects,
+    certificates: [],
+    code_samples: [],
+    work_descriptions: [],
+  };
 
-  orchestrateBtn.disabled = true;
-  orchestrateBtn.textContent = 'Running...';
-  setOrchestrateStatus('Calling Member B and Member C, then applying fairness...', true);
-  resultsEl.innerHTML = '<div class="empty">Running fair ranking...</div>';
+  runBtn.disabled = true;
+  runBtn.textContent = 'Evaluating...';
+  setRunStatus('', true);
+  resultsEl.innerHTML = '<div class="empty">Running the pipeline...</div>';
 
-  try{
-    const resp = await fetch('/api/orchestrate', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json', 'Authorization': 'Bearer ' + token},
-      body: JSON.stringify({
-        claimed_skills: claimedSkills,
-        portfolio_evidence: evidence,
-        experience_years: experienceYears
-      })
-    });
+  const callPromise = fetch('/api/full-pipeline', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json', 'Authorization': 'Bearer ' + token},
+    body: JSON.stringify(payload)
+  }).then(async resp => {
     const body = await resp.json();
-    if(resp.ok){
-      setOrchestrateStatus('Done.', true);
-      renderResults(body);
-    } else {
-      setOrchestrateStatus(body.detail || 'Request failed with status ' + resp.status + '.', false);
-      resultsEl.innerHTML = '<div class="empty">' + escapeHtml(body.detail || 'Request failed.') + '</div>';
-    }
+    if(!resp.ok) throw new Error(body.detail || `Request failed with status ${resp.status}.`);
+    return body;
+  });
+
+  try{
+    const result = await animateProgress(callPromise);
+    setRunStatus('Done.', true);
+    renderResults(result);
   }catch(e){
-    setOrchestrateStatus('Could not reach the server.', false);
+    setRunStatus(e.message || 'Something went wrong.', false);
+    resultsEl.innerHTML = '<div class="empty">' + escapeHtml(e.message || 'Request failed.') + '</div>';
   }finally{
-    orchestrateBtn.disabled = false;
-    orchestrateBtn.textContent = 'Run fair ranking';
+    runBtn.disabled = false;
+    runBtn.textContent = 'Evaluate candidate';
   }
 };
 </script>

@@ -24,9 +24,7 @@ app = FastAPI(
 # Portfolio Evidence Agent
 # --------------------------------------------------
 
-agent = PortfolioEvidenceAgent(
-    use_llm=True
-)
+agent = PortfolioEvidenceAgent(use_llm=False)
 
 
 # --------------------------------------------------
