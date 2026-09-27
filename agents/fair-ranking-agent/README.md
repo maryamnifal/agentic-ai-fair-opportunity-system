@@ -110,8 +110,10 @@ tests don't require three live servers.
 curl -X POST http://localhost:8003/auth/register -H "Content-Type: application/json" \
   -d '{"username":"alice","password":"password123"}'
 
-curl -X POST http://localhost:8003/auth/login -H "Content-Type: application/json" \
-  -d '{"username":"alice","password":"password123"}'
+curl -X POST http://localhost:8003/auth/login \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "username=alice" \
+  --data-urlencode "password=password123"
 # -> {"access_token": "...", "token_type": "bearer", "expires_in_minutes": 60}
 
 curl -X POST http://localhost:8003/api/rank -H "Content-Type: application/json" \
