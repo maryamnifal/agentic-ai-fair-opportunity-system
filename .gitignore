@@ -234,3 +234,6 @@ Thumbs.db
 # VS Code local settings
 .vscode/
 
+
+# Fair Ranking Agent runtime data
+agents/fair-ranking-agent/data/
