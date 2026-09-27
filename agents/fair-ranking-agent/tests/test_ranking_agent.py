@@ -60,3 +60,22 @@ def test_empty_matched_jobs_returns_empty_ranked_list():
     )
     result = agent.rank(request)
     assert result.ranked_jobs == []
+
+
+def test_response_includes_verified_skills_passthrough():
+    """Regression: verified_skills must be returned so the UI can show a real skills breakdown."""
+    agent = FairRankingAgent()
+    verified = [
+        VerifiedSkill(skill="Python", status="supported", confidence=0.9),
+        VerifiedSkill(skill="React", status="unsupported", confidence=0.05),
+    ]
+    request = FairRankingRequest(
+        candidate_id="F004",
+        claimed_skills=["Python", "React"],
+        verified_skills=verified,
+        matched_jobs=[],
+    )
+    result = agent.rank(request)
+    assert len(result.verified_skills) == 2
+    assert result.verified_skills[0].skill == "Python"
+    assert result.verified_skills[0].confidence == 0.9
