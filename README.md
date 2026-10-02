@@ -1,4 +1,4 @@
-# FairRank AI
+# FairRank 
 
 AI-powered fair opportunity evaluation for new freelancers.
 
