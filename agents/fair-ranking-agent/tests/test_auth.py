@@ -11,13 +11,19 @@ def test_register_duplicate_user_rejected(client):
 
 def test_login_wrong_password_rejected(client):
     client.post("/auth/register", json={"username": "carol", "password": "password123"})
-    resp = client.post("/auth/login", json={"username": "carol", "password": "wrongpass"})
+    resp = client.post(
+        "/auth/login",
+        data={"username": "carol", "password": "wrongpass"},
+    )
     assert resp.status_code == 401
 
 
 def test_login_success_returns_token(client):
     client.post("/auth/register", json={"username": "dave", "password": "password123"})
-    resp = client.post("/auth/login", json={"username": "dave", "password": "password123"})
+    resp = client.post(
+        "/auth/login",
+        data={"username": "dave", "password": "password123"},
+    )
     assert resp.status_code == 200
     body = resp.json()
     assert "access_token" in body
