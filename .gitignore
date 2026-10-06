@@ -237,3 +237,4 @@ Thumbs.db
 
 # Fair Ranking Agent runtime data
 agents/fair-ranking-agent/data/
+.Rhistory
