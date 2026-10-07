@@ -28,9 +28,11 @@ def client():
 @pytest.fixture
 def auth_token(client):
     client.post("/auth/register", json={"username": "tester", "password": "supersecret1"})
-    resp = client.post("/auth/login", json={"username": "tester", "password": "supersecret1"})
+    resp = client.post(
+        "/auth/login",
+        data={"username": "tester", "password": "supersecret1"},
+    )
     return resp.json()["access_token"]
-
 
 @pytest.fixture
 def auth_headers(auth_token):
