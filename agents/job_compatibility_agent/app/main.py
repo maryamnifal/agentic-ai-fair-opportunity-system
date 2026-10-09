@@ -36,6 +36,9 @@ def match_jobs(request: JobCompatibilityRequest):
         candidate_id=request.candidate_id,
         verified_skills=request.verified_skills,
         experience_years=request.experience_years,
+        work_descriptions=request.work_descriptions,
+        certificates=request.certificates,
+        resume_text=request.resume_text,
     )
 
     return agent.match_jobs(candidate)

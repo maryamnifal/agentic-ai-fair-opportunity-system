@@ -38,6 +38,8 @@ SKILL_CATEGORY_MAP: Dict[str, Set[str]] = {
     "etl": {"data_engineering"},
     "ssis": {"data_engineering"},
     "ssas": {"business_intelligence", "data_engineering"},
+    "pyspark": {"programming", "data_analysis", "data_engineering"},
+    "spark": {"programming", "data_analysis", "data_engineering"},
 }
 
 

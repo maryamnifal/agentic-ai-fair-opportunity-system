@@ -45,17 +45,26 @@ class Certificate(BaseModel):
     issuer: Optional[str] = None
     issue_date: Optional[str] = None
     description: str = ""
+    url: Optional[str] = None
+    certificate_text: Optional[str] = None
+    certificate_filename: Optional[str] = None
 
 
 class CodeSample(BaseModel):
     sample_id: str
+    title: Optional[str] = None
+    url: Optional[str] = None
     filename: Optional[str] = None
     language: Optional[str] = None
     snippet: str = ""
+    description: Optional[str] = None
 
 
 class WorkDescription(BaseModel):
     work_id: str
+    title: Optional[str] = None
+    company: Optional[str] = None
+    duration: Optional[str] = None
     description: str = ""
 
 
@@ -77,6 +86,9 @@ class ProfileRequest(BaseModel):
     work_descriptions: List[WorkDescription] = Field(
         default_factory=list
     )
+
+    resume_text: Optional[str] = None
+    portfolio_document_text: Optional[str] = None
 
 
 # --------------------------------------------------

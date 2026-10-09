@@ -3,785 +3,3176 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>FairWork AI — Candidate Evaluation</title>
+<title>FairWork AI — Evidence-Driven Talent Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --navy:#101B3D;
-    --navy-light:#1B2A5C;
-    --blue:#2F6FED;
-    --blue-dark:#1E56C9;
-    --blue-soft:#E8F0FE;
-    --green:#16A34A;
-    --green-soft:#DCFCE7;
-    --amber:#B7791F;
-    --amber-soft:#FEF3D8;
-    --red:#DC2626;
-    --red-soft:#FEE2E2;
-    --purple:#7C5CFF;
-    --purple-soft:#EFEBFF;
-    --ink:#111827;
-    --ink-soft:#6B7280;
-    --ink-faint:#9CA3AF;
-    --page-bg:#F5F6F8;
-    --white:#FFFFFF;
-    --line:#E5E7EB;
-    --radius:10px;
-    --shadow:0 1px 2px rgba(16,24,40,0.04), 0 1px 3px rgba(16,24,40,0.06);
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0; background:var(--page-bg); color:var(--ink);
-    font-family:'Inter',sans-serif; line-height:1.5; font-size:14px;
-  }
-  button, input{font-family:inherit;}
-  :focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
-  @media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms !important; transition-duration:.001ms !important;} }
+  :root {
+    /* Brand & Primary System */
+    --primary: #2563EB;
+    --primary-hover: #1D4ED8;
+    --primary-active: #1E40AF;
+    --primary-subtle: #EFF6FF;
+    --primary-border: #BFDBFE;
+    --primary-glow: rgba(37, 99, 235, 0.15);
 
-  /* ============ LOGIN SCREEN ============ */
-  .login-screen{min-height:100vh; display:flex;}
-  .login-left{
-    flex:1; background:var(--white); display:flex; flex-direction:column; justify-content:center;
-    padding:60px; border-right:1px solid var(--line);
-  }
-  .login-left-inner{max-width:420px; margin:0 auto; width:100%;}
-  .brand{display:flex; align-items:center; gap:10px; margin-bottom:40px;}
-  .brand-mark{
-    width:34px; height:34px; border-radius:9px; background:var(--blue);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0;
-  }
-  .brand-name{font-size:1.15rem; font-weight:800; color:var(--navy);}
-  .login-left h1{font-size:1.9rem; font-weight:800; margin:0 0 14px; color:var(--navy); line-height:1.25;}
-  .login-left p.desc{color:var(--ink-soft); font-size:0.95rem; margin:0 0 40px; max-width:38ch;}
-  .illustration{margin-top:8px;}
+    /* Neutrals & Surfaces */
+    --bg-page: #F8FAFC;
+    --bg-surface: #FFFFFF;
+    --bg-surface-elevated: #FFFFFF;
+    --bg-surface-soft: #F1F5F9;
+    --bg-surface-hover: #F8FAFC;
+    --border-subtle: #E2E8F0;
+    --border-medium: #CBD5E1;
+    --border-focus: #3B82F6;
 
-  .login-right{
-    flex:1; display:flex; align-items:center; justify-content:center; padding:60px; background:var(--page-bg);
-  }
-  .login-form-box{width:100%; max-width:360px;}
-  .login-form-box h2{font-size:1.4rem; font-weight:700; margin:0 0 6px; color:var(--navy);}
-  .login-form-box .sub{color:var(--ink-soft); font-size:0.88rem; margin:0 0 28px;}
-  .field{margin-bottom:16px;}
-  .field label{display:block; font-size:0.8rem; color:var(--ink-soft); font-weight:600; margin-bottom:6px;}
-  .field input{
-    width:100%; padding:10px 13px; border:1px solid var(--line); border-radius:8px;
-    background:var(--white); color:var(--ink); font-size:0.9rem;
-  }
-  .field input:focus{border-color:var(--blue);}
-  .btn-primary{
-    width:100%; background:var(--blue); color:#fff; border:none; border-radius:8px;
-    padding:11px 18px; font-size:0.92rem; font-weight:700; cursor:pointer; margin-top:4px;
-  }
-  .btn-primary:hover{background:var(--blue-dark);}
-  .btn-primary:disabled{background:var(--ink-faint); cursor:default;}
-  .form-alt{text-align:center; margin-top:16px; font-size:0.85rem; color:var(--ink-soft);}
-  .form-alt button{background:none; border:none; color:var(--blue); font-weight:700; cursor:pointer; padding:0; font-size:inherit;}
-  .status-line{font-size:0.82rem; margin-top:12px; min-height:1.2em;}
-  .status-line.ok{color:var(--green);}
-  .status-line.err{color:var(--red);}
+    /* Text & Ink */
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-tertiary: #64748B;
+    --text-muted: #94A3B8;
+    --text-inverse: #FFFFFF;
 
-  /* ============ APP SHELL ============ */
-  .app-shell{display:none; min-height:100vh;}
-  .app-shell.visible{display:flex;}
+    /* Feedback Colors */
+    --success: #10B981;
+    --success-subtle: #ECFDF5;
+    --success-border: #A7F3D0;
+    --warning: #F59E0B;
+    --warning-subtle: #FFFBEB;
+    --warning-border: #FDE68A;
+    --danger: #EF4444;
+    --danger-subtle: #FEF2F2;
+    --danger-border: #FECACA;
+    --info: #0284C7;
+    --info-subtle: #F0F9FF;
+    --info-border: #BAE6FD;
 
-  .sidebar{
-    width:240px; flex-shrink:0; background:var(--navy); color:#fff;
-    display:flex; flex-direction:column; padding:22px 14px;
-  }
-  .sidebar .brand{margin-bottom:30px; padding:0 8px;}
-  .sidebar .brand-name{color:#fff;}
-  .sidebar-section-label{
-    font-size:0.72rem; color:#8592B8; font-weight:600; padding:0 12px; margin-bottom:8px;
-  }
-  .nav-list{list-style:none; margin:0 0 24px; padding:0;}
-  .nav-item{margin-bottom:3px;}
-  .nav-item button{
-    width:100%; display:flex; align-items:center; gap:11px; text-align:left;
-    background:none; border:none; color:#B8C1DE; padding:10px 12px; border-radius:8px;
-    font-size:0.87rem; font-weight:500; cursor:pointer; transition:background 0.15s ease, color 0.15s ease;
-  }
-  .nav-item button:hover:not(:disabled){background:var(--navy-light); color:#fff;}
-  .nav-item button:disabled{cursor:default; opacity:0.55;}
-  .nav-item.active button{background:var(--blue); color:#fff;}
-  .nav-item.done button{color:#fff;}
-  .nav-icon{width:17px; height:17px; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
-  .nav-check{
-    margin-left:auto; width:16px; height:16px; border-radius:50%; background:var(--green);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0;
-  }
-  .sidebar-spacer{flex:1;}
-  .sidebar-bottom{border-top:1px solid var(--navy-light); padding-top:14px;}
-  .signout-btn{
-    width:100%; display:flex; align-items:center; gap:10px; background:none; border:none;
-    color:#B8C1DE; padding:10px 12px; border-radius:8px; font-size:0.87rem; font-weight:500; cursor:pointer;
-  }
-  .signout-btn:hover{background:var(--navy-light); color:#fff;}
+    /* Metrics & Geometry */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
 
-  .main-col{flex:1; min-width:0; display:flex; flex-direction:column;}
-  .topbar{
-    background:var(--white); border-bottom:1px solid var(--line); padding:16px 32px;
-    display:flex; align-items:center; justify-content:space-between;
-  }
-  .topbar-title{font-size:1.05rem; font-weight:700; color:var(--navy);}
-  .topbar-user{display:flex; align-items:center; gap:10px;}
-  .avatar{
-    width:32px; height:32px; border-radius:50%; background:var(--blue-soft); color:var(--blue-dark);
-    display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700;
-  }
-  .topbar-username{font-size:0.85rem; font-weight:600; color:var(--ink);}
+    /* Shadows */
+    --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+    --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
 
-  .content{padding:28px 32px 80px; max-width:960px;}
-  .panel{display:none;}
-  .panel.active{display:block; animation:rise 0.3s ease;}
-  @keyframes rise{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
-
-  .card{
-    background:var(--white); border:1px solid var(--line); border-radius:var(--radius);
-    box-shadow:var(--shadow); padding:22px 24px; margin-bottom:20px;
-  }
-  .card h3{font-size:0.98rem; font-weight:700; margin:0 0 4px; color:var(--navy);}
-  .card .card-sub{font-size:0.82rem; color:var(--ink-soft); margin:0 0 18px;}
-
-  .row{display:flex; gap:16px; flex-wrap:wrap;}
-  .row .field{flex:1; min-width:180px;}
-  textarea{
-    width:100%; padding:10px 13px; border:1px solid var(--line); border-radius:8px;
-    background:var(--white); color:var(--ink); font-size:0.88rem; min-height:72px; resize:vertical;
-  }
-  textarea:focus{border-color:var(--blue);}
-
-  .chip-input{
-    display:flex; flex-wrap:wrap; gap:7px; padding:9px; border:1px solid var(--line);
-    border-radius:8px; background:var(--white);
-  }
-  .chip-input input{border:none; background:none; flex:1; min-width:120px; padding:4px; font-size:0.88rem;}
-  .chip-input input:focus{outline:none;}
-  .chip{
-    display:inline-flex; align-items:center; gap:7px; background:var(--blue-soft); color:var(--blue-dark);
-    font-size:0.82rem; font-weight:600; padding:5px 8px 5px 12px; border-radius:14px; white-space:nowrap;
-  }
-  .chip button{background:none; border:none; color:var(--blue-dark); cursor:pointer; font-size:1rem; line-height:1; padding:0; opacity:0.55;}
-  .chip button:hover{opacity:1;}
-
-  .project-card{border:1px solid var(--line); border-radius:8px; padding:16px; margin-bottom:12px; position:relative;}
-  .project-card .remove-btn{position:absolute; top:14px; right:14px; background:none; border:none; color:var(--ink-faint); cursor:pointer; font-size:0.78rem;}
-  .project-card .remove-btn:hover{color:var(--red);}
-  .add-link{
-    display:inline-flex; align-items:center; gap:6px; background:none; border:none; color:var(--blue);
-    font-weight:700; font-size:0.86rem; cursor:pointer; padding:4px 0;
-  }
-  .add-link:hover{color:var(--blue-dark);}
-
-  .btn-evaluate{
-    background:var(--blue); color:#fff; border:none; border-radius:8px;
-    padding:12px 26px; font-size:0.92rem; font-weight:700; cursor:pointer; margin-top:6px;
-  }
-  .btn-evaluate:hover{background:var(--blue-dark);}
-  .btn-evaluate:disabled{background:var(--ink-faint); cursor:default;}
-
-  /* ---- Agent timeline (purple/blue AI accent) ---- */
-  .agent-track{display:flex; flex-direction:column;}
-  .agent-row{display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid var(--line);}
-  .agent-row:last-child{border-bottom:none;}
-  .agent-icon{
-    width:30px; height:30px; border-radius:50%; background:var(--purple-soft); color:var(--purple);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s ease;
-  }
-  .agent-row.done .agent-icon{background:var(--green-soft); color:var(--green);}
-  .agent-row.failed .agent-icon{background:var(--red-soft); color:var(--red);}
-  .agent-row.active .agent-icon{animation:pulse 1s ease-in-out infinite;}
-  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:0.4;}}
-  .agent-text-title{font-size:0.9rem; font-weight:600; color:var(--ink);}
-  .agent-text-caption{font-size:0.78rem; color:var(--ink-soft); margin-top:1px;}
-  .badge-completed{
-    margin-left:auto; font-size:0.72rem; font-weight:700; color:var(--green); background:var(--green-soft);
-    padding:3px 9px; border-radius:12px; flex-shrink:0; align-self:center;
+    /* Animation Timing */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .error-box{border:1px solid var(--red); background:var(--red-soft); color:var(--red); border-radius:8px; padding:16px 18px; font-size:0.87rem; margin-top:8px;}
-  .error-box .retry-btn{margin-top:10px; background:none; border:1px solid var(--red); color:var(--red); padding:7px 14px; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:700;}
-
-  /* ---- Results: stat cards ---- */
-  .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px;}
-  .stat-card{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px 18px;}
-  .stat-card .num{font-size:1.6rem; font-weight:800; color:var(--navy); line-height:1;}
-  .stat-card .lbl{font-size:0.76rem; color:var(--ink-soft); margin-top:6px; font-weight:500;}
-  .stat-card.gold .num{color:var(--amber);}
-
-  /* ---- Evidence quality circular gauge ---- */
-  .gauge-wrap{display:flex; align-items:center; gap:24px; flex-wrap:wrap;}
-  .gauge{position:relative; width:120px; height:120px; flex-shrink:0;}
-  .gauge svg{transform:rotate(-90deg);}
-  .gauge-track{fill:none; stroke:var(--line); stroke-width:10;}
-  .gauge-fill{fill:none; stroke:var(--green); stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset 0.6s ease;}
-  .gauge-label{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
-  .gauge-label .pct{font-size:1.4rem; font-weight:800; color:var(--navy);}
-  .gauge-label .sub{font-size:0.68rem; color:var(--ink-soft);}
-  .gauge-desc{flex:1; min-width:220px;}
-  .gauge-desc p{font-size:0.88rem; color:var(--ink-soft); margin:0;}
-
-  /* ---- Skills bars ---- */
-  .skill-row{display:flex; align-items:center; gap:14px; margin-bottom:14px;}
-  .skill-row:last-child{margin-bottom:0;}
-  .skill-name{width:150px; flex-shrink:0; font-size:0.85rem; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .skill-bar-track{flex:1; height:8px; background:var(--page-bg); border-radius:4px; overflow:hidden;}
-  .skill-bar-fill{height:100%; border-radius:4px; transition:width 0.5s ease;}
-  .skill-bar-fill.supported{background:var(--green);}
-  .skill-bar-fill.weakly_supported{background:var(--amber);}
-  .skill-bar-fill.unsupported{background:var(--ink-faint);}
-  .skill-bar-fill.contradicted{background:var(--red);}
-  .skill-pct{width:42px; flex-shrink:0; text-align:right; font-size:0.82rem; font-weight:700; color:var(--ink-soft);}
-
-  /* ---- Opportunity cards ---- */
-  .opp-card{border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; margin-bottom:14px; background:var(--white);}
-  .opp-top{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:8px;}
-  .opp-title{font-size:1rem; font-weight:700; color:var(--navy);}
-  .opp-rank{font-size:0.76rem; color:var(--ink-faint); font-weight:600; margin-top:2px;}
-  .opp-score{text-align:right; flex-shrink:0;}
-  .opp-score .val{font-size:1.3rem; font-weight:800; color:var(--green);}
-  .opp-score .lbl{font-size:0.7rem; color:var(--ink-soft);}
-  .opp-chips{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;}
-  .opp-chip{font-size:0.76rem; font-weight:600; padding:4px 10px; border-radius:12px;}
-  .opp-chip.match{background:var(--green-soft); color:var(--green);}
-  .opp-chip.missing{background:var(--page-bg); color:var(--ink-soft);}
-  .opp-note{font-size:0.85rem; color:var(--ink-soft); margin-top:6px;}
-
-  .empty-note{border:1px dashed var(--line); border-radius:var(--radius); padding:30px; text-align:center; color:var(--ink-faint); font-size:0.88rem;}
-
-  .restart-link{display:inline-flex; align-items:center; gap:6px; background:none; border:none; color:var(--blue); font-weight:700; font-size:0.87rem; cursor:pointer; padding:0; margin-top:8px;}
-  .restart-link:hover{color:var(--blue-dark);}
-
-  @media (max-width:860px){
-    .stat-grid{grid-template-columns:repeat(2,1fr);}
-    .login-screen{flex-direction:column;}
-    .login-left{padding:40px 24px;}
-    .login-right{padding:40px 24px;}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg-page);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-  @media (max-width:680px){
-    .app-shell.visible{flex-direction:column;}
-    .sidebar{width:100%; flex-direction:row; align-items:center; padding:12px 16px; overflow-x:auto;}
-    .sidebar .brand{margin-bottom:0; padding:0; margin-right:16px;}
-    .sidebar-section-label{display:none;}
-    .nav-list{display:flex; gap:4px; margin:0;}
-    .nav-item{margin-bottom:0;}
-    .sidebar-spacer{display:none;}
-    .sidebar-bottom{border-top:none; padding-top:0; margin-left:auto;}
-    .signout-btn span{display:none;}
-    .content{padding:20px 16px 60px;}
-    .stat-grid{grid-template-columns:1fr 1fr;}
+
+  /* ==========================================================================
+     AUTHENTICATION EXPERIENCE
+     ========================================================================== */
+  .auth-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background: var(--bg-surface);
+  }
+
+  /* Left Hero / Value Proposition */
+  .auth-hero {
+    flex: 1.1;
+    background: linear-gradient(145deg, #0B132B 0%, #172554 50%, #1E3A8A 100%);
+    color: #FFFFFF;
+    padding: 64px 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .auth-hero::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .auth-hero-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 2;
+  }
+  .brand-logo-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  }
+  .brand-logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #FFFFFF;
+  }
+  .brand-logo-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.15);
+    color: #93C5FD;
+    margin-left: 4px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .auth-hero-body {
+    max-width: 520px;
+    z-index: 2;
+    margin: 48px 0;
+  }
+  .auth-hero-title {
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+    color: #FFFFFF;
+  }
+  .auth-hero-title span {
+    background: linear-gradient(135deg, #93C5FD 0%, #60A5FA 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .auth-hero-desc {
+    font-size: 16px;
+    color: #CBD5E1;
+    line-height: 1.6;
+    margin-bottom: 36px;
+  }
+
+  /* Multi-Agent Architecture Visualization */
+  .agent-diagram-card {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  }
+  .diagram-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #93C5FD;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .diagram-title::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #60A5FA;
+    box-shadow: 0 0 8px #60A5FA;
+  }
+  .agent-nodes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .agent-node-item {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .node-icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .node-icon-box.a { background: rgba(59, 130, 246, 0.2); color: #93C5FD; }
+  .node-icon-box.b { background: rgba(16, 185, 129, 0.2); color: #6EE7B7; }
+  .node-icon-box.c { background: rgba(245, 158, 11, 0.2); color: #FCD34D; }
+  .node-icon-box.d { background: rgba(139, 92, 246, 0.2); color: #C4B5FD; }
+  .node-text-name { font-size: 13px; font-weight: 600; color: #FFFFFF; }
+  .node-text-sub { font-size: 11px; color: #94A3B8; }
+
+  .auth-hero-footer {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: 13px;
+    color: #94A3B8;
+    z-index: 2;
+  }
+  .security-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #CBD5E1;
+  }
+
+  /* Right Form Area */
+  .auth-form-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 32px;
+    background: var(--bg-surface);
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 440px;
+  }
+  .auth-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 32px;
+  }
+  .auth-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  .auth-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+  .auth-header {
+    margin-bottom: 28px;
+  }
+  .auth-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .auth-header p {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+  .input-password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .input-password-wrapper input {
+    padding-right: 44px;
+  }
+  .toggle-password-btn {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .toggle-password-btn:hover { color: var(--text-primary); }
+
+  .preset-auth-box {
+    margin-top: 24px;
+    padding: 14px 16px;
+    background: var(--bg-surface-soft);
+    border: 1px dashed var(--border-medium);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+  .preset-auth-box span { color: var(--text-secondary); }
+  .btn-quick-fill {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    padding: 5px 12px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  .btn-quick-fill:hover { background: var(--bg-surface-hover); border-color: var(--primary); color: var(--primary); }
+
+  /* ==========================================================================
+     MAIN APPLICATION SHELL & LAYOUT
+     ========================================================================== */
+  .app-shell {
+    display: none;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+  .app-shell.visible {
+    display: flex;
+  }
+
+  /* Premium Sidebar */
+  .sidebar {
+    width: 260px;
+    background: #0B132B;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    z-index: 100;
+  }
+  .sidebar-header {
+    padding: 24px 20px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #FFFFFF;
+  }
+  .sidebar-nav-wrap {
+    flex: 1;
+    padding: 20px 12px;
+    overflow-y: auto;
+  }
+  .nav-group-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748B;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+  }
+  .nav-menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .nav-item-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    background: transparent;
+    border: none;
+    color: #94A3B8;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    position: relative;
+  }
+  .nav-item-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+    color: #F8FAFC;
+  }
+  .nav-item-btn.active {
+    background: rgba(37, 99, 235, 0.18);
+    color: #FFFFFF;
+    font-weight: 600;
+  }
+  .nav-item-btn.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 3px;
+    border-radius: 0 4px 4px 0;
+    background: var(--primary);
+  }
+  .nav-item-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    flex-shrink: 0;
+  }
+  .nav-badge-pill {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.1);
+    color: #94A3B8;
+  }
+  .nav-item-btn.active .nav-badge-pill {
+    background: rgba(37, 99, 235, 0.3);
+    color: #93C5FD;
+  }
+
+  /* User Profile Control in Sidebar Footer */
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(11, 19, 43, 0.6);
+  }
+  .user-profile-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .user-avatar-circle {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .user-meta-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .user-name-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #F8FAFC;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .user-role-label {
+    font-size: 11px;
+    color: #94A3B8;
+  }
+  .btn-signout-icon {
+    background: transparent;
+    border: none;
+    color: #94A3B8;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+  }
+  .btn-signout-icon:hover {
+    color: #EF4444;
+    background: rgba(239, 68, 68, 0.1);
+  }
+
+  /* Main Viewport & Layout */
+  .main-viewport {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    background: var(--bg-page);
+  }
+
+  /* Top Navigation Bar */
+  .top-navbar {
+    height: 64px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .top-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .mobile-menu-trigger {
+    display: none;
+    background: none;
+    border: 1px solid var(--border-subtle);
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .page-title-box h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .page-title-box p {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .top-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .system-health-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+    background: var(--success-subtle);
+    border: 1px solid var(--success-border);
+    color: var(--success);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 6px var(--success);
+  }
+
+  /* Content Scrollable Workspace */
+  .content-workspace {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px;
+  }
+  .content-max-width {
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+
+  /* Panels (Tab Pages) */
+  .view-panel {
+    display: none;
+  }
+  .view-panel.active {
+    display: block;
+    animation: fadeIn 250ms ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ==========================================================================
+     CORE UI COMPONENTS: CARDS, INPUTS, BUTTONS
+     ========================================================================== */
+  .section-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .section-card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .header-info-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background: var(--primary-subtle);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-card-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .section-card-header p {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-top: 1px;
+  }
+  .section-card-body {
+    padding: 24px;
+  }
+
+  /* Grid Layouts */
+  .grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .grid-3col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  /* Form Elements */
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="url"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--bg-surface);
+    transition: var(--transition-fast);
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-muted);
+  }
+  textarea {
+    min-height: 84px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  /* Button System */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--primary);
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--primary-hover);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  }
+  .btn-primary:active:not(:disabled) {
+    background: var(--primary-active);
+  }
+  .btn-primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px 18px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-medium);
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--bg-surface-soft);
+    border-color: var(--border-focus);
+    color: var(--primary);
+  }
+
+  .btn-danger-ghost {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--danger);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-danger-ghost:hover {
+    background: var(--danger-subtle);
+    border-color: var(--danger-border);
+  }
+
+  .btn-add-entry {
+    width: 100%;
+    background: var(--bg-surface-soft);
+    border: 1px dashed var(--border-medium);
+    padding: 12px;
+    border-radius: var(--radius-md);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: var(--transition-fast);
+    margin-top: 12px;
+  }
+  .btn-add-entry:hover {
+    background: var(--primary-subtle);
+    border-color: var(--primary);
+    border-style: solid;
+  }
+
+  /* Repeatable Entry Cards */
+  .entry-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .entry-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    position: relative;
+    box-shadow: var(--shadow-xs);
+    transition: var(--transition-fast);
+  }
+  .entry-card:hover {
+    border-color: var(--border-medium);
+    box-shadow: var(--shadow-sm);
+  }
+  .entry-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .entry-badge-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--primary-subtle);
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+  }
+
+  /* Empty States */
+  .empty-state-box {
+    padding: 36px 20px;
+    text-align: center;
+    border: 1px dashed var(--border-medium);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface-soft);
+    color: var(--text-tertiary);
+  }
+  .empty-state-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    box-shadow: var(--shadow-xs);
+  }
+  .empty-state-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  .empty-state-desc {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    max-width: 380px;
+    margin: 0 auto 14px;
+  }
+
+  /* Skill Tag Chips */
+  .skills-widget-wrap {
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    background: var(--bg-surface);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+  }
+  .skills-widget-wrap:focus-within {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+  .skill-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--primary-subtle);
+    border: 1px solid var(--primary-border);
+    color: var(--primary-hover);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+  }
+  .skill-chip button {
+    background: none;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2px;
+  }
+  .skill-chip button:hover { color: var(--danger); }
+  .skills-input-field {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 4px 8px !important;
+    font-size: 13px !important;
+    min-width: 140px;
+    flex: 1;
+  }
+  .preset-skills-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .preset-tag-btn {
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-soft);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  .preset-tag-btn:hover {
+    background: var(--primary-subtle);
+    border-color: var(--primary-border);
+    color: var(--primary);
+  }
+
+  /* ==========================================================================
+     UNIFIED FILE UPLOAD DROPZONE COMPONENT
+     ========================================================================== */
+  .upload-dropzone {
+    border: 2px dashed var(--border-medium);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    padding: 24px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    position: relative;
+  }
+  .upload-dropzone:hover {
+    border-color: var(--primary);
+    background: var(--primary-subtle);
+  }
+  .upload-dropzone.has-file {
+    border-style: solid;
+    border-color: var(--success-border);
+    background: var(--bg-surface);
+    cursor: default;
+    padding: 16px 20px;
+    text-align: left;
+  }
+  .upload-dropzone.dragover {
+    border-color: var(--primary);
+    background: var(--primary-subtle);
+  }
+  .upload-icon-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    background: var(--primary-subtle);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+  }
+  .upload-label-main {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .upload-label-sub {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .upload-btn-fake {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+  }
+  .upload-dropzone:hover .upload-btn-fake {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  /* File Success Badge */
+  .uploaded-file-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .uploaded-file-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+  }
+  .file-type-pill {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    background: #DCFCE7;
+    color: #16A34A;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .file-meta-col {
+    min-width: 0;
+  }
+  .file-name-line {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .file-stats-line {
+    font-size: 12px;
+    color: var(--success);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+  }
+  .file-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .btn-file-action {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    padding: 5px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  .btn-file-action:hover {
+    background: var(--bg-surface-soft);
+    color: var(--text-primary);
+  }
+  .btn-file-action.remove:hover {
+    border-color: var(--danger-border);
+    background: var(--danger-subtle);
+    color: var(--danger);
+  }
+
+  .upload-error-text {
+    font-size: 12px;
+    color: var(--danger);
+    font-weight: 600;
+    margin-top: 8px;
+    display: none;
+  }
+  .upload-error-text.visible { display: block; }
+
+  /* ==========================================================================
+     JOB DESCRIPTION PAGE WORKBENCH
+     ========================================================================== */
+  .preset-job-selector-bar {
+    background: var(--primary-subtle);
+    border: 1px solid var(--primary-border);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .preset-job-selector-bar .label-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary-hover);
+  }
+  .job-select-dropdown {
+    max-width: 340px;
+    background: #FFFFFF;
+    font-weight: 600;
+  }
+
+  /* ==========================================================================
+     VERIFYING / LOADING PIPELINE EXPERIENCE
+     ========================================================================== */
+  .eval-progress-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: 40px;
+    max-width: 680px;
+    margin: 40px auto;
+    box-shadow: var(--shadow-md);
+    text-align: center;
+  }
+  .pipeline-spinner-ring {
+    width: 64px;
+    height: 64px;
+    border: 4px solid var(--primary-subtle);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    animation: spin 800ms linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .eval-heading {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .eval-caption {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    margin-bottom: 32px;
+  }
+
+  /* Pipeline Stage Steps */
+  .pipeline-track {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+    margin-bottom: 28px;
+  }
+  .pipeline-step-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    background: var(--bg-surface-soft);
+    border: 1px solid var(--border-subtle);
+    transition: var(--transition-base);
+  }
+  .step-status-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 2px solid var(--border-medium);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .pipeline-step-item.active {
+    background: var(--primary-subtle);
+    border-color: var(--primary-border);
+  }
+  .pipeline-step-item.active .step-status-icon {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-glow);
+  }
+  .pipeline-step-item.done {
+    background: var(--bg-surface);
+    border-color: var(--border-subtle);
+  }
+  .pipeline-step-item.done .step-status-icon {
+    background: var(--success);
+    border-color: var(--success);
+    color: #FFFFFF;
+  }
+  .step-info-col {
+    flex: 1;
+    min-width: 0;
+  }
+  .step-title-line {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .step-desc-line {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 1px;
+  }
+  .step-state-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    background: var(--bg-surface);
+    color: var(--text-tertiary);
+  }
+  .pipeline-step-item.active .step-state-badge {
+    background: var(--primary);
+    color: #FFFFFF;
+  }
+  .pipeline-step-item.done .step-state-badge {
+    background: var(--success-subtle);
+    color: var(--success);
+  }
+
+  /* ==========================================================================
+     RESULTS PAGE — COMPREHENSIVE TALENT INTELLIGENCE
+     ========================================================================== */
+  .results-header-banner {
+    background: linear-gradient(135deg, #0B132B 0%, #172554 100%);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    color: #FFFFFF;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-md);
+  }
+  .banner-candidate-meta h2 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #FFFFFF;
+  }
+  .banner-candidate-meta p {
+    font-size: 14px;
+    color: #93C5FD;
+    margin-top: 4px;
+  }
+  .score-badge-circle {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .score-big-num {
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1;
+    color: #FFFFFF;
+    letter-spacing: -0.03em;
+  }
+  .score-rating-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .match-tier-pill {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    background: #10B981;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .score-label-sub {
+    font-size: 12px;
+    color: #94A3B8;
+  }
+
+  /* 4 Metric Cards Grid */
+  .metric-cards-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .metric-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-xs);
+  }
+  .metric-card-lbl {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+  .metric-card-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+  .metric-card-sub {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 6px;
+  }
+
+  /* Evaluated Evidence Sources Grid */
+  .evidence-sources-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .evidence-sources-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sources-badge-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .evidence-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    background: var(--primary-subtle);
+    border: 1px solid var(--primary-border);
+    color: var(--primary-hover);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* Verified Skills Section */
+  .verified-skill-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .skill-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .skill-title-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .skill-status-tag {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+  }
+  .skill-status-tag.supported { background: var(--success-subtle); color: var(--success); }
+  .skill-status-tag.weakly_supported { background: var(--warning-subtle); color: var(--warning); }
+  .skill-status-tag.unsupported { background: var(--bg-surface-soft); color: var(--text-muted); }
+  .skill-status-tag.contradicted { background: var(--danger-subtle); color: var(--danger); }
+
+  .skill-pct-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .skill-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-surface-soft);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .skill-progress-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 400ms ease;
+  }
+  .skill-progress-fill.supported { background: var(--success); }
+  .skill-progress-fill.weakly_supported { background: var(--warning); }
+  .skill-progress-fill.unsupported { background: var(--text-muted); }
+  .skill-reason-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+  .skill-sources-chips-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .source-attribution-pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface-soft);
+    color: var(--text-tertiary);
+    border: 1px solid var(--border-subtle);
+  }
+
+  /* Opportunity Cards */
+  .opportunity-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    margin-bottom: 14px;
+    transition: var(--transition-fast);
+  }
+  .opportunity-card:hover {
+    border-color: var(--border-medium);
+    box-shadow: var(--shadow-sm);
+  }
+  .opportunity-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .opp-rank-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--primary);
+    background: var(--primary-subtle);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 4px;
+  }
+  .opp-title-bold {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .opp-score-badge {
+    text-align: right;
+  }
+  .opp-fair-score {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--success);
+    line-height: 1;
+  }
+  .opp-score-sub {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+  .opp-skills-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 12px 0;
+  }
+  .opp-chip-matched {
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--success-subtle);
+    color: var(--success);
+    padding: 3px 9px;
+    border-radius: var(--radius-full);
+  }
+  .opp-chip-missing {
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--bg-surface-soft);
+    color: var(--text-tertiary);
+    padding: 3px 9px;
+    border-radius: var(--radius-full);
+  }
+  .opp-explanation-quote {
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: var(--bg-surface-soft);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--primary);
+    margin-top: 8px;
+  }
+
+  /* Toasts */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toast {
+    background: var(--text-primary);
+    color: #FFFFFF;
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideUp 200ms ease;
+  }
+  .toast.success { background: #065F46; }
+  .toast.error { background: #991B1B; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive Rules */
+  @media (max-width: 980px) {
+    .auth-hero { display: none; }
+    .metric-cards-row { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      left: -280px;
+      top: 0;
+      bottom: 0;
+      transition: left var(--transition-base);
+    }
+    .sidebar.open { left: 0; }
+    .mobile-menu-trigger { display: block; }
+    .top-navbar { padding: 0 16px; }
+    .content-workspace { padding: 20px 16px; }
+    .grid-2col, .grid-3col { grid-template-columns: 1fr; }
+    .metric-cards-row { grid-template-columns: 1fr; }
+    .results-header-banner { flex-direction: column; align-items: flex-start; gap: 16px; }
   }
 </style>
 </head>
 <body>
 
-<!-- ============ LOGIN SCREEN ============ -->
-<div class="login-screen" id="login-screen">
-  <div class="login-left">
-    <div class="login-left-inner">
-      <div class="brand">
-        <div class="brand-mark">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L20 6V12C20 16.5 16.5 20.3 12 22C7.5 20.3 4 16.5 4 12V6L12 2Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12L11 14L15 10" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<!-- ==========================================================================
+     AUTHENTICATION SCREEN (LOGIN / REGISTER)
+     ========================================================================== -->
+<div class="auth-container" id="auth-screen">
+  <!-- Left Side: Brand & Value Proposition -->
+  <div class="auth-hero">
+    <div class="auth-hero-header">
+      <div class="brand-logo-badge">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L20 6V12C20 16.5 16.5 20.3 12 22C7.5 20.3 4 16.5 4 12V6L12 2Z" stroke="white" stroke-width="2" stroke-linejoin="round"/><path d="M9 12L11 14L15 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="brand-logo-text">FairWork AI</div>
+      <span class="brand-logo-tag">Platform</span>
+    </div>
+
+    <div class="auth-hero-body">
+      <h1 class="auth-hero-title">Fair hiring. <span>Evidence-driven</span> decisions.</h1>
+      <p class="auth-hero-desc">Evaluate candidate skills, work history, and portfolio artifacts using transparent, bias-free multi-agent artificial intelligence.</p>
+
+      <div class="agent-diagram-card">
+        <div class="diagram-title">Autonomous Micro-Agent Pipeline</div>
+        <div class="agent-nodes-grid">
+          <div class="agent-node-item">
+            <div class="node-icon-box a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2"/></svg></div>
+            <div><div class="node-text-name">Portfolio Agent</div><div class="node-text-sub">Artifact & NER extractor</div></div>
+          </div>
+          <div class="agent-node-item">
+            <div class="node-icon-box b"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/></svg></div>
+            <div><div class="node-text-name">Verification Agent</div><div class="node-text-sub">Cross-evidence validator</div></div>
+          </div>
+          <div class="agent-node-item">
+            <div class="node-icon-box c"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="currentColor" stroke-width="2"/></svg></div>
+            <div><div class="node-text-name">Compatibility Agent</div><div class="node-text-sub">FAISS semantic matcher</div></div>
+          </div>
+          <div class="agent-node-item">
+            <div class="node-icon-box d"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 6l3 18h12l3-18H3zm5 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="2"/></svg></div>
+            <div><div class="node-text-name">Fair Ranking Agent</div><div class="node-text-sub">Bias audit & calibration</div></div>
+          </div>
         </div>
-        <span class="brand-name">FairWork AI</span>
       </div>
-      <h1>Fair opportunities,<br/>backed by evidence.</h1>
-      <p class="desc">Evaluate a candidate's claimed skills against what their portfolio actually shows — then see which roles genuinely fit.</p>
-      <div class="illustration">
-        <svg width="280" height="200" viewBox="0 0 280 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="20" y="30" width="160" height="130" rx="12" fill="#E8F0FE"/>
-          <rect x="44" y="54" width="90" height="10" rx="5" fill="#2F6FED"/>
-          <rect x="44" y="74" width="112" height="8" rx="4" fill="#C7D9FB"/>
-          <rect x="44" y="90" width="112" height="8" rx="4" fill="#C7D9FB"/>
-          <rect x="44" y="106" width="70" height="8" rx="4" fill="#C7D9FB"/>
-          <circle cx="200" cy="70" r="46" fill="#DCFCE7"/>
-          <path d="M182 70L194 82L218 56" stroke="#16A34A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-          <rect x="60" y="150" width="160" height="34" rx="10" fill="#101B3D"/>
-          <circle cx="82" cy="167" r="8" fill="#7C5CFF"/>
-          <rect x="98" y="161" width="100" height="6" rx="3" fill="#5B6A9E"/>
-          <rect x="98" y="171" width="70" height="6" rx="3" fill="#5B6A9E"/>
-        </svg>
+    </div>
+
+    <div class="auth-hero-footer">
+      <div class="security-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/></svg>
+        Enterprise-grade data encryption
       </div>
+      <div>&bull;</div>
+      <div>CPU-optimized microservices</div>
     </div>
   </div>
 
-  <div class="login-right">
-    <div class="login-form-box">
-      <h2 id="auth-heading">Welcome back</h2>
-      <p class="sub" id="auth-sub">Log in to evaluate a candidate.</p>
-
-      <div class="field">
-        <label for="username">Username</label>
-        <input type="text" id="username" value="demo_user" autocomplete="username" />
-      </div>
-      <div class="field">
-        <label for="password">Password</label>
-        <input type="password" id="password" value="demo_password123" autocomplete="current-password" />
+  <!-- Right Side: Auth Form -->
+  <div class="auth-form-wrap">
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="tab-login" onclick="setAuthMode('login')">Sign In</button>
+        <button type="button" class="auth-tab" id="tab-register" onclick="setAuthMode('register')">Create Account</button>
       </div>
 
-      <button class="btn-primary" id="primary-auth-btn" type="button">Log in</button>
-      <div class="form-alt" id="form-alt">
-        Don't have an account? <button type="button" id="switch-mode-btn">Register</button>
+      <div class="auth-header">
+        <h2 id="auth-title">Welcome back</h2>
+        <p id="auth-subtitle">Sign in to access your talent evaluation workspace.</p>
       </div>
-      <div class="status-line" id="auth-status"></div>
+
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+        <div class="form-group">
+          <label for="auth-username">Username or Email</label>
+          <input type="text" id="auth-username" required placeholder="name@company.com or username" value="demo_user" autocomplete="username" />
+        </div>
+
+        <div class="form-group">
+          <label for="auth-password">Password</label>
+          <div class="input-password-wrapper">
+            <input type="password" id="auth-password" required placeholder="Enter your password" value="demo_password123" autocomplete="current-password" />
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility()" aria-label="Toggle password visibility">
+              <svg width="18" height="18" id="eye-icon" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width:100%; margin-top:8px;" id="auth-submit-btn">
+          <span>Sign In</span>
+        </button>
+      </form>
+
+      <div class="preset-auth-box">
+        <span>Quick evaluation access:</span>
+        <button type="button" class="btn-quick-fill" onclick="useDemoCredentials()">Use Demo Account</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ============ APP SHELL ============ -->
+<!-- ==========================================================================
+     MAIN APPLICATION SHELL
+     ========================================================================== -->
 <div class="app-shell" id="app-shell">
-  <div class="sidebar">
-    <div class="brand">
-      <div class="brand-mark">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L20 6V12C20 16.5 16.5 20.3 12 22C7.5 20.3 4 16.5 4 12V6L12 2Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12L11 14L15 10" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <span class="brand-name">FairWork AI</span>
+  <!-- Desktop / Drawer Sidebar -->
+  <aside class="sidebar" id="app-sidebar">
+    <div class="sidebar-header">
+      <a href="#" class="sidebar-brand">
+        <div class="brand-logo-badge" style="width:32px; height:32px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L20 6V12C20 16.5 16.5 20.3 12 22C7.5 20.3 4 16.5 4 12V6L12 2Z" stroke="white" stroke-width="2" stroke-linejoin="round"/><path d="M9 12L11 14L15 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="brand-logo-text" style="font-size:17px;">FairWork AI</div>
+      </a>
     </div>
 
-    <div class="sidebar-section-label">Evaluation</div>
-    <ul class="nav-list">
-      <li class="nav-item active" data-nav="details">
-        <button type="button" data-goto="details">
-          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-          Details
+    <div class="sidebar-nav-wrap">
+      <div class="nav-group-label">Evaluation Flow</div>
+      <ul class="nav-menu">
+        <li>
+          <button type="button" class="nav-item-btn active" id="nav-details" onclick="navigateToPanel('details')">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke="currentColor" stroke-width="2"/></svg></span>
+            <span>Candidate Details</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="nav-item-btn" id="nav-job" onclick="navigateToPanel('job')">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="currentColor" stroke-width="2"/></svg></span>
+            <span>Job Description</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="nav-item-btn" id="nav-results" onclick="navigateToPanel('results')" disabled>
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2"/></svg></span>
+            <span>Evaluation Results</span>
+            <span class="nav-badge-pill" id="results-count-pill" style="display:none;">Ready</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-profile-card">
+        <div class="user-avatar-circle" id="user-avatar-initials">DU</div>
+        <div class="user-meta-info">
+          <div class="user-name-text" id="user-display-name">demo_user</div>
+          <div class="user-role-label">Evaluator &bull; Active</div>
+        </div>
+        <button type="button" class="btn-signout-icon" onclick="handleSignOut()" title="Sign out">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-      </li>
-      <li class="nav-item" data-nav="verifying">
-        <button type="button" data-goto="verifying" disabled>
-          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L19 5.5V11C19 15.5 16 19 12 21C8 19 5 15.5 5 11V5.5L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span>
-          Verifying
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Scrollable Area -->
+  <main class="main-viewport">
+    <header class="top-navbar">
+      <div class="top-nav-left">
+        <button type="button" class="mobile-menu-trigger" onclick="toggleMobileSidebar()" aria-label="Toggle navigation">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
-      </li>
-      <li class="nav-item" data-nav="results">
-        <button type="button" data-goto="results" disabled>
-          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M12 20V4M20 20V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-          Results
-        </button>
-      </li>
-    </ul>
+        <div class="page-title-box">
+          <h1 id="topbar-title">Candidate Details</h1>
+          <p id="topbar-subtitle">Provide verified candidate materials and rich artifacts for multi-agent evaluation.</p>
+        </div>
+      </div>
+      <div class="top-nav-actions">
+        <div class="system-health-pill">
+          <div class="pulse-dot"></div>
+          <span>4 Services Connected</span>
+        </div>
+      </div>
+    </header>
 
-    <div class="sidebar-spacer"></div>
-    <div class="sidebar-bottom">
-      <button class="signout-btn" id="signout-btn" type="button">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>Log out</span>
-      </button>
-    </div>
-  </div>
+    <div class="content-workspace">
+      <div class="content-max-width">
 
-  <div class="main-col">
-    <div class="topbar">
-      <div class="topbar-title" id="topbar-title">Candidate details</div>
-      <div class="topbar-user">
-        <div class="avatar" id="avatar-initials">U</div>
-        <span class="topbar-username" id="topbar-username"></span>
+        <!-- ==================================================================
+             PANEL 1: CANDIDATE DETAILS
+             ================================================================== -->
+        <div class="view-panel active" id="panel-details">
+          <!-- Basic Profile Information -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="header-info-wrap">
+                <div class="header-icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke="currentColor" stroke-width="2"/></svg></div>
+                <div>
+                  <h2>Candidate Profile</h2>
+                  <p>Identifiers, career tenure, and technical competencies claimed by the candidate.</p>
+                </div>
+              </div>
+            </div>
+            <div class="section-card-body">
+              <div class="grid-2col" style="margin-bottom:20px;">
+                <div class="form-group" style="margin-bottom:0;">
+                  <label for="candidate-id">Candidate ID <span style="color:var(--danger)">*</span></label>
+                  <input type="text" id="candidate-id" value="TEST001" placeholder="e.g. TEST001 or F001" />
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label for="experience-years">Years of Professional Experience</label>
+                  <input type="number" id="experience-years" value="3.0" min="0" step="0.5" />
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Technical Skills Claimed <span style="color:var(--danger)">*</span></label>
+                <div class="skills-widget-wrap" id="skills-widget">
+                  <input type="text" class="skills-input-field" id="skill-input-box" placeholder="Type a skill and press Enter or comma..." />
+                </div>
+                <div class="preset-skills-row">
+                  <span style="font-size:12px; color:var(--text-tertiary);">Quick add:</span>
+                  <button type="button" class="preset-tag-btn" onclick="addSkillTag('PySpark')">+ PySpark</button>
+                  <button type="button" class="preset-tag-btn" onclick="addSkillTag('Data Analysis')">+ Data Analysis</button>
+                  <button type="button" class="preset-tag-btn" onclick="addSkillTag('Python')">+ Python</button>
+                  <button type="button" class="preset-tag-btn" onclick="addSkillTag('SQL')">+ SQL</button>
+                  <button type="button" class="preset-tag-btn" onclick="addSkillTag('ETL')">+ ETL</button>
+                  <button type="button" class="preset-tag-btn" onclick="addSkillTag('Machine Learning')">+ Machine Learning</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Upload Dropzones (Resume & Portfolio PDF) -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="header-info-wrap">
+                <div class="header-icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div>
+                  <h2>Core Documents</h2>
+                  <p>In-memory text extraction for deep evidence validation. PDF only, maximum 10 MB.</p>
+                </div>
+              </div>
+            </div>
+            <div class="section-card-body">
+              <div class="grid-2col">
+                <!-- Resume Dropzone -->
+                <div>
+                  <div class="upload-dropzone" id="resume-dropzone" onclick="triggerFileInput('resume-file-input')">
+                    <input type="file" id="resume-file-input" accept=".pdf" style="display:none;" onchange="handlePdfSelected(event, 'resume')" />
+                    <div id="resume-prompt-content">
+                      <div class="upload-icon-circle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2"/></svg></div>
+                      <div class="upload-label-main">Upload Resume / CV</div>
+                      <div class="upload-label-sub">Drag & drop PDF here or browse file</div>
+                      <span class="upload-btn-fake">Choose PDF (Max 10 MB)</span>
+                    </div>
+                    <div id="resume-success-content" style="display:none;"></div>
+                  </div>
+                  <div class="upload-error-text" id="resume-error-msg"></div>
+                </div>
+
+                <!-- Portfolio Document Dropzone -->
+                <div>
+                  <div class="upload-dropzone" id="portfolio-doc-dropzone" onclick="triggerFileInput('portfolio-doc-file-input')">
+                    <input type="file" id="portfolio-doc-file-input" accept=".pdf" style="display:none;" onchange="handlePdfSelected(event, 'portfolio_doc')" />
+                    <div id="portfolio-doc-prompt-content">
+                      <div class="upload-icon-circle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke="currentColor" stroke-width="2"/></svg></div>
+                      <div class="upload-label-main">Upload Portfolio Document</div>
+                      <div class="upload-label-sub">Case studies, architecture, project decks</div>
+                      <span class="upload-btn-fake">Choose PDF (Max 10 MB)</span>
+                    </div>
+                    <div id="portfolio-doc-success-content" style="display:none;"></div>
+                  </div>
+                  <div class="upload-error-text" id="portfolio-doc-error-msg"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Work Experience -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="header-info-wrap">
+                <div class="header-icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="currentColor" stroke-width="2"/></svg></div>
+                <div>
+                  <h2>Work Experience</h2>
+                  <p>Professional employment history supporting practical technology application.</p>
+                </div>
+              </div>
+            </div>
+            <div class="section-card-body">
+              <div class="entry-stack" id="work-experience-list"></div>
+              <button type="button" class="btn-add-entry" onclick="addWorkExperienceEntry()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <span>Add Work Experience</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Certificates with PDF Upload Support -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="header-info-wrap">
+                <div class="header-icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="currentColor" stroke-width="2"/></svg></div>
+                <div>
+                  <h2>Certificates & Credentials</h2>
+                  <p>Official certifications with structured metadata and verified certificate PDF document upload.</p>
+                </div>
+              </div>
+            </div>
+            <div class="section-card-body">
+              <div class="entry-stack" id="certificates-list"></div>
+              <button type="button" class="btn-add-entry" onclick="addCertificateEntry()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <span>Add Certificate & Upload PDF</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Code Samples / Repositories -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="header-info-wrap">
+                <div class="header-icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div>
+                  <h2>Code Samples & Repositories</h2>
+                  <p>Public repositories, code highlights, and architectural codebases demonstrated by the candidate.</p>
+                </div>
+              </div>
+            </div>
+            <div class="section-card-body">
+              <div class="entry-stack" id="code-samples-list"></div>
+              <button type="button" class="btn-add-entry" onclick="addCodeSampleEntry()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <span>Add Code Repository</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Portfolio Projects -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="header-info-wrap">
+                <div class="header-icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke="currentColor" stroke-width="2"/></svg></div>
+                <div>
+                  <h2>Portfolio Projects</h2>
+                  <p>Discrete software engineering, analytics, or machine learning systems built by the candidate.</p>
+                </div>
+              </div>
+            </div>
+            <div class="section-card-body">
+              <div class="entry-stack" id="portfolio-projects-list"></div>
+              <button type="button" class="btn-add-entry" onclick="addPortfolioProjectEntry()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <span>Add Portfolio Project</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Primary Evaluation Action Bar -->
+          <div style="display:flex; justify-content:flex-end; gap:16px; margin:32px 0 60px;">
+            <button type="button" class="btn-secondary" onclick="navigateToPanel('job')">Review Target Job &rarr;</button>
+            <button type="button" class="btn-primary" style="padding:12px 28px; font-size:15px;" onclick="runCandidateEvaluation()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Evaluate Candidate</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ==================================================================
+             PANEL 2: JOB DESCRIPTION WORKBENCH
+             ================================================================== -->
+        <div class="view-panel" id="panel-job">
+          <div class="preset-job-selector-bar">
+            <div>
+              <div class="label-text">Opportunity Template Catalog</div>
+              <p style="font-size:12px; color:var(--text-secondary); margin-top:2px;">Select an opportunity from our benchmark repository to prefill role criteria.</p>
+            </div>
+            <select class="job-select-dropdown" id="job-catalog-select" onchange="handleJobCatalogSelect(this.value)">
+              <option value="">-- Choose Job Benchmark --</option>
+            </select>
+          </div>
+
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="header-info-wrap">
+                <div class="header-icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="currentColor" stroke-width="2"/></svg></div>
+                <div>
+                  <h2>Target Job Specification</h2>
+                  <p>Define requirements against which Member C (Job Compatibility) scores candidate capabilities.</p>
+                </div>
+              </div>
+            </div>
+            <div class="section-card-body">
+              <div class="grid-2col" style="margin-bottom:20px;">
+                <div class="form-group" style="margin-bottom:0;">
+                  <label for="job-title-input">Job Title</label>
+                  <input type="text" id="job-title-input" value="Data Engineer Intern" placeholder="e.g. Data Engineer Intern" />
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label for="job-dept-input">Department / Track</label>
+                  <input type="text" id="job-dept-input" value="Data Platform" placeholder="e.g. Data Analytics or Engineering" />
+                </div>
+              </div>
+
+              <div class="grid-2col" style="margin-bottom:20px;">
+                <div class="form-group" style="margin-bottom:0;">
+                  <label for="job-min-exp">Minimum Experience (Years)</label>
+                  <input type="number" id="job-min-exp" value="0" min="0" step="1" />
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label for="job-categories">Skill Categories</label>
+                  <input type="text" id="job-categories" value="programming, database, data_engineering" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="job-desc-input">Job Description & Responsibilities</label>
+                <textarea id="job-desc-input" rows="4">Build data pipelines, transform datasets, work with SQL databases, and support data warehouse development.</textarea>
+              </div>
+
+              <div class="grid-2col">
+                <div class="form-group" style="margin-bottom:0;">
+                  <label>Required Skills (Mandatory Criteria)</label>
+                  <div class="skills-widget-wrap" id="job-req-skills-wrap">
+                    <input type="text" class="skills-input-field" id="job-req-skills-input" placeholder="Type skill + Enter..." />
+                  </div>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label>Preferred Skills (Nice-to-Have)</label>
+                  <div class="skills-widget-wrap" id="job-pref-skills-wrap">
+                    <input type="text" class="skills-input-field" id="job-pref-skills-input" placeholder="Type skill + Enter..." />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:16px; margin:32px 0 60px;">
+            <button type="button" class="btn-secondary" onclick="navigateToPanel('details')">&larr; Return to Candidate Details</button>
+            <button type="button" class="btn-primary" style="padding:12px 28px; font-size:15px;" onclick="runCandidateEvaluation()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Evaluate Candidate</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ==================================================================
+             PANEL 3: VERIFYING / PIPELINE PROGRESS
+             ================================================================== -->
+        <div class="view-panel" id="panel-verifying">
+          <div class="eval-progress-card">
+            <div class="pipeline-spinner-ring"></div>
+            <h2 class="eval-heading">Autonomous Pipeline in Progress</h2>
+            <p class="eval-caption">Executing full orchestration across all four micro-agents without human bias.</p>
+
+            <div class="pipeline-track">
+              <div class="pipeline-step-item" id="stage-node-a">
+                <div class="step-status-icon" id="stage-icon-a">1</div>
+                <div class="step-info-col">
+                  <div class="step-title-line">Member A &bull; Portfolio Evidence Agent (Port 8000)</div>
+                  <div class="step-desc-line">Parsing resume, portfolio doc, and structured cards for technical artifacts.</div>
+                </div>
+                <span class="step-state-badge" id="stage-badge-a">Queued</span>
+              </div>
+
+              <div class="pipeline-step-item" id="stage-node-b">
+                <div class="step-status-icon" id="stage-icon-b">2</div>
+                <div class="step-info-col">
+                  <div class="step-title-line">Member B &bull; Skill Verification Agent (Port 8001)</div>
+                  <div class="step-desc-line">Cross-validating claimed skills against extracted evidence items.</div>
+                </div>
+                <span class="step-state-badge" id="stage-badge-b">Queued</span>
+              </div>
+
+              <div class="pipeline-step-item" id="stage-node-c">
+                <div class="step-status-icon" id="stage-icon-c">3</div>
+                <div class="step-info-col">
+                  <div class="step-title-line">Member C &bull; Job Compatibility Agent (Port 8002)</div>
+                  <div class="step-desc-line">Generating FAISS embeddings and matching candidate capability to jobs.</div>
+                </div>
+                <span class="step-state-badge" id="stage-badge-c">Queued</span>
+              </div>
+
+              <div class="pipeline-step-item" id="stage-node-d">
+                <div class="step-status-icon" id="stage-icon-d">4</div>
+                <div class="step-info-col">
+                  <div class="step-title-line">Member D &bull; Fair Ranking Agent (Port 8003)</div>
+                  <div class="step-desc-line">Calculating fairness multipliers, explainability notes, and final ranking.</div>
+                </div>
+                <span class="step-state-badge" id="stage-badge-d">Queued</span>
+              </div>
+            </div>
+
+            <div style="font-size:12px; color:var(--text-muted);">
+              Average pipeline execution time: ~1.2s &bull; Rate-limited and authenticated
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================================================================
+             PANEL 4: RESULTS EXPERIENCE
+             ================================================================== -->
+        <div class="view-panel" id="panel-results">
+          <!-- Top Results Header Banner -->
+          <div class="results-header-banner">
+            <div class="banner-candidate-meta">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                <span style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; background:rgba(255,255,255,0.15); padding:2px 8px; border-radius:var(--radius-full);">Audit Complete</span>
+                <span style="font-size:12px; color:#93C5FD;" id="res-timestamp">Just now</span>
+              </div>
+              <h2 id="res-candidate-id">Candidate TEST001</h2>
+              <p id="res-fairness-summary">100% of claimed skills corroborated by verifiable artifacts.</p>
+            </div>
+            <div class="score-badge-circle">
+              <div class="score-big-num" id="res-overall-score">92%</div>
+              <div class="score-rating-col">
+                <span class="match-tier-pill" id="res-tier-pill">Strong Match</span>
+                <span class="score-label-sub">Calibrated Fair Score</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Metrics Cards Row -->
+          <div class="metric-cards-row">
+            <div class="metric-card">
+              <div class="metric-card-lbl">Verified Skills</div>
+              <div class="metric-card-val" id="res-stat-supported">2 / 2</div>
+              <div class="metric-card-sub" id="res-stat-supported-sub">Supported by evidence</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-card-lbl">Weak / Unverified</div>
+              <div class="metric-card-val" id="res-stat-unsupported">0</div>
+              <div class="metric-card-sub">Requires corroboration</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-card-lbl">Evidence Quality</div>
+              <div class="metric-card-val" id="res-stat-quality">100%</div>
+              <div class="metric-card-sub">Cross-reference index</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-card-lbl">Fairness Multiplier</div>
+              <div class="metric-card-val" style="color:var(--primary);" id="res-stat-multiplier">1.20&times;</div>
+              <div class="metric-card-sub">Opportunity calibration</div>
+            </div>
+          </div>
+
+          <!-- Evaluated Evidence Sources -->
+          <div class="evidence-sources-card" id="res-evidence-card">
+            <h3>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="var(--success)" stroke-width="2"/></svg>
+              Verified Artifacts Evaluated
+            </h3>
+            <div class="sources-badge-grid" id="res-sources-grid"></div>
+          </div>
+
+          <!-- Verified Skills Section -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="header-info-wrap">
+                <div class="header-icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="currentColor" stroke-width="2"/></svg></div>
+                <div>
+                  <h2>Skill Verification Breakdown</h2>
+                  <p>Detailed verification status with human-readable supporting evidence sources.</p>
+                </div>
+              </div>
+            </div>
+            <div class="section-card-body" id="res-skills-container"></div>
+          </div>
+
+          <!-- Ranked Job Opportunities -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="header-info-wrap">
+                <div class="header-icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="currentColor" stroke-width="2"/></svg></div>
+                <div>
+                  <h2>Calibrated Opportunity Matches</h2>
+                  <p>Roles ranked by fairness-calibrated score, transparently comparing raw vs. adjusted suitability.</p>
+                </div>
+              </div>
+            </div>
+            <div class="section-card-body" id="res-opportunities-container"></div>
+          </div>
+
+          <!-- Actions -->
+          <div style="display:flex; justify-content:flex-end; gap:16px; margin:32px 0 60px;">
+            <button type="button" class="btn-secondary" onclick="navigateToPanel('details')">&larr; Edit Candidate Details</button>
+            <button type="button" class="btn-primary" onclick="resetAndEvaluateNew()">Evaluate Another Candidate</button>
+          </div>
+        </div>
+
       </div>
     </div>
-
-    <div class="content">
-
-      <!-- Step: Details -->
-      <div class="panel active" data-panel="details">
-        <div class="card">
-          <h3>Candidate details</h3>
-          <p class="card-sub">Enter what the candidate claims, and what their portfolio shows.</p>
-
-          <div class="row">
-            <div class="field">
-              <label for="candidate-id">Candidate ID</label>
-              <input type="text" id="candidate-id" value="F001" />
-            </div>
-            <div class="field">
-              <label for="experience-years">Years of experience</label>
-              <input type="text" id="experience-years" value="1.5" />
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="skills-input">Skills claimed</label>
-            <div class="chip-input" id="skills-chip-input">
-              <input type="text" id="skills-input" placeholder="Type a skill, press Enter" />
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Portfolio projects</label>
-            <div id="project-list"></div>
-            <button type="button" class="add-link" id="add-project">+ Add another project</button>
-          </div>
-
-          <button type="button" class="btn-evaluate" id="run-btn">Evaluate candidate</button>
-        </div>
-      </div>
-
-      <!-- Step: Verifying -->
-      <div class="panel" data-panel="verifying">
-        <div class="card">
-          <h3>AI Agent Activity</h3>
-          <p class="card-sub">Each agent runs in sequence to evaluate this candidate.</p>
-          <div class="agent-track" id="agent-track">
-            <div class="agent-row" data-step="a">
-              <div class="agent-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 19V5a2 2 0 012-2h9l5 5v11a2 2 0 01-2 2H6a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
-              <div><div class="agent-text-title">Reading the portfolio</div><div class="agent-text-caption">Portfolio Evidence Agent</div></div>
-            </div>
-            <div class="agent-row" data-step="b">
-              <div class="agent-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
-              <div><div class="agent-text-title">Checking claims against evidence</div><div class="agent-text-caption">Skill Verification Agent</div></div>
-            </div>
-            <div class="agent-row" data-step="c">
-              <div class="agent-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-              <div><div class="agent-text-title">Matching against open roles</div><div class="agent-text-caption">Job Compatibility Agent</div></div>
-            </div>
-            <div class="agent-row" data-step="d">
-              <div class="agent-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M12 20V4M20 20V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-              <div><div class="agent-text-title">Adjusting for fairness</div><div class="agent-text-caption">Fair Ranking Agent</div></div>
-            </div>
-          </div>
-          <div id="verify-error-container"></div>
-        </div>
-      </div>
-
-      <!-- Step: Results -->
-      <div class="panel" data-panel="results">
-
-        <div class="stat-grid" id="stat-grid"></div>
-
-        <div class="card">
-          <h3>Fairness-related results</h3>
-          <p class="card-sub">How claim-evidence consistency shaped this evaluation.</p>
-          <div class="gauge-wrap">
-            <div class="gauge">
-              <svg width="120" height="120" viewBox="0 0 120 120">
-                <circle class="gauge-track" cx="60" cy="60" r="50"/>
-                <circle class="gauge-fill" id="gauge-fill" cx="60" cy="60" r="50"/>
-              </svg>
-              <div class="gauge-label"><div class="pct" id="gauge-pct">0%</div><div class="sub">Evidence quality</div></div>
-            </div>
-            <div class="gauge-desc"><p id="fairness-summary"></p></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Verified skills</h3>
-          <p class="card-sub">Each claimed skill, checked against portfolio evidence.</p>
-          <div id="skills-body"></div>
-        </div>
-
-        <div class="card">
-          <h3>Ranked opportunities</h3>
-          <p class="card-sub">Job matches, adjusted for evidence quality.</p>
-          <div id="opportunities-body"></div>
-        </div>
-
-        <div class="card">
-          <h3>Agent activity</h3>
-          <p class="card-sub">What each agent did during this evaluation.</p>
-          <div class="agent-track" id="agent-track-results"></div>
-        </div>
-
-        <button type="button" class="restart-link" id="restart-btn">Evaluate another candidate</button>
-      </div>
-
-    </div>
-  </div>
+  </main>
 </div>
+
+<!-- Toast Feedback Container -->
+<div class="toast-container" id="toast-container"></div>
 
 <script>
-let token = null;
-let mode = 'login';
+/* ==========================================================================
+   STATE MANAGEMENT & CONSTANTS
+   ========================================================================== */
+let authToken = null;
+let currentUsername = 'demo_user';
+let authMode = 'login'; // 'login' | 'register'
 
-function escapeHtml(str){ return (str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+// Candidate Profile State
+let claimedSkills = ['PySpark', 'Data Analysis'];
+let resumeData = { filename: '', text: '' };
+let portfolioDocData = { filename: '', text: '' };
 
-// ---------- Auth ----------
-const authHeading = document.getElementById('auth-heading');
-const authSub = document.getElementById('auth-sub');
-const primaryAuthBtn = document.getElementById('primary-auth-btn');
-const formAlt = document.getElementById('form-alt');
-const authStatus = document.getElementById('auth-status');
-const usernameEl = document.getElementById('username');
-const passwordEl = document.getElementById('password');
+let workCounter = 0;
+let certCounter = 0;
+let codeCounter = 0;
+let projCounter = 0;
 
-function setAuthStatus(msg, ok){ authStatus.textContent = msg; authStatus.className = 'status-line ' + (ok?'ok':'err'); }
+// Job Benchmark Catalog
+let jobCatalog = [];
+let jobReqSkills = ['Python', 'SQL', 'ETL'];
+let jobPrefSkills = ['PySpark', 'Data Warehousing'];
 
-function renderAuthMode(){
-  if(mode === 'login'){
-    authHeading.textContent = 'Welcome back';
-    authSub.textContent = 'Log in to evaluate a candidate.';
-    primaryAuthBtn.textContent = 'Log in';
-    formAlt.innerHTML = 'Don\'t have an account? <button type="button" id="switch-mode-btn">Register</button>';
+/* ==========================================================================
+   AUTHENTICATION FUNCTIONS
+   ========================================================================== */
+function setAuthMode(mode) {
+  authMode = mode;
+  document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+  document.getElementById('tab-register').classList.toggle('active', mode === 'register');
+  if (mode === 'login') {
+    document.getElementById('auth-title').textContent = 'Welcome back';
+    document.getElementById('auth-subtitle').textContent = 'Sign in to access your talent evaluation workspace.';
+    document.getElementById('auth-submit-btn').innerHTML = '<span>Sign In</span>';
   } else {
-    authHeading.textContent = 'Create an account';
-    authSub.textContent = 'Set a username and password to start evaluating candidates.';
-    primaryAuthBtn.textContent = 'Create account';
-    formAlt.innerHTML = 'Already have an account? <button type="button" id="switch-mode-btn">Log in</button>';
+    document.getElementById('auth-title').textContent = 'Create an account';
+    document.getElementById('auth-subtitle').textContent = 'Register an evaluator identity to run unbiased AI assessments.';
+    document.getElementById('auth-submit-btn').innerHTML = '<span>Create Account</span>';
   }
-  document.getElementById('switch-mode-btn').onclick = () => {
-    mode = mode === 'login' ? 'register' : 'login';
-    renderAuthMode();
-    setAuthStatus('', true);
-  };
 }
-renderAuthMode();
 
-primaryAuthBtn.onclick = async () => {
-  const username = usernameEl.value.trim();
-  const password = passwordEl.value;
-  if(!username || !password){ setAuthStatus('Enter a username and password.', false); return; }
+function togglePasswordVisibility() {
+  const pInput = document.getElementById('auth-password');
+  pInput.type = pInput.type === 'password' ? 'text' : 'password';
+}
 
-  primaryAuthBtn.disabled = true;
-  setAuthStatus(mode === 'login' ? 'Signing in…' : 'Creating account…', true);
+function useDemoCredentials() {
+  document.getElementById('auth-username').value = 'demo_user';
+  document.getElementById('auth-password').value = 'demo_password123';
+  setAuthMode('login');
+  showToast('Demo credentials filled.', 'info');
+}
 
-  try{
-    if(mode === 'register'){
-      const resp = await fetch('/auth/register', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username, password})});
-      const body = await resp.json();
-      primaryAuthBtn.disabled = false;
-      if(!resp.ok){ setAuthStatus(body.detail || 'Could not create that account.', false); return; }
-      mode = 'login';
-      renderAuthMode();
-      setAuthStatus('Account created. Log in to continue.', true);
+async function handleAuthSubmit(e) {
+  e.preventDefault();
+  const username = document.getElementById('auth-username').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const btn = document.getElementById('auth-submit-btn');
+
+  if (!username || !password) {
+    showToast('Please enter both username and password.', 'error');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="pulse-dot" style="background:#fff;"></span> Processing...';
+
+  try {
+    if (authMode === 'register') {
+      const regResp = await fetch('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const regData = await regResp.json();
+      if (!regResp.ok) {
+        showToast(regData.detail || 'Registration failed.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<span>Create Account</span>';
+        return;
+      }
+      showToast('Account created successfully! Signing in...', 'success');
+    }
+
+    // Login for token
+    const loginResp = await fetch('/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ username, password })
+    });
+    const loginData = await loginResp.json();
+    btn.disabled = false;
+
+    if (!loginResp.ok) {
+      showToast(loginData.detail || 'Authentication failed.', 'error');
+      btn.innerHTML = authMode === 'login' ? '<span>Sign In</span>' : '<span>Create Account</span>';
       return;
     }
 
-    const resp = await fetch('/auth/login', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: new URLSearchParams({username, password})});
-    const body = await resp.json();
-    primaryAuthBtn.disabled = false;
-    if(!resp.ok){ setAuthStatus(body.detail || 'Incorrect username or password.', false); return; }
-
-    token = body.access_token;
-    enterApp(username);
-  }catch(e){
-    primaryAuthBtn.disabled = false;
-    setAuthStatus('Could not reach the server.', false);
+    authToken = loginData.access_token;
+    currentUsername = username;
+    enterApplication();
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = '<span>Sign In</span>';
+    showToast('Could not reach the server. Ensure services are running.', 'error');
   }
-};
+}
 
-function enterApp(username){
-  document.getElementById('login-screen').style.display = 'none';
+function enterApplication() {
+  document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-shell').classList.add('visible');
-  document.getElementById('topbar-username').textContent = username;
-  document.getElementById('avatar-initials').textContent = username.slice(0,2).toUpperCase();
+  document.getElementById('user-display-name').textContent = currentUsername;
+  document.getElementById('user-avatar-initials').textContent = (currentUsername.slice(0, 2) || 'US').toUpperCase();
+  showToast(`Welcome, ${currentUsername}!`, 'success');
+  loadJobCatalog();
 }
-document.getElementById('signout-btn').onclick = () => location.reload();
 
-// ---------- Sidebar step nav ----------
-const stepOrder = ['details','verifying','results'];
-let reachedStep = 0; // index of furthest step reached
-
-function goToStep(stepName){
-  const idx = stepOrder.indexOf(stepName);
-  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === stepName));
-  document.querySelectorAll('.nav-item').forEach((el, i) => {
-    el.classList.toggle('active', i === idx);
-    el.classList.toggle('done', i < reachedStep && i !== idx);
-    const btn = el.querySelector('button');
-    btn.disabled = i > reachedStep;
-  });
-  const titles = {details:'Candidate details', verifying:'Verifying', results:'Evaluation results'};
-  document.getElementById('topbar-title').textContent = titles[stepName];
+function handleSignOut() {
+  authToken = null;
+  document.getElementById('app-shell').classList.remove('visible');
+  document.getElementById('auth-screen').style.display = 'flex';
+  setAuthMode('login');
+  showToast('Signed out successfully.', 'info');
 }
-document.querySelectorAll('.nav-item button').forEach(btn => {
-  btn.addEventListener('click', () => { if(!btn.disabled) goToStep(btn.dataset.goto); });
-});
 
-// ---------- Claimed skills chip input ----------
-let skills = ['Python', 'Django', 'REST API'];
-const skillsInput = document.getElementById('skills-input');
-const chipWrap = document.getElementById('skills-chip-input');
-function renderChips(){
-  chipWrap.querySelectorAll('.chip').forEach(c => c.remove());
-  skills.forEach((s,i) => {
+function toggleMobileSidebar() {
+  document.getElementById('app-sidebar').classList.toggle('open');
+}
+
+/* ==========================================================================
+   NAVIGATION
+   ========================================================================== */
+function navigateToPanel(panelId) {
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item-btn').forEach(btn => btn.classList.remove('active'));
+
+  const targetPanel = document.getElementById(`panel-${panelId}`);
+  if (targetPanel) targetPanel.classList.add('active');
+
+  const targetNav = document.getElementById(`nav-${panelId}`);
+  if (targetNav) targetNav.classList.add('active');
+
+  const titles = {
+    details: ['Candidate Details', 'Provide verified candidate materials and rich artifacts for multi-agent evaluation.'],
+    job: ['Job Description Workbench', 'Target opportunity requirements and benchmark criteria for capability alignment.'],
+    verifying: ['Autonomous Pipeline Running', 'Executing multi-agent evaluation without human bias.'],
+    results: ['Evaluation Results', 'Calibrated scores, verified skills, and transparent evidence explainability.']
+  };
+  if (titles[panelId]) {
+    document.getElementById('topbar-title').textContent = titles[panelId][0];
+    document.getElementById('topbar-subtitle').textContent = titles[panelId][1];
+  }
+
+  // Close mobile drawer if open
+  document.getElementById('app-sidebar').classList.remove('open');
+}
+
+/* ==========================================================================
+   SKILLS CHIP INPUT WIDGET
+   ========================================================================== */
+function renderSkillsWidget() {
+  const widget = document.getElementById('skills-widget');
+  const input = document.getElementById('skill-input-box');
+  widget.querySelectorAll('.skill-chip').forEach(c => c.remove());
+
+  claimedSkills.forEach((skill, idx) => {
     const chip = document.createElement('span');
-    chip.className = 'chip';
-    chip.innerHTML = `${escapeHtml(s)} <button type="button" aria-label="Remove ${escapeHtml(s)}">&times;</button>`;
-    chip.querySelector('button').onclick = () => { skills.splice(i,1); renderChips(); };
-    chipWrap.insertBefore(chip, skillsInput);
+    chip.className = 'skill-chip';
+    chip.innerHTML = `${escapeHtml(skill)} <button type="button" onclick="removeSkillTag(${idx})" aria-label="Remove skill">&times;</button>`;
+    widget.insertBefore(chip, input);
   });
 }
-skillsInput.addEventListener('keydown', e => {
-  if(e.key==='Enter'||e.key===','){
+
+function addSkillTag(skill) {
+  const clean = skill.trim();
+  if (clean && !claimedSkills.map(s => s.toLowerCase()).includes(clean.toLowerCase())) {
+    claimedSkills.push(clean);
+    renderSkillsWidget();
+  }
+}
+
+function removeSkillTag(idx) {
+  claimedSkills.splice(idx, 1);
+  renderSkillsWidget();
+}
+
+document.getElementById('skill-input-box').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') {
     e.preventDefault();
-    const v = skillsInput.value.trim();
-    if(v && !skills.includes(v)){ skills.push(v); renderChips(); }
-    skillsInput.value='';
-  } else if(e.key==='Backspace' && !skillsInput.value && skills.length){ skills.pop(); renderChips(); }
+    const val = e.target.value.trim();
+    if (val) {
+      addSkillTag(val);
+      e.target.value = '';
+    }
+  } else if (e.key === 'Backspace' && !e.target.value && claimedSkills.length) {
+    claimedSkills.pop();
+    renderSkillsWidget();
+  }
 });
-renderChips();
 
-// ---------- Portfolio projects ----------
-const projectList = document.getElementById('project-list');
-let projCounter = 0;
-function addProject(data){
-  data = data || {project_id:'proj_'+String(++projCounter).padStart(3,'0'), title:'', description:''};
-  const block = document.createElement('div');
-  block.className = 'project-card';
-  block.innerHTML = `
-    <button type="button" class="remove-btn">Remove</button>
-    <div class="field"><label>Project title</label><input type="text" class="p-title" value="${escapeHtml(data.title)}" placeholder="e.g. Online Booking System" /></div>
-    <div class="field"><label>What was built</label><textarea class="p-desc" placeholder="Describe the work and the technologies used…">${escapeHtml(data.description)}</textarea></div>
-    <input type="hidden" class="p-id" value="${escapeHtml(data.project_id)}" />
+/* ==========================================================================
+   UNIFIED PDF UPLOAD (RESUME, PORTFOLIO DOC, CERTIFICATE)
+   ========================================================================== */
+function triggerFileInput(inputId) {
+  document.getElementById(inputId).click();
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+async function handlePdfSelected(e, type, certId = null) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const errElId = type === 'resume' ? 'resume-error-msg' : (type === 'portfolio_doc' ? 'portfolio-doc-error-msg' : `cert-err-${certId}`);
+  const errEl = document.getElementById(errElId);
+  if (errEl) { errEl.textContent = ''; errEl.classList.remove('visible'); }
+
+  // Client Validation
+  if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+    showUploadError(errEl, 'Only valid PDF files (.pdf) are allowed.');
+    return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    showUploadError(errEl, `File exceeds 10 MB limit (${formatBytes(file.size)} uploaded).`);
+    return;
+  }
+  if (file.size === 0) {
+    showUploadError(errEl, 'Uploaded PDF file is empty (0 bytes).');
+    return;
+  }
+
+  // Upload to Backend
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const endpoint = type === 'resume' ? '/api/upload/resume' : (type === 'portfolio_doc' ? '/api/upload/portfolio' : '/api/upload/certificate');
+
+  try {
+    const resp = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + authToken },
+      body: formData
+    });
+    const resData = await resp.json();
+
+    if (!resp.ok) {
+      showUploadError(errEl, resData.detail || `Upload failed (Status ${resp.status}).`);
+      return;
+    }
+
+    // Success State
+    if (type === 'resume') {
+      resumeData = { filename: file.name, text: resData.text };
+      renderUploadSuccess('resume', file.name, file.size, resData.character_count || resData.text.length);
+      showToast('Resume PDF extracted successfully.', 'success');
+    } else if (type === 'portfolio_doc') {
+      portfolioDocData = { filename: file.name, text: resData.text };
+      renderUploadSuccess('portfolio_doc', file.name, file.size, resData.character_count || resData.text.length);
+      showToast('Portfolio PDF extracted successfully.', 'success');
+    } else if (type === 'certificate' && certId) {
+      renderCertUploadSuccess(certId, file.name, file.size, resData.character_count || resData.text.length, resData.text);
+      showToast('Certificate PDF attached and verified.', 'success');
+    }
+  } catch (err) {
+    showUploadError(errEl, 'Server error during PDF processing.');
+  }
+}
+
+function showUploadError(el, msg) {
+  if (el) {
+    el.textContent = msg;
+    el.classList.add('visible');
+  }
+  showToast(msg, 'error');
+}
+
+function renderUploadSuccess(type, filename, size, chars) {
+  const isResume = type === 'resume';
+  const dropzone = document.getElementById(isResume ? 'resume-dropzone' : 'portfolio-doc-dropzone');
+  const promptBox = document.getElementById(isResume ? 'resume-prompt-content' : 'portfolio-doc-prompt-content');
+  const successBox = document.getElementById(isResume ? 'resume-success-content' : 'portfolio-doc-success-content');
+
+  dropzone.classList.add('has-file');
+  promptBox.style.display = 'none';
+  successBox.style.display = 'block';
+
+  successBox.innerHTML = `
+    <div class="uploaded-file-banner">
+      <div class="uploaded-file-left">
+        <div class="file-type-pill">PDF</div>
+        <div class="file-meta-col">
+          <div class="file-name-line" title="${escapeHtml(filename)}">${escapeHtml(filename)}</div>
+          <div class="file-stats-line">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            ${chars.toLocaleString()} characters extracted &bull; ${formatBytes(size)}
+          </div>
+        </div>
+      </div>
+      <div class="file-actions-row">
+        <button type="button" class="btn-file-action" onclick="event.stopPropagation(); triggerFileInput('${isResume ? 'resume-file-input' : 'portfolio-doc-file-input'}')">Replace</button>
+        <button type="button" class="btn-file-action remove" onclick="event.stopPropagation(); removeUploadedFile('${type}')">Remove</button>
+      </div>
+    </div>
   `;
-  block.querySelector('.remove-btn').onclick = () => block.remove();
-  projectList.appendChild(block);
-}
-document.getElementById('add-project').onclick = () => addProject();
-addProject({project_id:'proj_001', title:'Online Booking System', description:'Built a web-based booking platform using Django and REST APIs.'});
-
-// ---------- Evaluate flow ----------
-const runBtn = document.getElementById('run-btn');
-const agentRows = { a: document.querySelector('#agent-track .agent-row[data-step="a"]'), b: document.querySelector('#agent-track .agent-row[data-step="b"]'), c: document.querySelector('#agent-track .agent-row[data-step="c"]'), d: document.querySelector('#agent-track .agent-row[data-step="d"]') };
-const verifyErrorContainer = document.getElementById('verify-error-container');
-
-const AGENT_META = {
-  a: {title:'Reading the portfolio', caption:'Portfolio Evidence Agent',
-      icon:'<path d="M4 19V5a2 2 0 012-2h9l5 5v11a2 2 0 01-2 2H6a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>'},
-  b: {title:'Checking claims against evidence', caption:'Skill Verification Agent',
-      icon:'<path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>'},
-  c: {title:'Matching against open roles', caption:'Job Compatibility Agent',
-      icon:'<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
-  d: {title:'Adjusting for fairness', caption:'Fair Ranking Agent',
-      icon:'<path d="M4 20V10M12 20V4M20 20V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
-};
-
-function resetAgentTrack(){
-  Object.values(agentRows).forEach(row => row.classList.remove('active','done','failed'));
-  verifyErrorContainer.innerHTML = '';
-}
-function showRetry(message){
-  verifyErrorContainer.innerHTML = `<div class="error-box">${escapeHtml(message)}<div><button type="button" class="retry-btn" id="retry-btn">Try again</button></div></div>`;
-  document.getElementById('retry-btn').onclick = () => { reachedStep = 0; goToStep('details'); };
 }
 
-runBtn.onclick = async () => {
-  if(!skills.length){ alert('Add at least one claimed skill.'); return; }
+function removeUploadedFile(type) {
+  const isResume = type === 'resume';
+  const dropzone = document.getElementById(isResume ? 'resume-dropzone' : 'portfolio-doc-dropzone');
+  const promptBox = document.getElementById(isResume ? 'resume-prompt-content' : 'portfolio-doc-prompt-content');
+  const successBox = document.getElementById(isResume ? 'resume-success-content' : 'portfolio-doc-success-content');
+  const fileInput = document.getElementById(isResume ? 'resume-file-input' : 'portfolio-doc-file-input');
 
-  const portfolioProjects = Array.from(projectList.querySelectorAll('.project-card')).map(b => ({
-    project_id: b.querySelector('.p-id').value,
-    title: b.querySelector('.p-title').value.trim(),
-    description: b.querySelector('.p-desc').value.trim(),
-  })).filter(p => p.description);
+  fileInput.value = '';
+  dropzone.classList.remove('has-file');
+  promptBox.style.display = 'block';
+  successBox.style.display = 'none';
+  successBox.innerHTML = '';
+
+  if (isResume) resumeData = { filename: '', text: '' };
+  else portfolioDocData = { filename: '', text: '' };
+  showToast(`${isResume ? 'Resume' : 'Portfolio'} removed.`, 'info');
+}
+
+/* ==========================================================================
+   REPEATABLE ENTRY CARD BUILDERS
+   ========================================================================== */
+// 1. Work Experience
+function addWorkExperienceEntry(data = {}) {
+  const id = data.work_id || `work_${String(++workCounter).padStart(3, '0')}`;
+  const list = document.getElementById('work-experience-list');
+
+  const card = document.createElement('div');
+  card.className = 'entry-card';
+  card.id = `card-${id}`;
+  card.innerHTML = `
+    <div class="entry-card-top">
+      <div class="entry-badge-num">Work Experience #${list.children.length + 1}</div>
+      <button type="button" class="btn-danger-ghost" onclick="removeEntryCard('card-${id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Remove</span>
+      </button>
+    </div>
+    <div class="grid-2col" style="margin-bottom:14px;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Job Title</label>
+        <input type="text" class="w-title" value="${escapeHtml(data.title || '')}" placeholder="e.g. Data Engineer" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Company / Organization</label>
+        <input type="text" class="w-company" value="${escapeHtml(data.company || '')}" placeholder="e.g. Test Company" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Duration / Dates</label>
+      <input type="text" class="w-duration" value="${escapeHtml(data.duration || '')}" placeholder="e.g. 3 years or Jan 2023 - Present" />
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label>Work Description & Responsibilities</label>
+      <textarea class="w-desc" placeholder="Built and maintained PySpark pipelines for large-scale data processing...">${escapeHtml(data.description || '')}</textarea>
+    </div>
+    <input type="hidden" class="w-id" value="${escapeHtml(id)}" />
+  `;
+  list.appendChild(card);
+}
+
+// 2. Certificates (with PDF document upload)
+function addCertificateEntry(data = {}) {
+  const id = data.certificate_id || `cert_${String(++certCounter).padStart(3, '0')}`;
+  const list = document.getElementById('certificates-list');
+
+  const card = document.createElement('div');
+  card.className = 'entry-card';
+  card.id = `card-${id}`;
+  card.innerHTML = `
+    <div class="entry-card-top">
+      <div class="entry-badge-num">Certificate #${list.children.length + 1}</div>
+      <button type="button" class="btn-danger-ghost" onclick="removeEntryCard('card-${id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Remove Certificate</span>
+      </button>
+    </div>
+    <div class="grid-2col" style="margin-bottom:14px;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Certificate Title</label>
+        <input type="text" class="c-title" value="${escapeHtml(data.title || '')}" placeholder="e.g. AWS Certified Data Engineer" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Issuer / Organization</label>
+        <input type="text" class="c-issuer" value="${escapeHtml(data.issuer || '')}" placeholder="e.g. Amazon Web Services" />
+      </div>
+    </div>
+    <div class="grid-2col" style="margin-bottom:14px;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Issue Date (optional)</label>
+        <input type="text" class="c-date" value="${escapeHtml(data.issue_date || '')}" placeholder="e.g. 2024-03" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Credential Verification URL</label>
+        <input type="url" class="c-url" value="${escapeHtml(data.url || '')}" placeholder="https://aws.amazon.com/verification/..." />
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Description / Verified Skills</label>
+      <textarea class="c-desc" placeholder="Demonstrated skills in PySpark, cloud data architectures, and ETL pipeline management...">${escapeHtml(data.description || '')}</textarea>
+    </div>
+
+    <!-- Certificate PDF Upload Dropzone -->
+    <div class="form-group" style="margin-bottom:0;">
+      <label>Certificate Document (PDF Upload)</label>
+      <div class="upload-dropzone" id="cert-dropzone-${id}" onclick="triggerFileInput('cert-file-${id}')">
+        <input type="file" id="cert-file-${id}" accept=".pdf" style="display:none;" onchange="handlePdfSelected(event, 'certificate', '${id}')" />
+        <div id="cert-prompt-${id}">
+          <div class="upload-icon-circle" style="width:36px; height:36px; margin-bottom:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2"/></svg></div>
+          <div class="upload-label-main" style="font-size:13px;">Upload Certificate PDF Document</div>
+          <div class="upload-label-sub" style="font-size:11px;">PDF only &bull; Maximum 10 MB</div>
+          <span class="upload-btn-fake" style="margin-top:8px; padding:4px 10px; font-size:11px;">Choose PDF</span>
+        </div>
+        <div id="cert-success-${id}" style="display:none;"></div>
+      </div>
+      <div class="upload-error-text" id="cert-err-${id}"></div>
+    </div>
+
+    <input type="hidden" class="c-id" value="${escapeHtml(id)}" />
+    <input type="hidden" class="c-pdf-text" id="cert-text-${id}" value="${escapeHtml(data.certificate_text || '')}" />
+    <input type="hidden" class="c-pdf-fname" id="cert-fname-${id}" value="${escapeHtml(data.certificate_filename || '')}" />
+  `;
+  list.appendChild(card);
+
+  // If pre-filled with PDF text
+  if (data.certificate_text) {
+    renderCertUploadSuccess(id, data.certificate_filename || 'certificate.pdf', 100000, data.certificate_text.length, data.certificate_text);
+  }
+}
+
+function renderCertUploadSuccess(certId, filename, size, chars, text) {
+  const dropzone = document.getElementById(`cert-dropzone-${certId}`);
+  const promptBox = document.getElementById(`cert-prompt-${certId}`);
+  const successBox = document.getElementById(`cert-success-${certId}`);
+  const hiddenText = document.getElementById(`cert-text-${certId}`);
+  const hiddenFname = document.getElementById(`cert-fname-${certId}`);
+
+  hiddenText.value = text;
+  hiddenFname.value = filename;
+
+  dropzone.classList.add('has-file');
+  promptBox.style.display = 'none';
+  successBox.style.display = 'block';
+
+  successBox.innerHTML = `
+    <div class="uploaded-file-banner">
+      <div class="uploaded-file-left">
+        <div class="file-type-pill">PDF</div>
+        <div class="file-meta-col">
+          <div class="file-name-line">${escapeHtml(filename)}</div>
+          <div class="file-stats-line">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            PDF verified (${chars.toLocaleString()} chars) &bull; ${formatBytes(size)}
+          </div>
+        </div>
+      </div>
+      <div class="file-actions-row">
+        <button type="button" class="btn-file-action" onclick="event.stopPropagation(); triggerFileInput('cert-file-${certId}')">Replace</button>
+        <button type="button" class="btn-file-action remove" onclick="event.stopPropagation(); removeCertPdf('${certId}')">Remove</button>
+      </div>
+    </div>
+  `;
+}
+
+function removeCertPdf(certId) {
+  const dropzone = document.getElementById(`cert-dropzone-${certId}`);
+  const promptBox = document.getElementById(`cert-prompt-${certId}`);
+  const successBox = document.getElementById(`cert-success-${certId}`);
+  const fileInput = document.getElementById(`cert-file-${certId}`);
+  const hiddenText = document.getElementById(`cert-text-${certId}`);
+  const hiddenFname = document.getElementById(`cert-fname-${certId}`);
+
+  fileInput.value = '';
+  hiddenText.value = '';
+  hiddenFname.value = '';
+
+  dropzone.classList.remove('has-file');
+  promptBox.style.display = 'block';
+  successBox.style.display = 'none';
+  successBox.innerHTML = '';
+  showToast('Certificate PDF detached.', 'info');
+}
+
+// 3. Code Samples
+function addCodeSampleEntry(data = {}) {
+  const id = data.sample_id || `code_${String(++codeCounter).padStart(3, '0')}`;
+  const list = document.getElementById('code-samples-list');
+
+  const card = document.createElement('div');
+  card.className = 'entry-card';
+  card.id = `card-${id}`;
+  card.innerHTML = `
+    <div class="entry-card-top">
+      <div class="entry-badge-num">Code Repository #${list.children.length + 1}</div>
+      <button type="button" class="btn-danger-ghost" onclick="removeEntryCard('card-${id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Remove</span>
+      </button>
+    </div>
+    <div class="grid-2col" style="margin-bottom:14px;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Repository / Project Title</label>
+        <input type="text" class="cs-title" value="${escapeHtml(data.title || '')}" placeholder="e.g. PySpark Data Processing Repo" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Language / Primary Tech</label>
+        <input type="text" class="cs-lang" value="${escapeHtml(data.language || 'Python')}" placeholder="e.g. Python / PySpark" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Repository URL</label>
+      <input type="url" class="cs-url" value="${escapeHtml(data.url || '')}" placeholder="https://github.com/test001/pyspark-pipeline" />
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label>Description & Architectural Highlights</label>
+      <textarea class="cs-desc" placeholder="Repository containing PySpark ETL pipeline implementation for processing large datasets...">${escapeHtml(data.description || '')}</textarea>
+    </div>
+    <input type="hidden" class="cs-id" value="${escapeHtml(id)}" />
+  `;
+  list.appendChild(card);
+}
+
+// 4. Portfolio Projects
+function addPortfolioProjectEntry(data = {}) {
+  const id = data.project_id || `proj_${String(++projCounter).padStart(3, '0')}`;
+  const list = document.getElementById('portfolio-projects-list');
+
+  const card = document.createElement('div');
+  card.className = 'entry-card';
+  card.id = `card-${id}`;
+  card.innerHTML = `
+    <div class="entry-card-top">
+      <div class="entry-badge-num">Portfolio Project #${list.children.length + 1}</div>
+      <button type="button" class="btn-danger-ghost" onclick="removeEntryCard('card-${id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Remove</span>
+      </button>
+    </div>
+    <div class="grid-2col" style="margin-bottom:14px;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Project Title</label>
+        <input type="text" class="p-title" value="${escapeHtml(data.title || '')}" placeholder="e.g. Data Processing Pipeline" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Role / Position</label>
+        <input type="text" class="p-role" value="${escapeHtml(data.role || 'Data Engineer')}" placeholder="e.g. Data Engineer" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Project URL (optional)</label>
+      <input type="url" class="p-url" value="${escapeHtml(data.url || '')}" placeholder="https://github.com/test001/data-pipeline" />
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label>What was Built & Technical Details</label>
+      <textarea class="p-desc" placeholder="Built an ETL pipeline using PySpark to process large datasets...">${escapeHtml(data.description || '')}</textarea>
+    </div>
+    <input type="hidden" class="p-id" value="${escapeHtml(id)}" />
+  `;
+  list.appendChild(card);
+}
+
+function removeEntryCard(cardId) {
+  const card = document.getElementById(cardId);
+  if (card) {
+    card.remove();
+    showToast('Entry removed.', 'info');
+  }
+}
+
+/* ==========================================================================
+   JOB BENCHMARK CATALOG
+   ========================================================================== */
+async function loadJobCatalog() {
+  try {
+    const resp = await fetch('/api/jobs', {
+      headers: { 'Authorization': 'Bearer ' + authToken }
+    });
+    if (resp.ok) {
+      jobCatalog = await resp.json();
+      populateJobCatalogSelect();
+    }
+  } catch (err) {
+    console.warn('Could not load jobs catalog:', err);
+  }
+}
+
+function populateJobCatalogSelect() {
+  const select = document.getElementById('job-catalog-select');
+  select.innerHTML = '<option value="">-- Choose Job Benchmark --</option>';
+  jobCatalog.forEach(job => {
+    const opt = document.createElement('option');
+    opt.value = job.job_id;
+    opt.textContent = `${job.title} (${job.department || 'Analytics'})`;
+    select.appendChild(opt);
+  });
+}
+
+function handleJobCatalogSelect(jobId) {
+  const job = jobCatalog.find(j => j.job_id === jobId);
+  if (!job) return;
+
+  document.getElementById('job-title-input').value = job.title;
+  document.getElementById('job-dept-input').value = job.department || 'Data Platform';
+  document.getElementById('job-min-exp').value = job.minimum_experience_years || 0;
+  document.getElementById('job-categories').value = (job.skill_categories || []).join(', ');
+  document.getElementById('job-desc-input').value = job.description;
+
+  jobReqSkills = [...job.required_skills];
+  jobPrefSkills = [...(job.preferred_skills || [])];
+  renderJobSkillsWidgets();
+  showToast(`Loaded "${job.title}" benchmark.`, 'info');
+}
+
+function renderJobSkillsWidgets() {
+  // Required
+  const reqWrap = document.getElementById('job-req-skills-wrap');
+  const reqInput = document.getElementById('job-req-skills-input');
+  reqWrap.querySelectorAll('.skill-chip').forEach(c => c.remove());
+  jobReqSkills.forEach((s, idx) => {
+    const chip = document.createElement('span');
+    chip.className = 'skill-chip';
+    chip.innerHTML = `${escapeHtml(s)} <button type="button" onclick="jobReqSkills.splice(${idx},1); renderJobSkillsWidgets();">&times;</button>`;
+    reqWrap.insertBefore(chip, reqInput);
+  });
+
+  // Preferred
+  const prefWrap = document.getElementById('job-pref-skills-wrap');
+  const prefInput = document.getElementById('job-pref-skills-input');
+  prefWrap.querySelectorAll('.skill-chip').forEach(c => c.remove());
+  jobPrefSkills.forEach((s, idx) => {
+    const chip = document.createElement('span');
+    chip.className = 'skill-chip';
+    chip.innerHTML = `${escapeHtml(s)} <button type="button" onclick="jobPrefSkills.splice(${idx},1); renderJobSkillsWidgets();">&times;</button>`;
+    prefWrap.insertBefore(chip, prefInput);
+  });
+}
+
+/* ==========================================================================
+   EVALUATION PIPELINE ORCHESTRATION
+   ========================================================================== */
+async function runCandidateEvaluation() {
+  const candidateId = document.getElementById('candidate-id').value.trim();
+  const expYears = parseFloat(document.getElementById('experience-years').value) || 0.0;
+
+  if (!candidateId) {
+    showToast('Candidate ID is required.', 'error');
+    navigateToPanel('details');
+    document.getElementById('candidate-id').focus();
+    return;
+  }
+  if (!claimedSkills.length) {
+    showToast('Please add at least one claimed skill.', 'error');
+    navigateToPanel('details');
+    document.getElementById('skill-input-box').focus();
+    return;
+  }
+
+  // Gather Work Experiences
+  const workDescriptions = Array.from(document.querySelectorAll('#work-experience-list .entry-card')).map(card => ({
+    work_id: card.querySelector('.w-id').value,
+    title: card.querySelector('.w-title').value.trim(),
+    company: card.querySelector('.w-company').value.trim(),
+    duration: card.querySelector('.w-duration').value.trim(),
+    description: card.querySelector('.w-desc').value.trim()
+  })).filter(w => w.title || w.company || w.description);
+
+  // Gather Certificates (including uploaded PDF text!)
+  const certificates = Array.from(document.querySelectorAll('#certificates-list .entry-card')).map(card => ({
+    certificate_id: card.querySelector('.c-id').value,
+    title: card.querySelector('.c-title').value.trim(),
+    issuer: card.querySelector('.c-issuer').value.trim(),
+    issue_date: card.querySelector('.c-date').value.trim(),
+    url: card.querySelector('.c-url').value.trim(),
+    description: card.querySelector('.c-desc').value.trim(),
+    certificate_text: card.querySelector('.c-pdf-text').value.trim() || null,
+    certificate_filename: card.querySelector('.c-pdf-fname').value.trim() || null
+  })).filter(c => c.title || c.issuer || c.description || c.certificate_text);
+
+  // Gather Code Samples
+  const codeSamples = Array.from(document.querySelectorAll('#code-samples-list .entry-card')).map(card => ({
+    sample_id: card.querySelector('.cs-id').value,
+    title: card.querySelector('.cs-title').value.trim(),
+    url: card.querySelector('.cs-url').value.trim(),
+    language: card.querySelector('.cs-lang').value.trim(),
+    description: card.querySelector('.cs-desc').value.trim()
+  })).filter(s => s.title || s.url || s.description);
+
+  // Gather Portfolio Projects
+  const portfolioProjects = Array.from(document.querySelectorAll('#portfolio-projects-list .entry-card')).map(card => ({
+    project_id: card.querySelector('.p-id').value,
+    title: card.querySelector('.p-title').value.trim(),
+    role: card.querySelector('.p-role').value.trim(),
+    url: card.querySelector('.p-url').value.trim(),
+    description: card.querySelector('.p-desc').value.trim()
+  })).filter(p => p.title || p.description);
 
   const payload = {
-    candidate_id: document.getElementById('candidate-id').value.trim() || 'candidate_001',
-    claimed_skills: skills,
-    experience_years: parseFloat(document.getElementById('experience-years').value) || 0,
+    candidate_id: candidateId,
+    claimed_skills: claimedSkills,
+    experience_years: expYears,
     portfolio_projects: portfolioProjects,
-    certificates: [], code_samples: [], work_descriptions: [],
+    work_descriptions: workDescriptions,
+    certificates: certificates,
+    code_samples: codeSamples,
+    resume_text: resumeData.text || null,
+    resume_filename: resumeData.filename || null,
+    portfolio_document_text: portfolioDocData.text || null,
+    portfolio_document_filename: portfolioDocData.filename || null
   };
 
-  reachedStep = 1;
-  goToStep('verifying');
-  resetAgentTrack();
-  const stages = ['a','b','c','d'];
-  let i = 0;
-  agentRows[stages[0]].classList.add('active');
-  const interval = setInterval(() => {
-    agentRows[stages[i]].classList.remove('active');
-    agentRows[stages[i]].classList.add('done');
-    i++;
-    if(i < stages.length) agentRows[stages[i]].classList.add('active');
-  }, 850);
+  // Switch to Verifying view and start visual pipeline tracker
+  navigateToPanel('verifying');
+  resetPipelineVisualizer();
 
-  try{
+  const stages = ['a', 'b', 'c', 'd'];
+  let currentStage = 0;
+  activatePipelineStage(stages[currentStage]);
+
+  const stageInterval = setInterval(() => {
+    completePipelineStage(stages[currentStage]);
+    currentStage++;
+    if (currentStage < stages.length) {
+      activatePipelineStage(stages[currentStage]);
+    }
+  }, 450);
+
+  try {
     const resp = await fetch('/api/full-pipeline', {
-      method:'POST', headers:{'Content-Type':'application/json', 'Authorization':'Bearer ' + token},
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + authToken
+      },
       body: JSON.stringify(payload)
     });
-    const body = await resp.json();
-    clearInterval(interval);
+    const result = await resp.json();
+    clearInterval(stageInterval);
 
-    if(!resp.ok){
-      stages.forEach(s => agentRows[s].classList.remove('active','done'));
-      agentRows[stages[Math.min(i, 3)]].classList.add('failed');
-      showRetry(body.detail || `Evaluation failed with status ${resp.status}.`);
+    if (!resp.ok) {
+      stages.forEach(s => failPipelineStage(s));
+      showToast(result.detail || `Evaluation failed with status ${resp.status}.`, 'error');
+      setTimeout(() => navigateToPanel('details'), 1200);
       return;
     }
 
-    stages.forEach(s => { agentRows[s].classList.remove('active'); agentRows[s].classList.add('done'); });
-    renderResults(body);
-    reachedStep = 2;
-    goToStep('results');
-  }catch(e){
-    clearInterval(interval);
-    agentRows[stages[Math.min(i,3)]].classList.add('failed');
-    showRetry('Could not reach the evaluation service. Check that all agents are running.');
-  }
-};
+    // Complete all stages
+    stages.forEach(s => completePipelineStage(s));
 
-// ---------- Results rendering ----------
-function statusColor(status){
-  return {supported:'green', weakly_supported:'amber', unsupported:'ink-faint', contradicted:'red'}[status] || 'ink-faint';
+    // Render Results
+    renderEvaluationResults(result, candidateId);
+    document.getElementById('nav-results').disabled = false;
+    document.getElementById('results-count-pill').style.display = 'inline-block';
+    setTimeout(() => navigateToPanel('results'), 350);
+  } catch (err) {
+    clearInterval(stageInterval);
+    stages.forEach(s => failPipelineStage(s));
+    showToast('Failed to connect to microservices. Please verify Docker status.', 'error');
+    setTimeout(() => navigateToPanel('details'), 1500);
+  }
 }
 
-function renderResults(data){
+function resetPipelineVisualizer() {
+  ['a', 'b', 'c', 'd'].forEach(s => {
+    const node = document.getElementById(`stage-node-${s}`);
+    const badge = document.getElementById(`stage-badge-${s}`);
+    const icon = document.getElementById(`stage-icon-${s}`);
+    node.className = 'pipeline-step-item';
+    badge.textContent = 'Queued';
+    icon.innerHTML = s.toUpperCase();
+  });
+}
+
+function activatePipelineStage(s) {
+  const node = document.getElementById(`stage-node-${s}`);
+  const badge = document.getElementById(`stage-badge-${s}`);
+  if (node && badge) {
+    node.className = 'pipeline-step-item active';
+    badge.textContent = 'Running';
+  }
+}
+
+function completePipelineStage(s) {
+  const node = document.getElementById(`stage-node-${s}`);
+  const badge = document.getElementById(`stage-badge-${s}`);
+  const icon = document.getElementById(`stage-icon-${s}`);
+  if (node && badge && icon) {
+    node.className = 'pipeline-step-item done';
+    badge.textContent = 'Completed';
+    icon.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+}
+
+function failPipelineStage(s) {
+  const node = document.getElementById(`stage-node-${s}`);
+  const badge = document.getElementById(`stage-badge-${s}`);
+  if (node && badge) {
+    node.classList.remove('active');
+    badge.textContent = 'Error';
+    badge.style.color = 'var(--danger)';
+  }
+}
+
+/* ==========================================================================
+   RESULTS RENDERING
+   ========================================================================== */
+function renderEvaluationResults(data, candidateId) {
   const f = data.fairness;
+  document.getElementById('res-candidate-id').textContent = `Candidate ${candidateId}`;
+  document.getElementById('res-timestamp').textContent = new Date().toLocaleTimeString();
 
-  // 1. Evaluation summary stat cards
-  document.getElementById('stat-grid').innerHTML = `
-    <div class="stat-card"><div class="num">${f.supported_count}</div><div class="lbl">Supported skills</div></div>
-    <div class="stat-card"><div class="num">${f.weakly_supported_count}</div><div class="lbl">Weakly supported</div></div>
-    <div class="stat-card"><div class="num">${f.unsupported_count + f.contradicted_count}</div><div class="lbl">Unsupported / contradicted</div></div>
-    <div class="stat-card ${f.fairness_multiplier > 1.02 ? 'gold' : ''}"><div class="num">${f.fairness_multiplier.toFixed(2)}×</div><div class="lbl">Fairness adjustment</div></div>
-  `;
+  // Top Score & Rating
+  const topJob = (data.ranked_jobs && data.ranked_jobs.length) ? data.ranked_jobs[0] : null;
+  const topScore = topJob ? Math.round(topJob.fair_score * 100) : Math.round(f.evidence_quality * 100);
+  document.getElementById('res-overall-score').textContent = `${topScore}%`;
 
-  // 4. Fairness gauge (evidence_quality is a real 0-1 field)
-  const pct = Math.round(f.evidence_quality * 100);
-  const r = 50, circumference = 2 * Math.PI * r;
-  const fillEl = document.getElementById('gauge-fill');
-  fillEl.setAttribute('stroke-dasharray', circumference);
-  fillEl.setAttribute('stroke-dashoffset', circumference - (pct/100)*circumference);
-  document.getElementById('gauge-pct').textContent = pct + '%';
-  document.getElementById('fairness-summary').textContent = f.summary;
+  const tierPill = document.getElementById('res-tier-pill');
+  if (topScore >= 80) { tierPill.textContent = 'Strong Match'; tierPill.style.background = '#10B981'; }
+  else if (topScore >= 50) { tierPill.textContent = 'Qualified'; tierPill.style.background = '#3B82F6'; }
+  else { tierPill.textContent = 'Review Needed'; tierPill.style.background = '#F59E0B'; }
 
-  // 2. Verified skills bars (real per-skill data)
-  const skillsBody = document.getElementById('skills-body');
-  if(!data.verified_skills || !data.verified_skills.length){
-    skillsBody.innerHTML = '<div class="empty-note">No skill verification data was returned for this evaluation.</div>';
+  document.getElementById('res-fairness-summary').textContent = f.summary || 'Evidence evaluated across multi-agent consensus.';
+
+  // 4 Metric Cards
+  document.getElementById('res-stat-supported').textContent = `${f.supported_count} / ${f.claimed_skill_count}`;
+  document.getElementById('res-stat-supported-sub').textContent = `${Math.round((f.supported_count / (f.claimed_skill_count || 1)) * 100)}% verified`;
+  document.getElementById('res-stat-unsupported').textContent = `${f.unsupported_count + f.contradicted_count}`;
+  document.getElementById('res-stat-quality').textContent = `${Math.round(f.evidence_quality * 100)}%`;
+  document.getElementById('res-stat-multiplier').textContent = `${f.fairness_multiplier.toFixed(2)}×`;
+
+  // Evaluated Evidence Sources Badges
+  const sourcesGrid = document.getElementById('res-sources-grid');
+  sourcesGrid.innerHTML = '';
+  if (data.evidence_summary && data.evidence_summary.sources_used && data.evidence_summary.sources_used.length) {
+    data.evidence_summary.sources_used.forEach(s => {
+      const pill = document.createElement('div');
+      pill.className = 'evidence-pill';
+      pill.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        ${escapeHtml(s)}
+      `;
+      sourcesGrid.appendChild(pill);
+    });
   } else {
-    skillsBody.innerHTML = data.verified_skills.map(v => `
-      <div class="skill-row">
-        <div class="skill-name" title="${escapeHtml(v.skill)}">${escapeHtml(v.skill)}</div>
-        <div class="skill-bar-track"><div class="skill-bar-fill ${v.status}" style="width:${Math.round(v.confidence*100)}%"></div></div>
-        <div class="skill-pct">${Math.round(v.confidence*100)}%</div>
-      </div>
-    `).join('');
+    sourcesGrid.innerHTML = '<span style="font-size:13px; color:var(--text-tertiary);">No structured artifact evidence sources logged.</span>';
   }
 
-  // 3. Ranked opportunities (real ranked_jobs fields only)
-  const oppBody = document.getElementById('opportunities-body');
-  if(!data.ranked_jobs.length){
-    oppBody.innerHTML = '<div class="empty-note">No job matches were returned for this candidate.</div>';
+  // Verified Skills List
+  const skillsContainer = document.getElementById('res-skills-container');
+  skillsContainer.innerHTML = '';
+  if (!data.verified_skills || !data.verified_skills.length) {
+    skillsContainer.innerHTML = '<div class="empty-state-box"><div class="empty-state-title">No skills evaluated</div></div>';
   } else {
-    oppBody.innerHTML = data.ranked_jobs.map(job => `
-      <div class="opp-card">
-        <div class="opp-top">
-          <div>
-            <div class="opp-title">${escapeHtml(job.title)}</div>
-            <div class="opp-rank">Rank #${job.fair_rank}${job.original_rank !== job.fair_rank ? ` (was #${job.original_rank})` : ''}</div>
+    data.verified_skills.forEach(v => {
+      const pct = Math.round(v.confidence * 100);
+      const card = document.createElement('div');
+      card.className = 'verified-skill-card';
+
+      // Human-readable evidence source mapping
+      const cleanSources = (v.evidence_ids || []).map(id => {
+        if (id.startsWith('resume')) return 'Resume PDF';
+        if (id.startsWith('portfolio_doc')) return 'Portfolio PDF';
+        if (id.startsWith('cert')) return 'Verified Certificate';
+        if (id.startsWith('proj')) return 'Portfolio Project';
+        if (id.startsWith('work')) return 'Work Experience';
+        if (id.startsWith('code')) return 'Code Sample';
+        return id;
+      });
+
+      card.innerHTML = `
+        <div class="skill-card-top">
+          <div class="skill-title-name">
+            <span>${escapeHtml(v.skill)}</span>
+            <span class="skill-status-tag ${v.status}">${v.status.replace('_', ' ')}</span>
           </div>
-          <div class="opp-score"><div class="val">${Math.round(job.fair_score*100)}%</div><div class="lbl">Match score</div></div>
+          <div class="skill-pct-val">${pct}% Confidence</div>
         </div>
-        <div class="opp-chips">
-          ${job.matched_skills.map(s => `<span class="opp-chip match">${escapeHtml(s)}</span>`).join('')}
-          ${job.missing_skills.map(s => `<span class="opp-chip missing">${escapeHtml(s)}</span>`).join('')}
+        <div class="skill-progress-bar">
+          <div class="skill-progress-fill ${v.status}" style="width:${pct}%;"></div>
         </div>
-        <div class="opp-note">${escapeHtml(job.fairness_note)}</div>
-      </div>
-    `).join('');
+        <div class="skill-reason-text">${escapeHtml(v.reason || 'Skill corroborated by submitted evidence materials.')}</div>
+        ${cleanSources.length ? `
+          <div class="skill-sources-chips-row">
+            <span style="font-size:11px; font-weight:700; color:var(--text-tertiary);">Supporting Artifacts:</span>
+            ${cleanSources.map(src => `<span class="source-attribution-pill">${escapeHtml(src)}</span>`).join('')}
+          </div>
+        ` : ''}
+      `;
+      skillsContainer.appendChild(card);
+    });
   }
 
-  // 5. Agent activity (completed state, real steps)
-  const stepsHtml = ['a','b','c','d'].map(k => `
-    <div class="agent-row done">
-      <div class="agent-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none">${AGENT_META[k].icon}</svg></div>
-      <div><div class="agent-text-title">${AGENT_META[k].title}</div><div class="agent-text-caption">${AGENT_META[k].caption}</div></div>
-      <div class="badge-completed">Completed</div>
-    </div>
-  `).join('');
-  document.getElementById('agent-track-results').innerHTML = stepsHtml;
+  // Opportunities List
+  const oppContainer = document.getElementById('res-opportunities-container');
+  oppContainer.innerHTML = '';
+  if (!data.ranked_jobs || !data.ranked_jobs.length) {
+    oppContainer.innerHTML = '<div class="empty-state-box"><div class="empty-state-title">No job matches found</div></div>';
+  } else {
+    data.ranked_jobs.forEach(job => {
+      const fairPct = Math.round(job.fair_score * 100);
+      const rawPct = Math.round(job.compatibility_score * 100);
+      const card = document.createElement('div');
+      card.className = 'opportunity-card';
+      card.innerHTML = `
+        <div class="opportunity-card-top">
+          <div>
+            <span class="opp-rank-pill">Rank #${job.fair_rank}</span>
+            <div class="opp-title-bold">${escapeHtml(job.title)}</div>
+          </div>
+          <div class="opp-score-badge">
+            <div class="opp-fair-score">${fairPct}%</div>
+            <div class="opp-score-sub">Raw Match: ${rawPct}%</div>
+          </div>
+        </div>
+        <div class="opp-skills-row">
+          ${(job.matched_skills || []).map(s => `<span class="opp-chip-matched">&check; ${escapeHtml(s)}</span>`).join('')}
+          ${(job.missing_skills || []).map(s => `<span class="opp-chip-missing">&bull; Missing: ${escapeHtml(s)}</span>`).join('')}
+        </div>
+        <div class="opp-explanation-quote">
+          <strong>Fairness Calibration:</strong> ${escapeHtml(job.fairness_note || 'Rank adjusted transparently using evidence-grounded multiplier.')}
+        </div>
+      `;
+      oppContainer.appendChild(card);
+    });
+  }
 }
 
-document.getElementById('restart-btn').onclick = () => { reachedStep = 0; goToStep('details'); };
+function resetAndEvaluateNew() {
+  navigateToPanel('details');
+  document.getElementById('candidate-id').value = 'TEST002';
+  document.getElementById('candidate-id').focus();
+  showToast('Ready for new candidate evaluation.', 'info');
+}
+
+/* ==========================================================================
+   TOAST FEEDBACK MANAGER & UTILITIES
+   ========================================================================== */
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <span>${escapeHtml(message)}</span>
+  `;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(10px)';
+    toast.style.transition = 'all 200ms ease';
+    setTimeout(() => toast.remove(), 200);
+  }, 3500);
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/* ==========================================================================
+   INITIALIZATION & SENSIBLE BENCHMARK PRELOAD
+   ========================================================================== */
+window.addEventListener('DOMContentLoaded', () => {
+  renderSkillsWidget();
+  renderJobSkillsWidgets();
+
+  // Populate initial benchmark candidate cards (TEST001 with PySpark, ETL, Data Engineering)
+  addWorkExperienceEntry({
+    title: 'Data Engineer',
+    company: 'Test Company',
+    duration: '3 years',
+    description: 'Built and maintained PySpark pipelines for large-scale data processing.'
+  });
+
+  addCertificateEntry({
+    title: 'AWS Certified Data Engineer',
+    issuer: 'Amazon Web Services',
+    issue_date: '2024-03',
+    url: 'https://aws.amazon.com/verification/123',
+    description: 'Demonstrated PySpark data engineering, cloud ETL pipelines, and architecture.'
+  });
+
+  addCodeSampleEntry({
+    title: 'PySpark Data Processing Repo',
+    url: 'https://github.com/test001/pyspark-pipeline',
+    language: 'Python',
+    description: 'Repository containing PySpark ETL pipeline implementation for processing large datasets.'
+  });
+
+  addPortfolioProjectEntry({
+    title: 'Data Processing Pipeline',
+    role: 'Data Engineer',
+    url: 'https://github.com/test001/data-pipeline',
+    description: 'Built an ETL pipeline using PySpark to process large datasets.'
+  });
+});
 </script>
 </body>
 </html>

@@ -1,11 +1,21 @@
-from agents.job_compatibility_agent.app.matcher import (
-    calculate_hybrid_score,
-    calculate_structured_score,
-)
-from agents.job_compatibility_agent.app.schemas import (
-    Job,
-    VerifiedSkill,
-)
+try:
+    from app.matcher import (
+        calculate_hybrid_score,
+        calculate_structured_score,
+    )
+    from app.schemas import (
+        Job,
+        VerifiedSkill,
+    )
+except ImportError:
+    from agents.job_compatibility_agent.app.matcher import (
+        calculate_hybrid_score,
+        calculate_structured_score,
+    )
+    from agents.job_compatibility_agent.app.schemas import (
+        Job,
+        VerifiedSkill,
+    )
 
 
 def test_hybrid_score():

@@ -36,6 +36,8 @@ STRONG_IMPLIES: Dict[str, List[str]] = {
     "asp.net": ["c#", "backend development", "web development"],
     "android studio": ["java", "kotlin", "mobile development"],
     "swiftui": ["swift", "mobile development"],
+    "pyspark": ["python", "data engineering", "etl"],
+    "etl": ["data engineering"],
 }
 
 # skill (lowercase) -> other skills it WEAKLY / loosely relates to (partial, not implication)
@@ -51,6 +53,8 @@ WEAK_RELATED: Dict[str, List[str]] = {
     "html": ["web development"],
     "css": ["web development"],
     "javascript": ["web development"],
+    "pyspark": ["data analysis", "machine learning"],
+    "etl": ["data analysis", "sql"],
 }
 
 # "language families" used purely for contradiction detection: if evidence text
@@ -58,7 +62,7 @@ WEAK_RELATED: Dict[str, List[str]] = {
 # family is treated as a potential contradiction rather than just "unsupported".
 LANGUAGE_FAMILIES: Dict[str, List[str]] = {
     "python": ["python", "django", "flask", "fastapi", "pandas", "numpy",
-               "tensorflow", "pytorch", "scikit-learn", "django rest framework"],
+               "tensorflow", "pytorch", "scikit-learn", "django rest framework", "pyspark"],
     "java": ["java", "spring", "spring boot", "android studio"],
     "javascript": ["javascript", "typescript", "react", "vue", "angular",
                    "node.js", "express", "react native"],
@@ -112,6 +116,13 @@ ALIASES: Dict[str, str] = {
     "restful api": "rest api",
     "web api": "rest api",
     "version control": "git",
+    "spark": "pyspark",
+    "apache spark": "pyspark",
+    "data engineer": "data engineering",
+    "etl pipeline": "etl",
+    "etl pipelines": "etl",
+    "data pipeline": "etl",
+    "data pipelines": "etl",
 }
 
 

@@ -13,9 +13,11 @@ Endpoints:
   GET  /health                     health check
 """
 
+import io
+import json
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, Request, status
+from fastapi import Depends, FastAPI, Request, status, UploadFile, File, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, FileResponse
@@ -30,6 +32,7 @@ from app.schemas import (
     FairRankingResponse,
     OrchestrateRequest,
     FullPipelineRequest,
+    EvidenceSummary,
 )
 from app.auth import create_access_token, get_current_user
 from app.users_store import create_user, verify_user, user_exists
@@ -63,9 +66,140 @@ def health_check():
     return {"status": "ok", "service": "fair-ranking-agent"}
 
 
+@app.get("/", include_in_schema=False)
 @app.get("/demo", include_in_schema=False)
 def demo_ui():
     return FileResponse(_STATIC_DIR / "demo.html")
+
+
+def extract_text_from_pdf(file_bytes: bytes, max_size_bytes: int = 10 * 1024 * 1024) -> str:
+    """
+    Safely extract plain text from an uploaded PDF file.
+    Validates size (<=10MB), magic bytes (%PDF-), encryption, and extractable content.
+    Never executes embedded scripts or writes files to disk.
+    """
+    if len(file_bytes) > max_size_bytes:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"File exceeds maximum allowed size of 10 MB ({len(file_bytes)} bytes uploaded)."
+        )
+    if not file_bytes.startswith(b"%PDF-"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Uploaded file is not a valid PDF document (missing PDF header signature)."
+        )
+
+    try:
+        from pypdf import PdfReader
+        from pypdf.errors import PdfReadError
+    except ImportError:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="pypdf library is not installed on the server."
+        )
+
+    try:
+        reader = PdfReader(io.BytesIO(file_bytes))
+        if reader.is_encrypted:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Password-protected or encrypted PDFs are not supported."
+            )
+
+        pages_text = []
+        for page in reader.pages:
+            text = page.extract_text()
+            if text:
+                pages_text.append(text.strip())
+
+        full_text = "\n\n".join(pages_text).strip()
+        if not full_text or len(full_text) < 10:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="PDF contains no readable text (scanned image-only PDFs without OCR text layers are not supported)."
+            )
+        return full_text
+    except HTTPException:
+        raise
+    except PdfReadError as err:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Corrupted or invalid PDF file: {str(err)}"
+        )
+    except Exception as err:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to process PDF: {str(err)}"
+        )
+
+
+@app.post("/api/upload/resume")
+async def upload_resume(
+    file: UploadFile = File(...),
+    username: str = Depends(get_current_user),
+):
+    if not (file.filename or "").lower().endswith(".pdf"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only PDF files (.pdf) are allowed for resume upload."
+        )
+    contents = await file.read()
+    text = extract_text_from_pdf(contents)
+    return {
+        "filename": file.filename,
+        "text": text,
+        "character_count": len(text),
+        "status": "extracted",
+    }
+
+
+@app.post("/api/upload/portfolio")
+async def upload_portfolio(
+    file: UploadFile = File(...),
+    username: str = Depends(get_current_user),
+):
+    if not (file.filename or "").lower().endswith(".pdf"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only PDF files (.pdf) are allowed for portfolio upload."
+        )
+    contents = await file.read()
+    text = extract_text_from_pdf(contents)
+    return {
+        "filename": file.filename,
+        "text": text,
+        "character_count": len(text),
+        "status": "extracted",
+    }
+
+
+@app.post("/api/upload/certificate")
+async def upload_certificate(
+    file: UploadFile = File(...),
+    username: str = Depends(get_current_user),
+):
+    if not (file.filename or "").lower().endswith(".pdf"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only PDF files (.pdf) are allowed for certificate upload."
+        )
+    contents = await file.read()
+    text = extract_text_from_pdf(contents)
+    return {
+        "filename": file.filename,
+        "text": text,
+        "character_count": len(text),
+        "status": "extracted",
+    }
+
+
+@app.get("/api/jobs")
+def get_jobs_catalog(username: str = Depends(get_current_user)):
+    jobs_file = Path(__file__).resolve().parent / "jobs.json"
+    if jobs_file.exists():
+        with open(jobs_file, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
 
 
 # ---------------- Auth ----------------
@@ -279,6 +413,8 @@ def full_pipeline(
         "certificates": [c.model_dump() for c in payload.certificates],
         "code_samples": [s.model_dump() for s in payload.code_samples],
         "work_descriptions": [w.model_dump() for w in payload.work_descriptions],
+        "resume_text": payload.resume_text,
+        "portfolio_document_text": payload.portfolio_document_text,
     }
 
     try:
@@ -303,7 +439,12 @@ def full_pipeline(
 
     try:
         matched_jobs = call_job_compatibility(
-            final_candidate_id, verified_skills, payload.experience_years
+            final_candidate_id,
+            verified_skills,
+            payload.experience_years,
+            work_descriptions=[w.model_dump() for w in payload.work_descriptions] if payload.work_descriptions else None,
+            certificates=[c.model_dump() for c in payload.certificates] if payload.certificates else None,
+            resume_text=payload.resume_text,
         )
     except UpstreamServiceError as exc:
         return JSONResponse(
@@ -317,7 +458,36 @@ def full_pipeline(
         verified_skills=verified_skills,
         matched_jobs=matched_jobs,
     )
-    return ranking_agent.rank(fair_request)
+    result = ranking_agent.rank(fair_request)
+
+    sources_used = []
+    if payload.resume_text:
+        sources_used.append("Resume / CV (PDF)")
+    if payload.portfolio_document_text:
+        sources_used.append("Portfolio Document (PDF)")
+    if payload.portfolio_projects:
+        sources_used.append(f"{len(payload.portfolio_projects)} Portfolio Project(s)")
+    if payload.work_descriptions:
+        sources_used.append(f"{len(payload.work_descriptions)} Work Experience(s)")
+    if payload.certificates:
+        cert_pdfs = sum(1 for c in payload.certificates if c.certificate_text)
+        if cert_pdfs > 0:
+            sources_used.append(f"{len(payload.certificates)} Certificate(s) ({cert_pdfs} with verified PDF)")
+        else:
+            sources_used.append(f"{len(payload.certificates)} Certificate(s)")
+    if payload.code_samples:
+        sources_used.append(f"{len(payload.code_samples)} Code Sample(s)")
+
+    result.evidence_summary = EvidenceSummary(
+        resume_uploaded=bool(payload.resume_text),
+        portfolio_doc_uploaded=bool(payload.portfolio_document_text),
+        projects_count=len(payload.portfolio_projects),
+        certificates_count=len(payload.certificates),
+        code_samples_count=len(payload.code_samples),
+        work_experience_count=len(payload.work_descriptions),
+        sources_used=sources_used,
+    )
+    return result
 
 
 # ---------------- Error handlers ----------------

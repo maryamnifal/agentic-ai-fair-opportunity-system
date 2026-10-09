@@ -137,5 +137,39 @@
     "aliases": [
       "data analytics"
     ]
+  },
+
+  "SQL": {
+    "category": "database",
+    "aliases": [
+      "sql query",
+      "sql queries"
+    ]
+  },
+
+  "PySpark": {
+    "category": "tool",
+    "aliases": [
+      "pyspark",
+      "apache spark",
+      "spark"
+    ]
+  },
+
+  "ETL": {
+    "category": "domain",
+    "aliases": [
+      "etl pipeline",
+      "etl pipelines",
+      "data pipeline",
+      "data pipelines"
+    ]
+  },
+
+  "Data Engineering": {
+    "category": "domain",
+    "aliases": [
+      "data engineer"
+    ]
   }
 }

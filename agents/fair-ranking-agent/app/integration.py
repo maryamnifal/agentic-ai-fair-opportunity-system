@@ -17,7 +17,7 @@ agent communication protocol alongside MCP/sockets).
 """
 
 import os
-from typing import List
+from typing import List, Optional
 
 import httpx
 
@@ -82,7 +82,12 @@ def call_skill_verification(
 
 
 def call_job_compatibility(
-    candidate_id: str, verified_skills: List[VerifiedSkill], experience_years: float
+    candidate_id: str,
+    verified_skills: List[VerifiedSkill],
+    experience_years: float,
+    work_descriptions: Optional[List[dict]] = None,
+    certificates: Optional[List[dict]] = None,
+    resume_text: Optional[str] = None,
 ) -> List[MatchedJob]:
     """Calls Member C's POST /match-jobs."""
     url = f"{JOB_COMPATIBILITY_URL}/match-jobs"
@@ -91,6 +96,13 @@ def call_job_compatibility(
         "verified_skills": [v.model_dump() for v in verified_skills],
         "experience_years": experience_years,
     }
+    if work_descriptions:
+        payload["work_descriptions"] = work_descriptions
+    if certificates:
+        payload["certificates"] = certificates
+    if resume_text:
+        payload["resume_text"] = resume_text
+
     try:
         resp = httpx.post(url, json=payload, timeout=TIMEOUT_SECONDS)
     except httpx.RequestError as exc:

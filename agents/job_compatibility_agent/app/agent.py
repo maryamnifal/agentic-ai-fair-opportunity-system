@@ -53,10 +53,37 @@ class JobCompatibilityAgent:
             }
         ]
 
-        return (
-            "Candidate capabilities: "
-            + ", ".join(skills)
-        )
+        parts = ["Candidate capabilities: " + ", ".join(skills)]
+
+        if candidate.work_descriptions:
+            work_texts = []
+            for w in candidate.work_descriptions:
+                title = w.get("title", "")
+                company = w.get("company", "")
+                desc = w.get("description", "")
+                snippet = f"{title} at {company}. {desc}".strip()
+                if snippet:
+                    work_texts.append(snippet)
+            if work_texts:
+                parts.append("Work experience: " + " ".join(work_texts))
+
+        if candidate.certificates:
+            cert_texts = []
+            for c in candidate.certificates:
+                title = c.get("title", "")
+                issuer = c.get("issuer", "")
+                desc = c.get("description", "")
+                snippet = f"{title} ({issuer}) {desc}".strip()
+                if snippet:
+                    cert_texts.append(snippet)
+            if cert_texts:
+                parts.append("Certifications: " + ", ".join(cert_texts))
+
+        if candidate.resume_text:
+            resume_snippet = candidate.resume_text[:600].strip()
+            parts.append(f"Resume summary: {resume_snippet}")
+
+        return " ".join(parts)
 
     def match_jobs(
         self,

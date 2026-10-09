@@ -207,67 +207,110 @@ class PortfolioEvidenceAgent:
             "portfolio_projects",
             []
         ):
-
-            text = (
-                f"{project.get('title', '')}. "
-                f"{project.get('description', '')}"
-            )
+            parts = []
+            if project.get("role"):
+                parts.append(f"Role: {project['role']}.")
+            if project.get("title"):
+                parts.append(f"{project['title']}.")
+            if project.get("description"):
+                parts.append(f"{project['description']}")
+            if project.get("url"):
+                parts.append(f"URL: {project['url']}")
+            text = " ".join(parts).strip()
 
             yield (
                 text,
                 "portfolio_project",
-                project["project_id"]
+                project.get("project_id", "proj")
             )
-
 
         # Certificates
         for certificate in profile.get(
             "certificates",
             []
         ):
-
-            text = (
-                f"{certificate.get('title', '')}. "
-                f"{certificate.get('description', '')}"
-            )
+            parts = []
+            if certificate.get("title"):
+                parts.append(f"{certificate['title']}.")
+            if certificate.get("issuer"):
+                parts.append(f"Issuer: {certificate['issuer']}.")
+            if certificate.get("issue_date"):
+                parts.append(f"Issued: {certificate['issue_date']}.")
+            if certificate.get("description"):
+                parts.append(f"{certificate['description']}")
+            if certificate.get("url"):
+                parts.append(f"Credential: {certificate['url']}")
+            if certificate.get("certificate_text"):
+                parts.append(f"Document content: {certificate['certificate_text']}")
+            text = " ".join(parts).strip()
 
             yield (
                 text,
                 "certificate",
-                certificate["certificate_id"]
+                certificate.get("certificate_id", "cert")
             )
-
 
         # Code samples
         for sample in profile.get(
             "code_samples",
             []
         ):
-
-            text = (
-                f"Language: "
-                f"{sample.get('language', '')}. "
-                f"{sample.get('snippet', '')}"
-            )
+            parts = []
+            title = sample.get("title") or sample.get("filename")
+            if title:
+                parts.append(f"Title: {title}.")
+            if sample.get("url"):
+                parts.append(f"Repository: {sample['url']}.")
+            if sample.get("language"):
+                parts.append(f"Language: {sample['language']}.")
+            if sample.get("description"):
+                parts.append(f"{sample['description']}")
+            if sample.get("snippet"):
+                parts.append(f"Snippet: {sample['snippet']}")
+            text = " ".join(parts).strip()
 
             yield (
                 text,
                 "code_sample",
-                sample["sample_id"]
+                sample.get("sample_id", "sample")
             )
-
 
         # Work descriptions
         for work in profile.get(
             "work_descriptions",
             []
         ):
+            parts = []
+            if work.get("title"):
+                parts.append(f"Job title: {work['title']}.")
+            if work.get("company"):
+                parts.append(f"Company: {work['company']}.")
+            if work.get("duration"):
+                parts.append(f"Duration: {work['duration']}.")
+            if work.get("description"):
+                parts.append(f"{work['description']}")
+            text = " ".join(parts).strip()
 
             yield (
-                work.get(
-                    "description",
-                    ""
-                ),
+                text,
                 "work_description",
-                work["work_id"]
+                work.get("work_id", "work")
+            )
+
+        # Resume / CV PDF text
+        resume_text = profile.get("resume_text")
+        if resume_text and resume_text.strip():
+            yield (
+                resume_text.strip(),
+                "resume",
+                "resume_001"
+            )
+
+        # Portfolio document PDF text
+        portfolio_doc_text = profile.get("portfolio_document_text")
+        if portfolio_doc_text and portfolio_doc_text.strip():
+            yield (
+                portfolio_doc_text.strip(),
+                "portfolio_document",
+                "portfolio_doc_001"
             )

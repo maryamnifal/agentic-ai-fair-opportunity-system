@@ -26,6 +26,9 @@ class CandidateProfile(BaseModel):
     candidate_id: str
     verified_skills: List[VerifiedSkill]
     experience_years: float = Field(default=0.0, ge=0.0)
+    work_descriptions: Optional[List[dict]] = None
+    certificates: Optional[List[dict]] = None
+    resume_text: Optional[str] = None
 
 
 class Job(BaseModel):
@@ -68,6 +71,9 @@ class JobCompatibilityRequest(BaseModel):
     candidate_id: str
     verified_skills: List[VerifiedSkill]
     experience_years: float = Field(default=0.0, ge=0.0)
+    work_descriptions: Optional[List[dict]] = None
+    certificates: Optional[List[dict]] = None
+    resume_text: Optional[str] = None
 
 
 class JobCompatibilityResponse(BaseModel):

@@ -81,6 +81,16 @@ class FairRankingRequest(BaseModel):
     matched_jobs: List[MatchedJob] = Field(default_factory=list)
 
 
+class EvidenceSummary(BaseModel):
+    resume_uploaded: bool = False
+    portfolio_doc_uploaded: bool = False
+    projects_count: int = 0
+    certificates_count: int = 0
+    code_samples_count: int = 0
+    work_experience_count: int = 0
+    sources_used: List[str] = Field(default_factory=list)
+
+
 class FairRankingResponse(BaseModel):
     candidate_id: str
     fairness: FairnessBreakdown
@@ -92,6 +102,7 @@ class FairRankingResponse(BaseModel):
             "can render a real skills breakdown without any new backend logic."
         ),
     )
+    evidence_summary: Optional[EvidenceSummary] = None
 
 
 # ---- Auth ----
@@ -149,17 +160,26 @@ class Certificate(BaseModel):
     issuer: Optional[str] = None
     issue_date: Optional[str] = None
     description: str = ""
+    url: Optional[str] = None
+    certificate_text: Optional[str] = None
+    certificate_filename: Optional[str] = None
 
 
 class CodeSample(BaseModel):
     sample_id: str
+    title: Optional[str] = None
+    url: Optional[str] = None
     filename: Optional[str] = None
     language: Optional[str] = None
     snippet: str = ""
+    description: Optional[str] = None
 
 
 class WorkDescription(BaseModel):
     work_id: str
+    title: Optional[str] = None
+    company: Optional[str] = None
+    duration: Optional[str] = None
     description: str = ""
 
 
@@ -182,3 +202,8 @@ class FullPipelineRequest(BaseModel):
     certificates: List[Certificate] = Field(default_factory=list)
     code_samples: List[CodeSample] = Field(default_factory=list)
     work_descriptions: List[WorkDescription] = Field(default_factory=list)
+
+    resume_text: Optional[str] = None
+    resume_filename: Optional[str] = None
+    portfolio_document_text: Optional[str] = None
+    portfolio_document_filename: Optional[str] = None
